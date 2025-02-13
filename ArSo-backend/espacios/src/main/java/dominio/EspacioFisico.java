@@ -85,9 +85,7 @@ public class EspacioFisico implements Identificable {
     this.estado = EstadoEspacioFisico.ACTIVO;
   }
 
-  // Metodos
-
-  public boolean addPuntoInteres(PuntoInteres puntoInteres) {
+public boolean addPuntoInteres(PuntoInteres puntoInteres) {
     if (puntoInteres == null) {
       throw new IllegalArgumentException("El punto de interes no puede ser nulo.");
     }

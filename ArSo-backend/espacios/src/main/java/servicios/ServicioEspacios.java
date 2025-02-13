@@ -55,8 +55,8 @@ public interface ServicioEspacios {
 	 - método: GET
 	 - respuesta: 200 OK, BODY:lista de espacios fisicos libres
 	 */
-	List<EspacioFisicoDTO> findEspaciosFisicosLibres(final LocalDateTime fechaInicio, final LocalDateTime fechaFin,
-			final int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada;
+	List<EspacioFisicoDTO> findEspaciosFisicosLibres(String fechaInicio, String fechaFin, int capacidadRequerida)
+			throws RepositorioException, EntidadNoEncontrada;
 
 	/**
 	- ruta de acceso: "/espacios?propietario={propietario}"
@@ -70,6 +70,7 @@ public interface ServicioEspacios {
 	 - método: GET
 	 - respuesta: 200 OK, BODY:espacio fisico
 	 */
-
 	EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada;
+
+	
 }
