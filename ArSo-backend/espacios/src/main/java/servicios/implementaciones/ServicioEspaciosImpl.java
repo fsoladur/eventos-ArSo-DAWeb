@@ -5,10 +5,13 @@ import dominio.Evento;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import api.mapper.EspacioFisicoMapper;
 import repositorio.Repositorio;
 import repositorio.RepositorioEspacioFisicoAdhoc;
 import repositorio.RepositorioEventosAdhoc;
@@ -112,7 +115,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
 		repositorioEspacioFisico.update(espacioFisico);
 
-		return transformToDTO(espacioFisico);
+		return EspacioFisicoMapper.transformToEspacioFisicoDTO(espacioFisico);
 	}
 
 	@Override
@@ -148,10 +151,17 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
+	public List<EspacioFisicoDTO> findEspaciosFisicosLibres(String fechaInicio, String fechaFin,
 			int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada {
+		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
+		try {
+			fechaInicioParse = LocalDateTime.parse(fechaInicio);
+			fechaFinParse = LocalDateTime.parse(fechaFin);
+		} catch (DateTimeParseException e) {
+			throw new IllegalArgumentException(e);
+		}
 
-		if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
+		if (fechaInicioParse == null || fechaFinParse == null || fechaInicioParse.isAfter(fechaFinParse)) {
 			throw new IllegalArgumentException(
 					"Las fechas de inicio y fin no pueden ser nulas o la fecha de inicio no puede ser posterior a la de fin.");
 		}
@@ -160,9 +170,9 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 		}
 
 		List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisicoAdhoc
-				.getEspaciosFisicosDisponibles(fechaInicio, fechaFin, capacidadRequerida);
+				.getEspaciosFisicosDisponibles(fechaInicioParse, fechaFinParse, capacidadRequerida);
 
-		return listaEspacioFisicosLibres.stream().map(this::transformToDTO).collect(Collectors.toList());
+		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
 	}
 
 	@Override
@@ -173,12 +183,18 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 		}
 
 		return repositorioEspacioFisicoAdhoc.getEspaciosFisicosByPropietario(propietario).stream()
-				.map(this::transformToDTO).collect(Collectors.toList());
+				.map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
 	}
-
-	public EspacioFisicoDTO transformToDTO(EspacioFisico espacioFisico) {
-		return new EspacioFisicoDTO(espacioFisico.getId(), espacioFisico.getNombre(), espacioFisico.getCapacidad(),
-				espacioFisico.getDireccion(), espacioFisico.getEstado());
+	
+	@Override
+	public EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada
+	{
+		if (idEspacio == null || idEspacio.isEmpty()) {
+			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+		}
+		EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+		
+		return EspacioFisicoMapper.transformToEspacioFisicoDTO(espacioFisico);
 	}
 
 }
