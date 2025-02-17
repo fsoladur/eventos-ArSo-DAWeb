@@ -1,6 +1,6 @@
 package servicios;
 
-import externalAPIs.exception.GeoNamesAPIFailException;
+import externalAPIs.geonamesAPI.exception.*;
 import dominio.PuntoInteres;
 import java.util.List;
 

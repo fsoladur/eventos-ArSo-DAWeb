@@ -85,8 +85,21 @@
 			<artifactId>jersey-media-json-gson</artifactId>
 			<version>2.41</version>
 		</dependency>
+		
+		<!-- Retrofit -->
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>retrofit</artifactId>
+			<version>2.11.0</version>
+		</dependency>
 
-		<!-- JSON Libraries -->
+		<!-- Retrofit parser-->
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>converter-gson</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>

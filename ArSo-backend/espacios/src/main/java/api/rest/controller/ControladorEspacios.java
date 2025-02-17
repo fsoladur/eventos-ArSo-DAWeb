@@ -1,6 +1,8 @@
-package api.rest;
+package api.rest.controller;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +21,12 @@ import javax.ws.rs.core.UriInfo;
 import api.rest.utils.Listado;
 import api.rest.utils.Listado.ResumenExtendido;
 import dominio.PuntoInteres;
+import externalAPIs.eventosAPI.dto.ModificarEventoDTO;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
 import servicios.DTO.EspacioFisicoDTO;
+import servicios.DTO.ModificarEspacioFisicoDTO;
 import servicios.factoria.*;;
 
 @Path("espacios")
@@ -48,11 +52,11 @@ public class ControladorEspacios {
 
 	@PATCH
 	@Path("/{id}")
-	public Response modificarEspacioFisico(@PathParam("idEspacio") String idEspacio, @FormParam("nombre") String nombre,
-			@FormParam("descripcion") String descripcion, @FormParam("capacidad") int capacidad)
+	public Response modificarEspacioFisico(@PathParam("idEspacio") String idEspacio, @FormParam("espacio") ModificarEspacioFisicoDTO espacio)
 			throws RepositorioException, EntidadNoEncontrada {
 
-		servicio.modificarEspacioFisico(idEspacio, nombre, descripcion, capacidad);
+		servicio.modificarEspacioFisico(idEspacio, 
+				espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
 
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
@@ -79,8 +83,16 @@ public class ControladorEspacios {
 	@Path("/libres?fechaInicio={fechaInicio}&fechaFin={fechaFin}&capacidadRequerida={capacidadRequerida}")
 	public Response findEspaciosFisicosLibres(String fechaInicio, String fechaFin, int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada {
+		
+		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
+		try {
+			fechaInicioParse = LocalDateTime.parse(fechaInicio);
+			fechaFinParse = LocalDateTime.parse(fechaFin);
+		} catch (DateTimeParseException e) {
+			throw new IllegalArgumentException(e);
+		}
 
-		List<EspacioFisicoDTO> listaEspacioFisicosLibres = servicio.findEspaciosFisicosLibres(fechaInicio, fechaFin,
+		List<EspacioFisicoDTO> listaEspacioFisicosLibres = servicio.findEspaciosFisicosLibres(fechaInicioParse, fechaFinParse,
 				capacidadRequerida);
 
 		LinkedList<ResumenExtendido> extendido = new LinkedList<>();

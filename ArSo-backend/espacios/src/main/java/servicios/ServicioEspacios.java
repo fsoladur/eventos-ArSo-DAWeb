@@ -55,7 +55,7 @@ public interface ServicioEspacios {
 	 - método: GET
 	 - respuesta: 200 OK, BODY:lista de espacios fisicos libres
 	 */
-	List<EspacioFisicoDTO> findEspaciosFisicosLibres(String fechaInicio, String fechaFin, int capacidadRequerida)
+	List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada;
 
 	/**

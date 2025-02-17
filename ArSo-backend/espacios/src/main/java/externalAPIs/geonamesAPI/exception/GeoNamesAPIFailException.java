@@ -1,4 +1,4 @@
-package externalAPIs.exception;
+package externalAPIs.geonamesAPI.exception;
 
 @SuppressWarnings("serial")
 public class GeoNamesAPIFailException extends Exception {

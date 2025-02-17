@@ -1,6 +1,6 @@
-package externalAPIs;
+package externalAPIs.geonamesAPI;
 
-import externalAPIs.exception.GeoNamesAPIFailException;
+import externalAPIs.geonamesAPI.exception.GeoNamesAPIFailException;
 import dominio.PuntoInteres;
 import java.util.List;
 

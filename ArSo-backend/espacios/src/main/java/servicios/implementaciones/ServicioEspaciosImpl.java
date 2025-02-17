@@ -4,6 +4,9 @@ import dominio.EspacioFisico;
 import dominio.Evento;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
+import externalAPIs.eventosAPI.EventosAPI;
+import externalAPIs.factoria.FactoriaServicioExterno;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
@@ -11,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import api.mapper.EspacioFisicoMapper;
+import api.rest.mapper.EspacioFisicoMapper;
 import repositorio.Repositorio;
 import repositorio.RepositorioEspacioFisicoAdhoc;
 import repositorio.RepositorioEventosAdhoc;
@@ -23,11 +26,10 @@ import servicios.DTO.EspacioFisicoDTO;
 
 public class ServicioEspaciosImpl implements ServicioEspacios {
 
-	private Repositorio<EspacioFisico, String> repositorioEspacioFisico = FactoriaRepositorios
+	private RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
 			.getRepositorio(EspacioFisico.class);
-	private RepositorioEspacioFisicoAdhoc repositorioEspacioFisicoAdhoc = FactoriaRepositorios
-			.getRepositorio(EspacioFisico.class);
-	private RepositorioEventosAdhoc repositorioEventosAdhoc = FactoriaRepositorios.getRepositorio(Evento.class);
+
+	private EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
 
 	@Override
 	public String darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
@@ -151,17 +153,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public List<EspacioFisicoDTO> findEspaciosFisicosLibres(String fechaInicio, String fechaFin,
+	public List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
 			int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada {
-		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
-		try {
-			fechaInicioParse = LocalDateTime.parse(fechaInicio);
-			fechaFinParse = LocalDateTime.parse(fechaFin);
-		} catch (DateTimeParseException e) {
-			throw new IllegalArgumentException(e);
-		}
 
-		if (fechaInicioParse == null || fechaFinParse == null || fechaInicioParse.isAfter(fechaFinParse)) {
+		if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
 			throw new IllegalArgumentException(
 					"Las fechas de inicio y fin no pueden ser nulas o la fecha de inicio no puede ser posterior a la de fin.");
 		}
@@ -169,10 +164,11 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 			throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
 		}
 
-		List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisicoAdhoc
-				.getEspaciosFisicosDisponibles(fechaInicioParse, fechaFinParse, capacidadRequerida);
+		List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisico
+				.getEspaciosFisicosDisponibles(fechaInicio, fechaFin, capacidadRequerida);
 
-		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
+		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -182,18 +178,18 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 			throw new IllegalArgumentException("El propietario no puede ser nulo o vacío.");
 		}
 
-		return repositorioEspacioFisicoAdhoc.getEspaciosFisicosByPropietario(propietario).stream()
+		return repositorioEspacioFisico.getEspaciosFisicosByPropietario(propietario).stream()
 				.map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
 	}
-	
+
 	@Override
-	public EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada
-	{
+	public EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio)
+			throws RepositorioException, EntidadNoEncontrada {
 		if (idEspacio == null || idEspacio.isEmpty()) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 		EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-		
+
 		return EspacioFisicoMapper.transformToEspacioFisicoDTO(espacioFisico);
 	}
 

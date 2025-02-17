@@ -1,4 +1,4 @@
-package api.mapper;
+package api.rest.mapper;
 
 import dominio.EspacioFisico;
 import servicios.DTO.EspacioFisicoDTO;
