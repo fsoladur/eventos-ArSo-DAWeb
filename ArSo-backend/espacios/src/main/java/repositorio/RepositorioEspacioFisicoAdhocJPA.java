@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicosJPA implements RepositorioEspacioFisicoAdhoc{
-  @Override
+  /*@Override
   public List<EspacioFisico> getEspaciosFisicosDisponibles(LocalDateTime fechaInicio, LocalDateTime fechaFin, long capacidadMinima) throws RepositorioException, EntidadNoEncontrada {
     EntityManager em =  EntityManagerHelper.getEntityManager();
 
@@ -39,7 +39,7 @@ public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicos
     query.setParameter("fechaFin", fechaFin);
 
     return query.getResultList();
-  }
+  }*/
   
   @Override
 	public List<EspacioFisico> getEspaciosFisicosByPropietario(String propietario) throws RepositorioException {

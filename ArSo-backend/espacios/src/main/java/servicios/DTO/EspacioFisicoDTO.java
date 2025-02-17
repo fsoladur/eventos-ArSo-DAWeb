@@ -13,6 +13,7 @@ public class EspacioFisicoDTO implements Serializable {
 	private String direccion;
 	private EstadoEspacioFisico estado;
 	
+	
 	public EspacioFisicoDTO() {}
 	
 	public EspacioFisicoDTO(String id, String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {

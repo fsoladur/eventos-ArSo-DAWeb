@@ -25,6 +25,7 @@ import externalAPIs.eventosAPI.dto.ModificarEventoDTO;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
+import servicios.DTO.CrearEspacioFisicoDTO;
 import servicios.DTO.EspacioFisicoDTO;
 import servicios.DTO.ModificarEspacioFisicoDTO;
 import servicios.factoria.*;;
@@ -36,6 +37,18 @@ public class ControladorEspacios {
 
 	@Context
 	private UriInfo uriInfo;
+	
+	public Response darAltaEspacioFisico(@FormParam("espacioFisico") CrearEspacioFisicoDTO espacioFisico)
+			throws RepositorioException, EntidadNoEncontrada
+	{
+				String id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
+                espacioFisico.getCapacidad(), espacioFisico.getDireccionPostal(), espacioFisico.getLongitud(),
+                espacioFisico.getLatitud(), espacioFisico.getDescripcion());
+
+        URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
+
+        return Response.created(nuevaURL).entity(id).build();
+	}
 	
 	// TODO: Preguntar a marcos si esto está bien
 	@PUT

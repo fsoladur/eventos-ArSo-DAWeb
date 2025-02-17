@@ -1,7 +1,6 @@
 package servicios.implementaciones;
 
 import dominio.EspacioFisico;
-import dominio.Evento;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
 import externalAPIs.eventosAPI.EventosAPI;
@@ -11,13 +10,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import api.rest.mapper.EspacioFisicoMapper;
 import repositorio.Repositorio;
 import repositorio.RepositorioEspacioFisicoAdhoc;
-import repositorio.RepositorioEventosAdhoc;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import repositorio.factoria.FactoriaRepositorios;
@@ -129,12 +128,12 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
 		boolean noHayOcupacion = false;
 
-		if (repositorioEventosAdhoc.getOcupacionActivaByEspacioFisico(idEspacio).isEmpty()) {
+		/*if (repositorioEventosAdhoc.getOcupacionActivaByEspacioFisico(idEspacio).isEmpty()) {
 			EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
 			espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
 			repositorioEspacioFisico.update(espacioFisico);
 			noHayOcupacion = true;
-		}
+		}*/
 
 		return noHayOcupacion;
 	}
@@ -163,9 +162,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 		if (capacidadRequerida <= 0) {
 			throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
 		}
-
-		List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisico
-				.getEspaciosFisicosDisponibles(fechaInicio, fechaFin, capacidadRequerida);
+		
+		List<EspacioFisico> listaEspacioFisicosLibres = new LinkedList<>();
+	/*	List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisico
+				.getEspaciosFisicosDisponibles(fechaInicio, fechaFin, capacidadRequerida);*/
 
 		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
 				.collect(Collectors.toList());

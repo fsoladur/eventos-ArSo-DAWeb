@@ -62,7 +62,7 @@
 		</dependency>
 
 		<!-- JAX-RS Jersey -->
-
+		
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -85,6 +85,21 @@
 			<artifactId>jersey-media-json-gson</artifactId>
 			<version>2.41</version>
 		</dependency>
+
+		<!-- JAXB: solo es necesario si JDK > 8 -->
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
 		
 		<!-- Retrofit -->
 		<dependency>

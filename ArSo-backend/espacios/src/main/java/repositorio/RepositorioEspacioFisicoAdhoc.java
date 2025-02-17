@@ -1,7 +1,6 @@
 package repositorio;
 
 import dominio.EspacioFisico;
-import dominio.Evento;
 import dominio.enumerados.EstadoEspacioFisico;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +11,7 @@ import repositorio.factoria.FactoriaRepositorios;
 
 public interface RepositorioEspacioFisicoAdhoc extends RepositorioString<EspacioFisico> {
 
-  default List<EspacioFisico> getEspaciosFisicosDisponibles(
+  /*default List<EspacioFisico> getEspaciosFisicosDisponibles(
       LocalDateTime fechaInicio, LocalDateTime fechaFin, long capacidadMinima)
       throws RepositorioException, EntidadNoEncontrada {
 
@@ -40,7 +39,7 @@ public interface RepositorioEspacioFisicoAdhoc extends RepositorioString<Espacio
             .collect(Collectors.toList());
     
     //TODO: obtener los espacios fisicos ocupados y filtrar
-  }
+  }*/
   
   default List<EspacioFisico> getEspaciosFisicosByPropietario(String propietario) throws RepositorioException{
 		return getAll().stream().filter(espacio -> espacio.getPropietario().equals(propietario))
