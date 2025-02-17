@@ -236,9 +236,6 @@ components:
     ModificarEventoDTO:
       type: object
       properties:
-        id:
-          type: string
-          description: Identificador del evento a modificarEvento
         descripcion:
           type: string
           description: neuva descripción del evento
