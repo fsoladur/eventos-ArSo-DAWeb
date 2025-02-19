@@ -28,8 +28,6 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	private RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
 			.getRepositorio(EspacioFisico.class);
 
-	private EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
-
 	@Override
 	public String darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
 			double longitud, double latitud, String descripcion) throws RepositorioException, EntidadNoEncontrada {

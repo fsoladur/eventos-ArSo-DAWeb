@@ -3,16 +3,19 @@ package api.rest.controller;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,13 +23,12 @@ import javax.ws.rs.core.UriInfo;
 
 import api.rest.utils.Listado;
 import api.rest.utils.Listado.ResumenExtendido;
-import dominio.PuntoInteres;
-import externalAPIs.eventosAPI.dto.ModificarEventoDTO;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
 import servicios.DTO.CrearEspacioFisicoDTO;
 import servicios.DTO.EspacioFisicoDTO;
+import servicios.DTO.ListaPuntosInteresDTO;
 import servicios.DTO.ModificarEspacioFisicoDTO;
 import servicios.factoria.*;;
 
@@ -38,26 +40,29 @@ public class ControladorEspacios {
 	@Context
 	private UriInfo uriInfo;
 	
-	public Response darAltaEspacioFisico(@FormParam("espacioFisico") CrearEspacioFisicoDTO espacioFisico)
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
 			throws RepositorioException, EntidadNoEncontrada
 	{
-				String id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
-                espacioFisico.getCapacidad(), espacioFisico.getDireccionPostal(), espacioFisico.getLongitud(),
-                espacioFisico.getLatitud(), espacioFisico.getDescripcion());
+		String id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
+        espacioFisico.getCapacidad(), espacioFisico.getDireccionPostal(), espacioFisico.getLongitud(),
+        espacioFisico.getLatitud(), espacioFisico.getDescripcion());
 
         URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
 
         return Response.created(nuevaURL).entity(id).build();
 	}
 	
-	// TODO: Preguntar a marcos si esto está bien
+	
 	@PUT
 	@Path("/{id}/puntosinteres")
-	public Response asignarPuntosInteres(@PathParam("idEspacio") String idEspacio,
-			@FormParam("puntosInteres") Collection<PuntoInteres> puntosInteres)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response asignarPuntosInteres(@PathParam("id") String id,
+			ListaPuntosInteresDTO listaPuntosInteres)
 			throws RepositorioException, EntidadNoEncontrada {
 
-		servicio.asignarPuntosInteres(idEspacio, puntosInteres);
+		servicio.asignarPuntosInteres(id, listaPuntosInteres.getPuntos());
 
 		return Response.status(Response.Status.NO_CONTENT).build();
 
@@ -65,10 +70,11 @@ public class ControladorEspacios {
 
 	@PATCH
 	@Path("/{id}")
-	public Response modificarEspacioFisico(@PathParam("idEspacio") String idEspacio, @FormParam("espacio") ModificarEspacioFisicoDTO espacio)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response modificarEspacioFisico(@PathParam("id") String id, ModificarEspacioFisicoDTO espacio)
 			throws RepositorioException, EntidadNoEncontrada {
 
-		servicio.modificarEspacioFisico(idEspacio, 
+		servicio.modificarEspacioFisico(id, 
 				espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
 
 		return Response.status(Response.Status.NO_CONTENT).build();
@@ -76,13 +82,13 @@ public class ControladorEspacios {
 
 	@PUT
 	@Path("/{id}/estado")
-	public Response cambiarEstadoEspacioFisico(@PathParam("idEspacio") String idEspacio,
+	public Response cambiarEstadoEspacioFisico(@PathParam("id") String id,
 			@FormParam("estado") String estado) throws RepositorioException, EntidadNoEncontrada {
 
 		if ("activo".equalsIgnoreCase(estado)) {
-			servicio.activarEspacioFisico(idEspacio);
+			servicio.activarEspacioFisico(id);
 		} else if ("cerrado".equalsIgnoreCase(estado)) {
-			servicio.darBajaEspacioFisico(idEspacio);
+			servicio.darBajaEspacioFisico(id);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Estado inválido. Use 'activo' o 'cerrado'.")
 					.build();
@@ -93,8 +99,9 @@ public class ControladorEspacios {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/libres?fechaInicio={fechaInicio}&fechaFin={fechaFin}&capacidadRequerida={capacidadRequerida}")
-	public Response findEspaciosFisicosLibres(String fechaInicio, String fechaFin, int capacidadRequerida)
+	@Path("/libres")
+	public Response findEspaciosFisicosLibres(@QueryParam("fechaInicio") String fechaInicio,@QueryParam("fechaFin") String fechaFin, 
+			@QueryParam("capacidadRequerida") int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada {
 		
 		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
@@ -128,8 +135,7 @@ public class ControladorEspacios {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("?propietario={propietario}")
-	public Response findEspaciosFisicosDePropietario(@PathParam("propietario") String propietario)
+	public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
 			throws RepositorioException, EntidadNoEncontrada {
 		List<EspacioFisicoDTO> listaEspacioFisicosPropietario = servicio.findEspaciosFisicosDePropietario(propietario);
 
@@ -154,9 +160,9 @@ public class ControladorEspacios {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public Response recuperarEspacioFisico(@PathParam("idEspacio") final String idEspacio)
+	public Response recuperarEspacioFisico(@PathParam("id") String id)
 			throws RepositorioException, EntidadNoEncontrada {
-		EspacioFisicoDTO espacioFisico = servicio.recuperarEspacioFisico(idEspacio);
+		EspacioFisicoDTO espacioFisico = servicio.recuperarEspacioFisico(id);
 
 		return Response.ok(espacioFisico).build();
 	}

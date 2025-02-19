@@ -1,5 +1,4 @@
 package externalAPIs.eventosAPI;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import externalAPIs.eventosAPI.dto.EventoDTO;
