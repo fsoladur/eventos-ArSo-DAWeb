@@ -4,6 +4,7 @@ package externalAPIs.eventosAPI.dto;
 
 public class ModificarEventoDTO {
 	
+	
 	private String descripcion;
 	private String fechaInicio;
 	private String fechaFin;
