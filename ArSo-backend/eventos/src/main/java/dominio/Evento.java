@@ -1,14 +1,12 @@
 package dominio;
 
 import dominio.enumerados.Categoria;
-import repositorio.Identificable;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Evento implements Identificable {
+public class Evento {
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE)
   private String id;

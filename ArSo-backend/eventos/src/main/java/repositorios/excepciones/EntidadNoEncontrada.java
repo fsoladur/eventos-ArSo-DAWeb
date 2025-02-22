@@ -1,4 +1,4 @@
-package repositorio.excepciones;
+package repositorios.excepciones;
 
 @SuppressWarnings("serial")
 public class EntidadNoEncontrada extends Exception {

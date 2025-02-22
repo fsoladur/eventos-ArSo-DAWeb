@@ -3,10 +3,9 @@ package dominio;
 import dominio.enumerados.EstadoEspacioFisico;
 import java.util.Objects;
 import javax.persistence.*;
-import repositorio.Identificable;
 
 @Entity
-public class EspacioFisico implements Identificable {
+public class EspacioFisico {
 
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE)

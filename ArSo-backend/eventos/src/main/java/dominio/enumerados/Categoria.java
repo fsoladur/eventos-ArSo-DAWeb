@@ -1,7 +1,7 @@
 package dominio.enumerados;
 
 public enum Categoria {
-  ACADÉMICO,
+  ACADEMICO,
   CULTURAL,
   ENTRETENIMIENTO,
   DEPORTES,
