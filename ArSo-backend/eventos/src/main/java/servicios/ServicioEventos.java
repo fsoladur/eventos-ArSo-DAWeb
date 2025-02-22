@@ -1,29 +1,24 @@
 package servicios;
 
-import dominio.EspacioFisico;
 import dominio.Evento;
 import dominio.enumerados.Categoria;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
-import servicios.DTO.EventoResumenDTO;
+
+import org.springframework.dao.DataAccessException;
+import repositorios.excepciones.EntidadNoEncontrada;
+import api.rest.dto.EventoResumenDTO;
+
+import javax.persistence.EntityNotFoundException;
 
 public interface ServicioEventos {
 
-  /* TODO esto se deberá sustituir por una llamada al microservicio de espacios físicos
-    el cual nos devolverá una versión reducida y necesaria de los datos del espacio físico
-    para poder replicar los datos en este microservicio */ /* TODO esto se deberá sustituir por una llamada al microservicio de espacios físicos
-     el cual nos devolverá una versión reducida y necesaria de los datos del espacio físico
-     para poder replicar los datos en este microservicio */
-
   /**
-    * Da de alta un evento en el sistema.
-   - ruta de acceso: "/eventos"
-   - método: POST
-   - parámetros: nombre, descripción, organizador, categoría, fechaInicio, fechaFin, plazas, idEspacioFisico
-    - respuesta: 201 CREATED, body: idEvento o el evento completo + cabecera location con la URI del evento creado
+   * Da de alta un evento en el sistema. - ruta de acceso: "/eventos" - método: POST - parámetros:
+   * nombre, descripción, organizador, categoría, fechaInicio, fechaFin, plazas, idEspacioFisico -
+   * respuesta: 201 CREATED, body: idEvento o el evento completo + cabecera location con la URI del
+   * evento creado
    */
   String darAltaEvento(
       final String nombre,
@@ -34,13 +29,11 @@ public interface ServicioEventos {
       final LocalDateTime fechaFin,
       final int plazas,
       final String idEspacioFisico)
-      throws RepositorioException, EntidadNoEncontrada;
+      throws EntidadNoEncontrada;
 
   /**
-  - ruta de acceso: "/eventos/{idEvento}"
-    - método: PATCH
-    - parámetros: descripción, fechaInicio, fechaFin, plazas, idEspacioFisico
-    - respuesta: 204 NO CONTENT
+   * - ruta de acceso: "/eventos/{idEvento}" - método: PATCH - parámetros: descripción, fechaInicio,
+   * fechaFin, plazas, idEspacioFisico - respuesta: 204 NO CONTENT
    */
   Evento modificarEvento(
       final String idEvento,
@@ -49,30 +42,26 @@ public interface ServicioEventos {
       final LocalDateTime fechaFin,
       final int plazas,
       final String idEspacioFisico)
-      throws RepositorioException, EntidadNoEncontrada;
+      throws EntidadNoEncontrada;
 
   /**
-  - ruta de acceso: "/eventos/{idEvento}/ocupacion"
-    - método: PUT
-    - cuerpo: --
-    - respuesta: 204 NO CONTENT
+   * - ruta de acceso: "/eventos/{idEvento}/ocupacion" - método: PUT - cuerpo: -- - respuesta: 204
+   * NO CONTENT
    */
-  boolean cancelarEvento(final String idEvento) throws RepositorioException, EntidadNoEncontrada;
+  boolean cancelarEvento(final String idEvento) throws EntidadNoEncontrada;
 
   /**
-    - ruta de acceso: "/eventos?mes={mes}"
-        - método: GET
-        - respuesta: 200 OK, body: listado eventos
+   * - ruta de acceso: "/eventos?mes={mes}" - método: GET - respuesta: 200 OK, body: listado eventos
    */
-  List<EventoResumenDTO> getEventosDelMes(YearMonth mes)
-      throws RepositorioException, EntidadNoEncontrada;
+  List<EventoResumenDTO> getEventosDelMes(YearMonth mes) throws EntidadNoEncontrada;
 
-  /**
-    - ruta de acceso: "/eventos/{idEvento}"
-        - método: GET
-        - respuesta: 200 OK, body: evento
-   */
+  /** - ruta de acceso: "/eventos/{idEvento}" - método: GET - respuesta: 200 OK, body: evento */
+  Evento recuperarEvento(final String idEvento) throws EntidadNoEncontrada;
 
-  // es necesario este método faltaba antes
-    Evento recuperarEvento(final String idEvento) throws RepositorioException, EntidadNoEncontrada;
+  List<Evento> recuperarEventosPorEspaciosYFecha(
+      final List<String> idsEspacios, final LocalDateTime fechaInicio, final LocalDateTime fechaFin)
+      throws EntidadNoEncontrada;
+
+  boolean existeOcupacionActivaPorEspacioFisico(final String idEspacioFisico)
+      throws EntidadNoEncontrada;
 }

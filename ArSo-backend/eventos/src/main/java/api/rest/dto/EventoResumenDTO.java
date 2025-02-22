@@ -1,4 +1,4 @@
-package servicios.DTO;
+package api.rest.dto;
 
 import dominio.enumerados.Categoria;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import java.util.List;
 public class EventoResumenDTO {
 
   private final String nombre;
-  private final String descripción;
+  private final String descripcion;
   private final LocalDateTime fechaInicio;
   private final Categoria categoria;
   private final String nombreEspacioFisico;
@@ -23,7 +23,7 @@ public class EventoResumenDTO {
       String direccionEspacioFisico,
       List<String> puntosInteresCercanosEvento) {
     this.nombre = nombre;
-    this.descripción = descripción;
+    this.descripcion = descripción;
     this.fechaInicio = fechaInicio;
     this.categoria = categoria;
     this.nombreEspacioFisico = nombreEspacioFisico;
@@ -36,8 +36,8 @@ public class EventoResumenDTO {
     return nombre;
   }
 
-  public String getDescripción() {
-    return descripción;
+  public String getDescripcion() {
+    return descripcion;
   }
 
   public Categoria getCategoria() {

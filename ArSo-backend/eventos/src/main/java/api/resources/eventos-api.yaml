@@ -238,7 +238,7 @@ components:
       properties:
         descripcion:
           type: string
-          description: neuva descripción del evento
+          description: nueva descripción del evento
         fechaInicio:
           type: string
           format: date-time

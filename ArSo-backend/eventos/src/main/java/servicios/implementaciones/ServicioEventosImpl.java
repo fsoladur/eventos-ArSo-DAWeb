@@ -5,30 +5,28 @@ import dominio.Evento;
 import dominio.enumerados.Categoria;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import dominio.enumerados.EstadoEspacioFisico;
-import repositorio.Repositorio;
-import repositorio.RepositorioEventosAdhoc;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
-import repositorio.factoria.FactoriaRepositorios;
-import servicios.DTO.EventoResumenDTO;
+import org.springframework.stereotype.Service;
+import repositorios.espacios.RepositorioEspacios;
+import repositorios.eventos.RepositorioEventos;
+import repositorios.excepciones.EntidadNoEncontrada;
+import api.rest.dto.EventoResumenDTO;
 import servicios.ServicioEventos;
 
+@Service
 public class ServicioEventosImpl implements ServicioEventos {
 
-  private final Repositorio<Evento, String> repositorioEventos =
-      FactoriaRepositorios.getRepositorio(Evento.class);
-  private final RepositorioEventosAdhoc repositorioEventosAdhoc =
-      FactoriaRepositorios.getRepositorio(Evento.class);
-/*  private final Repositorio<EspacioFisico, String> repositorioEspacios =
-      FactoriaRepositorios.getRepositorio(EspacioFisico.class);
+  private final RepositorioEventos repositorioEventos;
+  private final RepositorioEspacios repositorioEspacios;
 
-      Tendrá que ser sustituido por una llamada al microservicio de espacios físicos
-      */
+  public ServicioEventosImpl(
+      RepositorioEventos repositorioEventos, RepositorioEspacios repositorioEspacios) {
+    this.repositorioEventos = repositorioEventos;
+    this.repositorioEspacios = repositorioEspacios;
+  }
 
   @Override
   public String darAltaEvento(
@@ -40,7 +38,7 @@ public class ServicioEventosImpl implements ServicioEventos {
       LocalDateTime fechaFin,
       int plazas,
       String idEspacioFisico)
-      throws RepositorioException, EntidadNoEncontrada {
+      throws EntidadNoEncontrada {
 
     if (nombre == null || nombre.isEmpty()) {
       throw new IllegalArgumentException("El nombre del evento no puede ser nulo o vacío.");
@@ -77,10 +75,13 @@ public class ServicioEventosImpl implements ServicioEventos {
     }
 
     /* TODO esto se deberá sustituir por una llamada al microservicio de espacios físicos
-     el cual nos devolverá una versión reducida y necesaria de los datos del espacio físico
-     para poder replicar los datos en este microservicio */
+    el cual nos devolverá una versión reducida y necesaria de los datos del espacio físico
+    para poder replicar los datos en este microservicio */
 
-    EspacioFisico espacioFisico = repositorioEspacios.getById(idEspacioFisico);
+    EspacioFisico espacioFisico =
+        repositorioEspacios
+            .findById(idEspacioFisico)
+            .orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado"));
 
     // LA CAPACIDAD TAMBIÉN ES IMPORTANTE
     if (plazas > espacioFisico.getCapacidad()) {
@@ -89,141 +90,215 @@ public class ServicioEventosImpl implements ServicioEventos {
     }
 
     // El estado del espacio físico es crucial
-    if(espacioFisico.getEstado() != EstadoEspacioFisico.ACTIVO){
+    if (espacioFisico.getEstado() != EstadoEspacioFisico.ACTIVO) {
       throw new IllegalArgumentException("El espacio físico no está activo.");
     }
 
-    Evento evento = new Evento(nombre, descripcion, organizador, plazas, fechaInicio, fechaFin, espacioFisico, categoria);
+    Evento evento =
+        new Evento(
+            nombre,
+            descripcion,
+            organizador,
+            plazas,
+            fechaInicio,
+            fechaFin,
+            espacioFisico,
+            categoria);
 
-    return repositorioEventos.add(evento);
+    return repositorioEventos.save(evento).getId();
   }
 
-  @Override
   public Evento modificarEvento(
       String idEvento,
       String descripcion,
       LocalDateTime fechaInicio,
       LocalDateTime fechaFin,
       int plazas,
-      EspacioFisico espacioFisico)
-      throws RepositorioException, EntidadNoEncontrada {
-
+      String idEspacioFisico)
+      throws EntidadNoEncontrada {
     if (idEvento == null || idEvento.isEmpty()) {
-      throw new IllegalArgumentException("El id del evento no puede ser nulo o estar vacío.");
+      throw new IllegalArgumentException("El id del evento no puede ser nulo o vacío.");
     }
 
-    if (fechaInicio != null && fechaInicio.isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException(
-          "La fecha de inicio no puede ser anterior a la fecha actual.");
+    if (plazas < 0) {
+      throw new IllegalArgumentException("El número de plazas no puede ser negativo.");
     }
 
-    if (fechaFin != null && fechaFin.isBefore(LocalDateTime.now())) {
-      throw new IllegalArgumentException(
-          "La fecha de fin no puede ser anterior a la fecha actual.");
+    Evento eventoParaModificar =
+        repositorioEventos
+            .findById(idEvento)
+            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+
+    Optional<EspacioFisico> nuevoEspacioFisico = obtenerEspacioFisicoSiEsNecesario(idEspacioFisico);
+
+    if (plazas > 0) {
+      validarCapacidadEspacioFisico(plazas, eventoParaModificar.getEspacioFisico());
+      eventoParaModificar.setPlazas(plazas);
     }
 
-    if (fechaInicio != null && fechaFin != null && fechaInicio.isAfter(fechaFin)) {
-      throw new IllegalArgumentException(
-          "La fecha de inicio no puede ser posterior a la fecha de fin.");
+    nuevoEspacioFisico.ifPresent(
+        espacioFisico -> {
+          validarCapacidadEspacioFisico(
+              plazas > 0 ? plazas : eventoParaModificar.getPlazas(), espacioFisico);
+          eventoParaModificar.setEspacioFisico(espacioFisico);
+        });
+
+    if (descripcion != null && !descripcion.isEmpty()) {
+      eventoParaModificar.setDescripcion(descripcion);
     }
 
-    if (plazas <= 0) {
-      throw new IllegalArgumentException("El número de plazas debe ser mayor a 0.");
+    if (fechaInicio != null
+        && fechaInicio.isAfter(LocalDateTime.now())
+        && eventoParaModificar.getFechaFin().isAfter(fechaInicio)) {
+      eventoParaModificar.setFechaInicio(fechaInicio);
     }
 
+    if (fechaFin != null
+        && fechaFin.isAfter(LocalDateTime.now())
+        && fechaFin.isAfter(eventoParaModificar.getFechaInicio())) {
+      eventoParaModificar.setFechaFin(fechaFin);
+    }
+
+    return eventoParaModificar;
+  }
+
+  private Optional<EspacioFisico> obtenerEspacioFisicoSiEsNecesario(String idEspacioFisico)
+      throws EntidadNoEncontrada {
+    if (idEspacioFisico == null || idEspacioFisico.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        repositorioEspacios
+            .findById(idEspacioFisico)
+            .orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado")));
+  }
+
+  private void validarCapacidadEspacioFisico(int plazas, EspacioFisico espacioFisico) {
     if (espacioFisico != null && plazas > espacioFisico.getCapacidad()) {
       throw new IllegalArgumentException(
           "El número de plazas no puede ser mayor a la capacidad del espacio físico.");
     }
-
-    if(espacioFisico.getEstado() != EstadoEspacioFisico.ACTIVO){
-      throw new IllegalArgumentException("El espacio físico no está activo.");
-    }
-
-    Evento eventoModificado = repositorioEventos.getById(idEvento);
-
-    if (descripcion != null) {
-      eventoModificado.setDescripcion(descripcion);
-    }
-    if (fechaInicio != null && fechaInicio.isBefore(eventoModificado.getFechaFin())) {
-      eventoModificado.setFechaInicio(fechaInicio);
-    }
-    if (fechaFin != null && fechaFin.isAfter(eventoModificado.getFechaInicio())) {
-      eventoModificado.setFechaFin(fechaFin);
-    }
-
-    if (plazas > 0) {
-      eventoModificado.setPlazas(plazas);
-    }
-
-    // TODO comprobar si el espacio físico existe en el microservicio de espacios físicos y su versión reducida en el microservicio de eventos, faltan dos comprobaciones
-    if (espacioFisico != null) {
-      eventoModificado.setEspacioFisico(espacioFisico);
-    }
-
-    repositorioEventos.update(eventoModificado);
-
-    return eventoModificado;
   }
 
   @Override
-  public boolean cancelarEvento(String idEvento) throws RepositorioException, EntidadNoEncontrada {
+  public boolean cancelarEvento(String idEvento) throws EntidadNoEncontrada {
     if (idEvento == null || idEvento.isEmpty()) {
       throw new IllegalArgumentException("El id del evento no puede ser nulo.");
     }
 
-    Evento evento = repositorioEventos.getById(idEvento);
+    Evento evento =
+        repositorioEventos
+            .findById(idEvento)
+            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
     evento.setCancelado(true);
     evento.setOcupacion(null);
 
-    repositorioEventos.update(evento);
+    repositorioEventos.save(evento);
     return true;
   }
 
+  // TODO operacion de listado
   @Override
-  public List<EventoResumenDTO> getEventosDelMes(YearMonth mes)
-      throws RepositorioException, EntidadNoEncontrada {
+  public List<EventoResumenDTO> getEventosDelMes(YearMonth mes) throws EntidadNoEncontrada {
+    return List.of();
+  }
 
-    if (mes == null) {
-      throw new IllegalArgumentException("El mes no puede ser nulo.");
+  /*
+   @Override
+   public List<EventoResumenDTO> getEventosDelMes(YearMonth mes) throws EntidadNoEncontrada {
+
+     if (mes == null) {
+       throw new IllegalArgumentException("El mes no puede ser nulo.");
+     }
+
+     if (mes.isBefore(YearMonth.now())) {
+       throw new IllegalArgumentException("El mes no puede ser anterior al mes actual.");
+     }
+
+     List<EventoResumenDTO> eventosResumen = new ArrayList<>();
+
+     List<Evento> eventosDelMes = repositorioEventos.getEventosDelMes(mes);
+
+     for (Evento evento : eventosDelMes) {
+       String idEspacioFisico = evento.getEspacioFisico().getId();
+
+       // TODO habrá que sustituirlo por una llamada a la API REST
+       EspacioFisico espacioFisicoEvento = null;
+
+       // TODO cómo devolvemos los puntos de interés?
+       List<String> puntosInteresEspacioFisico = new ArrayList<>();
+
+       if (espacioFisicoEvento.getPuntosInteres() != null) {
+         puntosInteresEspacioFisico =
+             espacioFisicoEvento.getPuntosInteres().stream()
+                 .sorted((p1, p2) -> Double.compare(p1.getDistancia(), p2.getDistancia()))
+                 .map(PuntoInteres::getNombre)
+                 .collect(Collectors.toList());
+       }
+
+       eventosResumen.add(
+           new EventoResumenDTO(
+               evento.getNombre(),
+               evento.getDescripcion(),
+               evento.getFechaInicio(),
+               evento.getCategoria(),
+               espacioFisicoEvento.getNombre(),
+               espacioFisicoEvento.getDireccion(),
+               puntosInteresEspacioFisico));
+     }
+
+     return eventosResumen;
+   }
+  */
+
+  @Override
+  public Evento recuperarEvento(String idEvento) throws EntidadNoEncontrada {
+    return repositorioEventos
+        .findById(idEvento)
+        .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+  }
+
+  @Override
+  public List<Evento> recuperarEventosPorEspaciosYFecha(
+      List<String> idsEspacios, LocalDateTime fechaInicio, LocalDateTime fechaFin)
+      throws EntidadNoEncontrada {
+    if (idsEspacios == null || idsEspacios.isEmpty()) {
+      throw new IllegalArgumentException("La lista de ids de espacios no puede ser nula o vacía.");
     }
 
-    if (mes.isBefore(YearMonth.now())) {
-      throw new IllegalArgumentException("El mes no puede ser anterior al mes actual.");
+    if (idsEspacios.stream().anyMatch(id -> id == null || id.isEmpty())) {
+      throw new IllegalArgumentException("Los ids de los espacios no pueden ser nulos o vacíos.");
     }
 
-    List<EventoResumenDTO> eventosResumen = new ArrayList<>();
-
-    List<Evento> eventosDelMes = repositorioEventosAdhoc.getEventosDelMes(mes);
-
-    for (Evento evento : eventosDelMes) {
-      String idEspacioFisico = evento.getEspacioFisico().getId();
-
-      // TODO habrá que sustituirlo por una llamada a la API REST
-      EspacioFisico espacioFisicoEvento = repositorioEspacios.getById(idEspacioFisico);
-
-      List<String> puntosInteresEspacioFisico = new ArrayList<>();
-
-      if (espacioFisicoEvento.getPuntosInteres() != null) {
-        puntosInteresEspacioFisico =
-            espacioFisicoEvento.getPuntosInteres().stream()
-                .sorted((p1, p2) -> Double.compare(p1.getDistancia(), p2.getDistancia()))
-                .map(PuntoInteres::getNombre)
-                .collect(Collectors.toList());
-      }
-
-      eventosResumen.add(
-          new EventoResumenDTO(
-              evento.getNombre(),
-              evento.getDescripcion(),
-              evento.getFechaInicio(),
-              evento.getCategoria(),
-              espacioFisicoEvento.getNombre(),
-              espacioFisicoEvento.getDireccion(),
-              puntosInteresEspacioFisico));
+    if (fechaInicio == null || fechaFin == null) {
+      throw new IllegalArgumentException("Las fechas de inicio y fin no pueden ser nulas.");
     }
 
-    return eventosResumen;
+    if (fechaInicio.isAfter(fechaFin)) {
+      throw new IllegalArgumentException(
+          "La fecha de inicio no puede ser posterior a la fecha de fin.");
+    }
+
+    if (fechaInicio.isBefore(LocalDateTime.now())) {
+      throw new IllegalArgumentException(
+          "La fecha de inicio no puede ser anterior a la fecha actual.");
+    }
+
+    if (fechaFin.isBefore(LocalDateTime.now())) {
+      throw new IllegalArgumentException(
+          "La fecha de fin no puede ser anterior a la fecha actual.");
+    }
+
+    return repositorioEventos.findEspaciosFisicosOcupados(idsEspacios, fechaFin, fechaInicio);
+  }
+
+  @Override
+  public boolean existeOcupacionActivaPorEspacioFisico(String idEspacioFisico)
+      throws EntidadNoEncontrada {
+    if (idEspacioFisico == null || idEspacioFisico.isEmpty()) {
+      throw new IllegalArgumentException("El id del espacio físico no puede ser nulo o vacío.");
+    }
+    return repositorioEventos.findOcupacionActivaByEspacioFisico(idEspacioFisico).isPresent();
   }
 }
