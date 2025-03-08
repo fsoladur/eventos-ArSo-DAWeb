@@ -6,6 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -42,6 +43,7 @@ public class ControladorEspacios {
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
 			throws RepositorioException, EntidadNoEncontrada
 	{
@@ -58,6 +60,7 @@ public class ControladorEspacios {
 	@PUT
 	@Path("/{id}/puntosinteres")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response asignarPuntosInteres(@PathParam("id") String id,
 			ListaPuntosInteresDTO listaPuntosInteres)
 			throws RepositorioException, EntidadNoEncontrada {
@@ -71,6 +74,7 @@ public class ControladorEspacios {
 	@PATCH
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response modificarEspacioFisico(@PathParam("id") String id, ModificarEspacioFisicoDTO espacio)
 			throws RepositorioException, EntidadNoEncontrada {
 
@@ -82,6 +86,7 @@ public class ControladorEspacios {
 
 	@PUT
 	@Path("/{id}/estado")
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response cambiarEstadoEspacioFisico(@PathParam("id") String id,
 			@FormParam("estado") String estado) throws RepositorioException, EntidadNoEncontrada {
 
@@ -100,6 +105,7 @@ public class ControladorEspacios {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/libres")
+	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
 	public Response findEspaciosFisicosLibres(@QueryParam("fechaInicio") String fechaInicio,@QueryParam("fechaFin") String fechaFin, 
 			@QueryParam("capacidadRequerida") int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada {
@@ -135,10 +141,11 @@ public class ControladorEspacios {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
 	public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
 			throws RepositorioException, EntidadNoEncontrada {
 		List<EspacioFisicoDTO> listaEspacioFisicosPropietario = servicio.findEspaciosFisicosDePropietario(propietario);
-
+ 
 		LinkedList<ResumenExtendido> extendido = new LinkedList<>();
 		for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosPropietario) {
 			ResumenExtendido resumenExtendido = new ResumenExtendido();
@@ -160,6 +167,7 @@ public class ControladorEspacios {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
+	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
 	public Response recuperarEspacioFisico(@PathParam("id") String id)
 			throws RepositorioException, EntidadNoEncontrada {
 		EspacioFisicoDTO espacioFisico = servicio.recuperarEspacioFisico(id);
