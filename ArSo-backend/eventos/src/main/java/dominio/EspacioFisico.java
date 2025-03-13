@@ -2,14 +2,13 @@ package dominio;
 
 import dominio.enumerados.EstadoEspacioFisico;
 import java.util.Objects;
+import java.util.UUID;
 import javax.persistence.*;
 
 @Entity
 public class EspacioFisico {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.TABLE)
-  private String id;
+  @Id private UUID id;
 
   @Column(nullable = false)
   private String nombre;
@@ -35,11 +34,11 @@ public class EspacioFisico {
 
   // Setters y getters
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
@@ -92,5 +91,4 @@ public class EspacioFisico {
   public int hashCode() {
     return Objects.hash(id, nombre, capacidad, estado, direccion);
   }
-
 }

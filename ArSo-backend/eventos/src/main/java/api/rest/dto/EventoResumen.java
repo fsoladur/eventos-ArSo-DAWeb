@@ -4,7 +4,7 @@ import dominio.enumerados.Categoria;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class EventoResumenDTO {
+public class EventoResumen {
 
   private final String nombre;
   private final String descripcion;
@@ -14,7 +14,7 @@ public class EventoResumenDTO {
   private final String direccionEspacioFisico;
   private final List<String> nombrePuntosInteresCercanos;
 
-  public EventoResumenDTO(
+  public EventoResumen(
       String nombre,
       String descripción,
       LocalDateTime fechaInicio,
