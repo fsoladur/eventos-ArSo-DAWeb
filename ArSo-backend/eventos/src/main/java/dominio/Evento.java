@@ -1,15 +1,15 @@
 package dominio;
 
 import dominio.enumerados.Categoria;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class Evento {
-  @Id
-  @GeneratedValue(strategy = GenerationType.TABLE)
-  private String id;
+  @Id private UUID id;
 
   @Column(nullable = false)
   private String nombre;
@@ -27,22 +27,21 @@ public class Evento {
   @Column(nullable = false)
   private boolean cancelado;
 
-  @Embedded
-  private Ocupacion ocupacion;
+  @Embedded private Ocupacion ocupacion;
 
   @Enumerated(EnumType.STRING)
   private Categoria categoria;
 
-  public Evento() {
-  }
+  public Evento() {}
 
   public Evento(
-          String nombre,
-          String descripcion,
-          String organizador,
-          int plazas,
-          Ocupacion ocupacion,
-          Categoria categoria) {
+      String nombre,
+      String descripcion,
+      String organizador,
+      int plazas,
+      Ocupacion ocupacion,
+      Categoria categoria) {
+    this.id = UUID.randomUUID();
     this.nombre = nombre;
     this.descripcion = descripcion;
     this.organizador = organizador;
@@ -53,24 +52,30 @@ public class Evento {
   }
 
   public Evento(
-          String nombre,
-          String descripcion,
-          String organizador,
-          int plazas,
-          LocalDateTime fechaInicio,
-          LocalDateTime fechaFin,
-          EspacioFisico espacioFisico,
-          Categoria categoria) {
-    this(nombre, descripcion, organizador, plazas, new Ocupacion(fechaInicio, fechaFin, espacioFisico), categoria);
+      String nombre,
+      String descripcion,
+      String organizador,
+      int plazas,
+      LocalDateTime fechaInicio,
+      LocalDateTime fechaFin,
+      EspacioFisico espacioFisico,
+      Categoria categoria) {
+    this(
+        nombre,
+        descripcion,
+        organizador,
+        plazas,
+        new Ocupacion(fechaInicio, fechaFin, espacioFisico),
+        categoria);
   }
 
   // Setters y getters
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
@@ -163,7 +168,7 @@ public class Evento {
   @Override
   public int hashCode() {
     return Objects.hash(
-            cancelado, categoria, descripcion, id, nombre, ocupacion, organizador, plazas);
+        cancelado, categoria, descripcion, id, nombre, ocupacion, organizador, plazas);
   }
 
   @Override
@@ -173,12 +178,12 @@ public class Evento {
     if (getClass() != obj.getClass()) return false;
     Evento other = (Evento) obj;
     return cancelado == other.cancelado
-            && categoria == other.categoria
-            && Objects.equals(descripcion, other.descripcion)
-            && Objects.equals(id, other.id)
-            && Objects.equals(nombre, other.nombre)
-            && Objects.equals(ocupacion, other.ocupacion)
-            && Objects.equals(organizador, other.organizador)
-            && plazas == other.plazas;
+        && categoria == other.categoria
+        && Objects.equals(descripcion, other.descripcion)
+        && Objects.equals(id, other.id)
+        && Objects.equals(nombre, other.nombre)
+        && Objects.equals(ocupacion, other.ocupacion)
+        && Objects.equals(organizador, other.organizador)
+        && plazas == other.plazas;
   }
 }

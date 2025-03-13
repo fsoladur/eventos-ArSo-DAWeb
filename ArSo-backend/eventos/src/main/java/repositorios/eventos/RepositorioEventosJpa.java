@@ -5,6 +5,7 @@ import dominio.Evento;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import dominio.Ocupacion;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository<Evento, String> {
+public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository<Evento, UUID> {
   // getEventos del mes
   @Query(
       "SELECT e "
@@ -29,7 +30,7 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
       "SELECT e.ocupacion FROM Evento e "
           + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
           + "AND e.ocupacion.fechaFin > CURRENT_TIMESTAMP")
-  Optional<Ocupacion> findOcupacionActivaByEspacioFisico(@Param("idEspacio") String idEspacio);
+  Optional<Ocupacion> findOcupacionActivaByEspacioFisico(@Param("idEspacio") UUID idEspacio);
 
   @Query(
       "SELECT ev "
@@ -38,7 +39,7 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
           + "AND ev.ocupacion.fechaInicio <= :fechaFin "
           + "AND ev.ocupacion.fechaFin >= :fechaInicio")
   List<Evento> findEspaciosFisicosOcupados(
-      @Param("ids") List<String> ids,
+      @Param("ids") List<UUID> ids,
       @Param("fechaFin") LocalDateTime fechaFin,
       @Param("fechaInicio") LocalDateTime fechaInicio);
 }

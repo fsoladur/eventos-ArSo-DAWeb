@@ -9,13 +9,14 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @NoRepositoryBean
-public interface RepositorioEventos extends CrudRepository<Evento, String> {
+public interface RepositorioEventos extends CrudRepository<Evento, UUID> {
   public List<Evento> findByOcupacionIsNotNullAndCanceladoFalseAndMesAndAnio(int mes, int anio);
 
-  Optional<Ocupacion> findOcupacionActivaByEspacioFisico(String idEspacio);
+  Optional<Ocupacion> findOcupacionActivaByEspacioFisico(UUID idEspacio);
 
   List<Evento> findEspaciosFisicosOcupados(
-      List<String> ids, LocalDateTime fechaFin, LocalDateTime fechaInicio);
+      List<UUID> ids, LocalDateTime fechaFin, LocalDateTime fechaInicio);
 }
