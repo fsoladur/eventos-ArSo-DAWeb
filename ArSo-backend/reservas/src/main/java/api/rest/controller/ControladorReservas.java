@@ -1,0 +1,65 @@
+package api.rest.controller;
+
+import api.rest.assembler.ReservaDtoAssembler;
+import api.rest.dto.in.CrearReservaDto;
+import api.rest.dto.out.ReservaDto;
+import api.rest.mapper.ReservaMapper;
+import api.rest.spec.ReservasApi;
+import java.net.URI;
+import java.util.UUID;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import servicios.ServicioReservas;
+
+@RestController
+@RequestMapping("/api")
+public class ControladorReservas implements ReservasApi {
+
+  private final ServicioReservas servicioReservas;
+  private final ReservaDtoAssembler reservaDtoAssembler;
+  private final PagedResourcesAssembler<ReservaDto> pagedResourcesAssembler;
+
+  @Autowired
+  public ControladorReservas(
+      ServicioReservas servicioReservas,
+      ReservaDtoAssembler reservaDtoAssembler,
+      PagedResourcesAssembler<ReservaDto> pagedResourcesAssembler) {
+    this.servicioReservas = servicioReservas;
+    this.reservaDtoAssembler = reservaDtoAssembler;
+    this.pagedResourcesAssembler = pagedResourcesAssembler;
+  }
+
+  @PostMapping("/reservas")
+  public ResponseEntity<Void> crearReserva(@Valid @RequestBody CrearReservaDto crearReservaDto)
+      throws Exception {
+    UUID id =
+        this.servicioReservas.reservar(
+            crearReservaDto.getIdEvento(),
+            crearReservaDto.getIdUsuario(),
+            crearReservaDto.getPlazasReservadas());
+    URI nuevaUri =
+        ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+
+    return ResponseEntity.created(nuevaUri).build();
+  }
+
+  @GetMapping("/reservas/{idReserva}")
+  public EntityModel<ReservaDto> getReserva(@PathVariable UUID idReserva) throws Exception {
+    return reservaDtoAssembler.toModel(ReservaMapper.toDTO(this.servicioReservas.get(idReserva)));
+  }
+
+  @GetMapping("/eventos/{idEvento}/reservas")
+  public PagedModel<EntityModel<ReservaDto>> getReservas(
+      @PathVariable UUID idEvento, Pageable pageable) throws Exception {
+    return this.pagedResourcesAssembler.toModel(
+        this.servicioReservas.getAll(idEvento, pageable).map(ReservaMapper::toDTO),
+        reservaDtoAssembler);
+  }
+}
