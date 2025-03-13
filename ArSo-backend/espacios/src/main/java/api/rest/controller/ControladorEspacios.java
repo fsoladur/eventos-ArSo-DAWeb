@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -47,11 +48,11 @@ public class ControladorEspacios {
 	public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
 			throws RepositorioException, EntidadNoEncontrada
 	{
-		String id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
+		UUID id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
         espacioFisico.getCapacidad(), espacioFisico.getDireccionPostal(), espacioFisico.getLongitud(),
         espacioFisico.getLatitud(), espacioFisico.getDescripcion());
 
-        URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
+        URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
 
         return Response.created(nuevaURL).entity(id).build();
 	}
@@ -61,7 +62,7 @@ public class ControladorEspacios {
 	@Path("/{id}/puntosinteres")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response asignarPuntosInteres(@PathParam("id") String id,
+	public Response asignarPuntosInteres(@PathParam("id") UUID id,
 			ListaPuntosInteresDTO listaPuntosInteres)
 			throws RepositorioException, EntidadNoEncontrada {
 
@@ -75,7 +76,7 @@ public class ControladorEspacios {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response modificarEspacioFisico(@PathParam("id") String id, ModificarEspacioFisicoDTO espacio)
+	public Response modificarEspacioFisico(@PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
 			throws RepositorioException, EntidadNoEncontrada {
 
 		servicio.modificarEspacioFisico(id, 
@@ -87,7 +88,7 @@ public class ControladorEspacios {
 	@PUT
 	@Path("/{id}/estado")
 	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response cambiarEstadoEspacioFisico(@PathParam("id") String id,
+	public Response cambiarEstadoEspacioFisico(@PathParam("id") UUID id,
 			@FormParam("estado") String estado) throws RepositorioException, EntidadNoEncontrada {
 
 		if ("activo".equalsIgnoreCase(estado)) {
@@ -105,7 +106,7 @@ public class ControladorEspacios {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/libres")
-	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
+	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
 	public Response findEspaciosFisicosLibres(@QueryParam("fechaInicio") String fechaInicio,@QueryParam("fechaFin") String fechaFin, 
 			@QueryParam("capacidadRequerida") int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada {
@@ -127,8 +128,8 @@ public class ControladorEspacios {
 			resumenExtendido.setResumen(espacioFisicoDTO);
 
 			// Construir la URL
-			String id = espacioFisicoDTO.getId();
-			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
+			UUID id = espacioFisicoDTO.getId();
+			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
 			resumenExtendido.setUrl(nuevaURL.toString());
 
 			extendido.add(resumenExtendido);
@@ -141,7 +142,7 @@ public class ControladorEspacios {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
+	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
 	public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
 			throws RepositorioException, EntidadNoEncontrada {
 		List<EspacioFisicoDTO> listaEspacioFisicosPropietario = servicio.findEspaciosFisicosDePropietario(propietario);
@@ -152,8 +153,8 @@ public class ControladorEspacios {
 			resumenExtendido.setResumen(espacioFisicoDTO);
 
 			// Construir la URL
-			String id = espacioFisicoDTO.getId();
-			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
+			UUID id = espacioFisicoDTO.getId();
+			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
 			resumenExtendido.setUrl(nuevaURL.toString());
 
 			extendido.add(resumenExtendido);
@@ -167,8 +168,8 @@ public class ControladorEspacios {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	@RolesAllowed("PROPIETARIO_ESPACIOS, USUARIO")
-	public Response recuperarEspacioFisico(@PathParam("id") String id)
+	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
+	public Response recuperarEspacioFisico(@PathParam("id") UUID id)
 			throws RepositorioException, EntidadNoEncontrada {
 		EspacioFisicoDTO espacioFisico = servicio.recuperarEspacioFisico(id);
 

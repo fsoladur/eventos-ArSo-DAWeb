@@ -7,7 +7,7 @@ import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 
 
-public interface RepositorioEspacioFisicoAdhoc extends RepositorioString<EspacioFisico> {
+public interface RepositorioEspacioFisicoAdhoc extends RepositorioUUID<EspacioFisico> {
 
   List<EspacioFisico> getEspaciosFisicosPorCapacidadYEstado(long capacidadMinima)  
 		  throws RepositorioException, EntidadNoEncontrada;

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import api.rest.mapper.EspacioFisicoMapper;
@@ -29,7 +30,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 			.getRepositorio(EspacioFisico.class);
 
 	@Override
-	public String darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
+	public UUID darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
 			double longitud, double latitud, String descripcion) throws RepositorioException, EntidadNoEncontrada {
 		// TODO Auto-generated method stub
 		// Comprobar que los parámetros no son nulos o vacíos
@@ -70,10 +71,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public boolean asignarPuntosInteres(String idEspacio, Collection<PuntoInteres> puntosInteres)
+	public boolean asignarPuntosInteres(UUID idEspacio, Collection<PuntoInteres> puntosInteres)
 			throws RepositorioException, EntidadNoEncontrada {
 
-		if (idEspacio == null || idEspacio.isEmpty()) {
+		if (idEspacio == null) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 
@@ -91,10 +92,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public EspacioFisicoDTO modificarEspacioFisico(String idEspacio, String nombre, String descripcion, int capacidad)
+	public EspacioFisicoDTO modificarEspacioFisico(UUID idEspacio, String nombre, String descripcion, int capacidad)
 			throws RepositorioException, EntidadNoEncontrada {
 
-		if (idEspacio == null || idEspacio.isEmpty()) {
+		if (idEspacio == null) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 
@@ -118,14 +119,16 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public boolean darBajaEspacioFisico(String idEspacio) throws RepositorioException, EntidadNoEncontrada {
+	public boolean darBajaEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada {
 
-		if (idEspacio == null || idEspacio.isEmpty()) {
+		if (idEspacio == null) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 
 		boolean noHayOcupacion = false;
-
+		EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+		espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
+		repositorioEspacioFisico.update(espacioFisico);
 		/*if (repositorioEventosAdhoc.getOcupacionActivaByEspacioFisico(idEspacio).isEmpty()) {
 			EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
 			espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
@@ -137,8 +140,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public boolean activarEspacioFisico(String idEspacio) throws RepositorioException, EntidadNoEncontrada {
-		if (idEspacio == null || idEspacio.isEmpty()) {
+	public boolean activarEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada {
+		if (idEspacio == null) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 
@@ -181,9 +184,9 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 	}
 
 	@Override
-	public EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio)
+	public EspacioFisicoDTO recuperarEspacioFisico(final UUID idEspacio)
 			throws RepositorioException, EntidadNoEncontrada {
-		if (idEspacio == null || idEspacio.isEmpty()) {
+		if (idEspacio == null) {
 			throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
 		}
 		EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
