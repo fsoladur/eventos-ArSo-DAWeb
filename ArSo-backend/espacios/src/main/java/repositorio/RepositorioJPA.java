@@ -1,6 +1,8 @@
 package repositorio;
 
 import java.util.List;
+import java.util.UUID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.eclipse.persistence.config.HintValues;
@@ -9,12 +11,12 @@ import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import utils.EntityManagerHelper;
 
-public abstract class RepositorioJPA<T extends Identificable> implements RepositorioString<T> {
+public abstract class RepositorioJPA<T extends Identificable> implements RepositorioUUID<T> {
 
   public abstract Class<T> getClase();
 
   @Override
-  public String add(T entity) throws RepositorioException {
+  public UUID add(T entity) throws RepositorioException {
     EntityManager em = EntityManagerHelper.getEntityManager();
     try {
       em.getTransaction().begin();
@@ -75,7 +77,7 @@ public abstract class RepositorioJPA<T extends Identificable> implements Reposit
   }
 
   @Override
-  public T getById(String id) throws EntidadNoEncontrada, RepositorioException {
+  public T getById(UUID id) throws EntidadNoEncontrada, RepositorioException {
     try {
       EntityManager em = EntityManagerHelper.getEntityManager();
 
@@ -119,7 +121,7 @@ public abstract class RepositorioJPA<T extends Identificable> implements Reposit
   }
 
   @Override
-  public List<String> getIds() throws RepositorioException {
+  public List<UUID> getIds() throws RepositorioException {
     EntityManager em = EntityManagerHelper.getEntityManager();
     try {
       final String queryString = " SELECT t.id from " + getClase().getSimpleName() + " t ";

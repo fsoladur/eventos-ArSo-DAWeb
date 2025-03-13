@@ -56,7 +56,7 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 				Claims claims = servicioAuth.validateToken(token);
 				
 				Set<String> roles = new HashSet<>(
-						Arrays.asList(claims.get("roles", String.class).split(",")));
+						Arrays.asList(claims.get("roles", String.class).trim().split(",")));
 				
 				if (this.resourceInfo.getResourceMethod().isAnnotationPresent(RolesAllowed.class)) {
 					String [] allowedRoles = resourceInfo.getResourceMethod().getAnnotation(RolesAllowed.class).value();

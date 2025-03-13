@@ -1,13 +1,14 @@
 package servicios.DTO;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import dominio.enumerados.EstadoEspacioFisico;
 
 @SuppressWarnings("serial")
 public class EspacioFisicoDTO implements Serializable {
 	
-	private String id;
+	private UUID id;
 	private String nombre;
 	private int capacidad;
 	private String direccion;
@@ -16,7 +17,7 @@ public class EspacioFisicoDTO implements Serializable {
 	
 	public EspacioFisicoDTO() {}
 	
-	public EspacioFisicoDTO(String id, String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {
+	public EspacioFisicoDTO(UUID id, String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {
 		this.id = id;
 		this.nombre = nombre;
 		this.capacidad = capacidad;
@@ -24,7 +25,7 @@ public class EspacioFisicoDTO implements Serializable {
 		this.estado = estado;
 	}
 	
-	public String getId() {
+	public UUID getId() {
 		return id;
 	}
 	
