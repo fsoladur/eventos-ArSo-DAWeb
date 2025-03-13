@@ -19,7 +19,7 @@ public interface ServicioEspacios {
 	 - body: parametros de alta de espacio fisico
 	 - respuesta: id del espacio fisico creado + 201 Created + location header con la URL del recurso creado
 	 */
-	String darAltaEspacioFisico(final String nombre, final String propietario, final int capacidad,
+	UUID darAltaEspacioFisico(final String nombre, final String propietario, final int capacidad,
 			final String direccionPostal, final double longitud, final double latitud, final String descripcion)
 			throws RepositorioException, EntidadNoEncontrada;
 
@@ -29,7 +29,7 @@ public interface ServicioEspacios {
 	 - body: lista de puntos de interes
 	 - respuesta: 204 No Content
 	 */
-	boolean asignarPuntosInteres(final String idEspacio, Collection<PuntoInteres> puntosInteres)
+	boolean asignarPuntosInteres(final UUID idEspacio, Collection<PuntoInteres> puntosInteres)
 			throws RepositorioException, EntidadNoEncontrada;
 
 	/**
@@ -38,7 +38,7 @@ public interface ServicioEspacios {
 	 - body: parametros de modificacion de espacio fisico
 	 - respuesta: 204 NO_CONTENT (la habitual) || otra opcion 200 ok más el objeto modificado
 	 */
-	EspacioFisicoDTO modificarEspacioFisico(final String idEspacio, final String nombre, final String descripcion,
+	EspacioFisicoDTO modificarEspacioFisico(final UUID idEspacio, final String nombre, final String descripcion,
 			final int capacidad) throws RepositorioException, EntidadNoEncontrada;
 
 	/**
@@ -47,8 +47,8 @@ public interface ServicioEspacios {
 	 - body: enum("activo", "cerrado")
 	 - respuesta: 204 NO_CONTENT
 	 */
-	boolean darBajaEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada;
-	boolean activarEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada;
+	boolean darBajaEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
+	boolean activarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
 
 	/**
 	 - ruta de acceso: "/espacios/libres?fechaInicio={fechaInicio}&fechaFin={fechaFin}&capacidadRequerida={capacidadRequerida}"
@@ -70,7 +70,7 @@ public interface ServicioEspacios {
 	 - método: GET
 	 - respuesta: 200 OK, BODY:espacio fisico
 	 */
-	EspacioFisicoDTO recuperarEspacioFisico(final String idEspacio) throws RepositorioException, EntidadNoEncontrada;
+	EspacioFisicoDTO recuperarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
 
 	
 }

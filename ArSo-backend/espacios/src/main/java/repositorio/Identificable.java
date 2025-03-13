@@ -1,8 +1,10 @@
 package repositorio;
 
+import java.util.UUID;
+
 public interface Identificable {
 
-  String getId();
+	UUID getId();
 
-  void setId(String id);
+	void setId(UUID id);
 }
