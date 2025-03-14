@@ -14,7 +14,7 @@ import servicios.factoria.FactoriaServicios;
 @Path("auth")
 public class ControladorAuth {
 	
-	private ServicioAuth servicioAuth;
+	private ServicioAuth servicioAuth = FactoriaServicios.getServicio(ServicioAuth.class);
 	
 	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "username=juan&password=clave" http://localhost:8080/api/auth/login
 	@POST
@@ -22,8 +22,6 @@ public class ControladorAuth {
 	public Response login(
 	@FormParam("username") String username, 
 	@FormParam("password") String password) {
-		
-		servicioAuth = FactoriaServicios.getServicio(ServicioAuth.class);
 		
 		Map<String, Object> claims = verificarCredenciales(username,password);
 		if (claims != null) {

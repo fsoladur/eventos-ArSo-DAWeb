@@ -1,19 +1,38 @@
-package externalAPIs.eventosAPI.dto;
+package api.rest.dto;
 
 import java.util.UUID;
 
-public class EventoDTO {
-	private String nombre;
-	private String descripcion;
-	private String organizador;
-	private String categoria;
-	private String fechaInicio;
-	private String fechaFin;
-	private int plazas;
-	private UUID idEspacioFisico;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO para la cración de un evento")
+public class CrearEventoDto {
 	
-	public EventoDTO(String nombre, String descripcion, String organizador, String categoria, String fechaInicio,
-			String fechaFin, int plazas, UUID idEspacioFisico) {
+	@Schema(description = "Nombre del evento", example = "Concierto de rock")
+	private String nombre;
+	
+	@Schema(description = "Descripción del evento", example = "Concierto de rock en el parque")
+	private String descripcion;
+	
+	@Schema(description = "Organizador del evento", example = "Ayuntamiento de Madrid")
+	private String organizador;
+	
+	@Schema(description = "Categoría del evento", example = "Música")
+	private String categoria;
+	
+	@Schema(description = "Fecha de inicio del evento", example = "2021-06-01T20:00:00")
+	private String fechaInicio;
+	
+	@Schema(description = "Fecha de fin del evento", example = "2021-06-01T22:00:00")
+	private String fechaFin;
+	
+    @Schema(description = "Número de plazas disponibles", example = "100")
+	private int plazas;
+    
+    @Schema(description = "Identificador del espacio físico donde se realizará el evento", example = "123e4567-e89b-12d3-a456-426614174000")
+	private String idEspacioFisico;
+
+	public CrearEventoDto(String nombre, String descripcion, String organizador, String categoria, String fechaInicio,
+			String fechaFin, int plazas, String idEspacioFisico) {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.organizador = organizador;
@@ -23,13 +42,13 @@ public class EventoDTO {
 		this.plazas = plazas;
 		this.idEspacioFisico = idEspacioFisico;
 	}
-	
-	public EventoDTO() {}
-	
+
+	public CrearEventoDto() {}
+
 	public String getNombre() {
 		return nombre;
 	}
-	
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
@@ -82,14 +101,12 @@ public class EventoDTO {
 		this.plazas = plazas;
 	}
 
-	public UUID getIdEspacioFisico() {
+	public String getIdEspacioFisico() {
 		return idEspacioFisico;
 	}
 
-	public void setIdEspacioFisico(UUID idEspacioFisico) {
+	public void setIdEspacioFisico(String idEspacioFisico) {
 		this.idEspacioFisico = idEspacioFisico;
 	}
-	
-	
-	
+
 }

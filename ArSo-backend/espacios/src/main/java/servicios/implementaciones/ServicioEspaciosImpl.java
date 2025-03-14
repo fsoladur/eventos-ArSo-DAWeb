@@ -164,10 +164,17 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 			throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
 		}
 		
-		List<EspacioFisico> listaEspacioFisicosLibres = new LinkedList<>();
-	/*	List<EspacioFisico> listaEspacioFisicosLibres = repositorioEspacioFisico
-				.getEspaciosFisicosDisponibles(fechaInicio, fechaFin, capacidadRequerida);*/
-
+		List<EspacioFisico> listaEspacioFisicosLibres 
+			= repositorioEspacioFisico.getEspaciosFisicosPorCapacidadYEstado(capacidadRequerida);
+		
+		String listaEspaciosIds = listaEspacioFisicosLibres.stream()
+				.map(espacio -> espacio.getId().toString()).collect(Collectors.joining(","));
+		
+		// Llamada a api de enventos
+		EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
+		
+		
+	
 		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
 				.collect(Collectors.toList());
 	}

@@ -26,7 +26,7 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 	@Context
 	private ResourceInfo resourceInfo;
 	
-	private ServicioAuth servicioAuth;
+	private ServicioAuth servicioAuth = FactoriaServicios.getServicio(ServicioAuth.class);
 	
 	 
 	
@@ -35,15 +35,11 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		
-		servicioAuth = FactoriaServicios.getServicio(ServicioAuth.class);
-		
 		String path = requestContext.getUriInfo().getPath();
 		// Rutas públicas
 		if (path.equals("auth/login")) {
 			return;
 		}
-		
-		
 		
 		// Implementación del control de autorización
 		String authorization = requestContext.getHeaderString("Authorization");
