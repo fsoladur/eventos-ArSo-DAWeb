@@ -10,92 +10,93 @@ import org.hibernate.annotations.Type;
 
 @Entity
 public class EspacioFisico {
-	
-    @SuppressWarnings("deprecation")
-	@Id
-    @Type(type = "uuid-char")
-    @Convert(converter = UUIDConverter.class)
-    @Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
-	private UUID id;
 
-	@Column(nullable = false)
-	private String nombre;
+  @SuppressWarnings("deprecation")
+  @Id
+  @Type(type = "uuid-char")
+  @Convert(converter = UUIDConverter.class)
+  @Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
+  private UUID id;
 
-	@Column(nullable = false)
-	private int capacidad;
+  @Column(nullable = false)
+  private String nombre;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private EstadoEspacioFisico estado;
+  @Column(nullable = false)
+  private int capacidad;
 
-	@Column(nullable = false)
-	private String direccion;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private EstadoEspacioFisico estado;
 
-	public EspacioFisico() {
-	}
+  @Column(nullable = false)
+  private String direccion;
 
-	public EspacioFisico(String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {
-		this.nombre = nombre;
-		this.capacidad = capacidad;
-		this.direccion = direccion;
-		this.estado = estado;
-	}
+  public EspacioFisico() {}
 
-	// Setters y getters
+  public EspacioFisico(String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {
+    this.nombre = nombre;
+    this.capacidad = capacidad;
+    this.direccion = direccion;
+    this.estado = estado;
+  }
 
-	public UUID getId() {
-		return id;
-	}
+  // Setters y getters
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+  public UUID getId() {
+    return id;
+  }
 
-	public String getNombre() {
-		return nombre;
-	}
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+  public String getNombre() {
+    return nombre;
+  }
 
-	public int getCapacidad() {
-		return capacidad;
-	}
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
 
-	public void setCapacidad(int capacidad) {
-		this.capacidad = capacidad;
-	}
+  public int getCapacidad() {
+    return capacidad;
+  }
 
-	public String getDireccion() {
-		return direccion;
-	}
+  public void setCapacidad(int capacidad) {
+    this.capacidad = capacidad;
+  }
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
+  public String getDireccion() {
+    return direccion;
+  }
 
-	public EstadoEspacioFisico getEstado() {
-		return estado;
-	}
+  public void setDireccion(String direccion) {
+    this.direccion = direccion;
+  }
 
-	public void setEstado(EstadoEspacioFisico estado) {
-		this.estado = estado;
-	}
+  public EstadoEspacioFisico getEstado() {
+    return estado;
+  }
 
-	// HashCode y Equals
+  public void setEstado(EstadoEspacioFisico estado) {
+    this.estado = estado;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (o == null || getClass() != o.getClass())
-			return false;
-		EspacioFisico that = (EspacioFisico) o;
-		return capacidad == that.capacidad && Objects.equals(id, that.id) && Objects.equals(nombre, that.nombre)
-				&& estado == that.estado && Objects.equals(direccion, that.direccion);
-	}
+  // HashCode y Equals
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, nombre, capacidad, estado, direccion);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    EspacioFisico that = (EspacioFisico) o;
+    return capacidad == that.capacidad
+        && Objects.equals(id, that.id)
+        && Objects.equals(nombre, that.nombre)
+        && estado == that.estado
+        && Objects.equals(direccion, that.direccion);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, nombre, capacidad, estado, direccion);
+  }
 }

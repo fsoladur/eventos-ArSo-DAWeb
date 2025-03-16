@@ -12,169 +12,187 @@ import java.util.UUID;
 
 @Entity
 public class Evento {
-	
-	@SuppressWarnings("deprecation")
-	@Id
-	@Type(type = "uuid-char")
-	@Convert(converter = UUIDConverter.class)
-	@Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
-	private UUID id;
 
-	@Column(nullable = false)
-	private String nombre;
+  @SuppressWarnings("deprecation")
+  @Id
+  @Type(type = "uuid-char")
+  @Convert(converter = UUIDConverter.class)
+  @Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
+  private UUID id;
 
-	@Lob
-	@Column(nullable = false)
-	private String descripcion;
+  @Column(nullable = false)
+  private String nombre;
 
-	@Column(nullable = false)
-	private String organizador;
+  @Lob
+  @Column(nullable = false)
+  private String descripcion;
 
-	@Column(nullable = false)
-	private int plazas;
+  @Column(nullable = false)
+  private String organizador;
 
-	@Column(nullable = false)
-	private boolean cancelado;
+  @Column(nullable = false)
+  private int plazas;
 
-	@Embedded
-	private Ocupacion ocupacion;
+  @Column(nullable = false)
+  private boolean cancelado;
 
-	@Enumerated(EnumType.STRING)
-	private Categoria categoria;
+  @Embedded private Ocupacion ocupacion;
 
-	public Evento() {
-	}
+  @Enumerated(EnumType.STRING)
+  private Categoria categoria;
 
-	public Evento(String nombre, String descripcion, String organizador, int plazas, Ocupacion ocupacion,
-			Categoria categoria) {
-		this.id = UUID.randomUUID();
-		this.nombre = nombre;
-		this.descripcion = descripcion;
-		this.organizador = organizador;
-		this.plazas = plazas;
-		this.cancelado = false;
-		this.ocupacion = ocupacion;
-		this.categoria = categoria;
-	}
+  public Evento() {}
 
-	public Evento(String nombre, String descripcion, String organizador, int plazas, LocalDateTime fechaInicio,
-			LocalDateTime fechaFin, EspacioFisico espacioFisico, Categoria categoria) {
-		this(nombre, descripcion, organizador, plazas, new Ocupacion(fechaInicio, fechaFin, espacioFisico), categoria);
-	}
+  public Evento(
+      String nombre,
+      String descripcion,
+      String organizador,
+      int plazas,
+      Ocupacion ocupacion,
+      Categoria categoria) {
+    this.id = UUID.randomUUID();
+    this.nombre = nombre;
+    this.descripcion = descripcion;
+    this.organizador = organizador;
+    this.plazas = plazas;
+    this.cancelado = false;
+    this.ocupacion = ocupacion;
+    this.categoria = categoria;
+  }
 
-	// Setters y getters
+  public Evento(
+      String nombre,
+      String descripcion,
+      String organizador,
+      int plazas,
+      LocalDateTime fechaInicio,
+      LocalDateTime fechaFin,
+      EspacioFisico espacioFisico,
+      Categoria categoria) {
+    this(
+        nombre,
+        descripcion,
+        organizador,
+        plazas,
+        new Ocupacion(fechaInicio, fechaFin, espacioFisico),
+        categoria);
+  }
 
-	public UUID getId() {
-		return id;
-	}
+  // Setters y getters
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+  public UUID getId() {
+    return id;
+  }
 
-	public String getNombre() {
-		return nombre;
-	}
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+  public String getNombre() {
+    return nombre;
+  }
 
-	public String getDescripcion() {
-		return descripcion;
-	}
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
+  public String getDescripcion() {
+    return descripcion;
+  }
 
-	public String getOrganizador() {
-		return organizador;
-	}
+  public void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
 
-	public void setOrganizador(String organizador) {
-		this.organizador = organizador;
-	}
+  public String getOrganizador() {
+    return organizador;
+  }
 
-	public int getPlazas() {
-		return plazas;
-	}
+  public void setOrganizador(String organizador) {
+    this.organizador = organizador;
+  }
 
-	public void setPlazas(int plazas) {
-		this.plazas = plazas;
-	}
+  public int getPlazas() {
+    return plazas;
+  }
 
-	public boolean isCancelado() {
-		return cancelado;
-	}
+  public void setPlazas(int plazas) {
+    this.plazas = plazas;
+  }
 
-	public void setCancelado(boolean cancelado) {
-		this.cancelado = cancelado;
-	}
+  public boolean isCancelado() {
+    return cancelado;
+  }
 
-	public Categoria getCategoria() {
-		return categoria;
-	}
+  public void setCancelado(boolean cancelado) {
+    this.cancelado = cancelado;
+  }
 
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}
+  public Categoria getCategoria() {
+    return categoria;
+  }
 
-	public Ocupacion getOcupacion() {
-		return ocupacion;
-	}
+  public void setCategoria(Categoria categoria) {
+    this.categoria = categoria;
+  }
 
-	public void setOcupacion(Ocupacion ocupacion) {
-		this.ocupacion = ocupacion;
-	}
+  public Ocupacion getOcupacion() {
+    return ocupacion;
+  }
 
-	public LocalDateTime getFechaInicio() {
-		return ocupacion.getFechaInicio();
-	}
+  public void setOcupacion(Ocupacion ocupacion) {
+    this.ocupacion = ocupacion;
+  }
 
-	public void setFechaInicio(LocalDateTime fechaInicio) {
-		this.ocupacion.setFechaInicio(fechaInicio);
-	}
+  public LocalDateTime getFechaInicio() {
+    return ocupacion.getFechaInicio();
+  }
 
-	public LocalDateTime getFechaFin() {
-		return ocupacion.getFechaFin();
-	}
+  public void setFechaInicio(LocalDateTime fechaInicio) {
+    this.ocupacion.setFechaInicio(fechaInicio);
+  }
 
-	public void setFechaFin(LocalDateTime fechaFin) {
-		this.ocupacion.setFechaFin(fechaFin);
-	}
+  public LocalDateTime getFechaFin() {
+    return ocupacion.getFechaFin();
+  }
 
-	public String getNombreEspacioFisico() {
-		return ocupacion.getNombreEspacioFisico();
-	}
+  public void setFechaFin(LocalDateTime fechaFin) {
+    this.ocupacion.setFechaFin(fechaFin);
+  }
 
-	public EspacioFisico getEspacioFisico() {
-		return ocupacion.getEspacioFisico();
-	}
+  public String getNombreEspacioFisico() {
+    return ocupacion.getNombreEspacioFisico();
+  }
 
-	public void setEspacioFisico(EspacioFisico espacioFisico) {
-		this.ocupacion.setEspacioFisico(espacioFisico);
-	}
+  public EspacioFisico getEspacioFisico() {
+    return ocupacion.getEspacioFisico();
+  }
 
-	// HashCode y Equals
+  public void setEspacioFisico(EspacioFisico espacioFisico) {
+    this.ocupacion.setEspacioFisico(espacioFisico);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(cancelado, categoria, descripcion, id, nombre, ocupacion, organizador, plazas);
-	}
+  // HashCode y Equals
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Evento other = (Evento) obj;
-		return cancelado == other.cancelado && categoria == other.categoria
-				&& Objects.equals(descripcion, other.descripcion) && Objects.equals(id, other.id)
-				&& Objects.equals(nombre, other.nombre) && Objects.equals(ocupacion, other.ocupacion)
-				&& Objects.equals(organizador, other.organizador) && plazas == other.plazas;
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        cancelado, categoria, descripcion, id, nombre, ocupacion, organizador, plazas);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    Evento other = (Evento) obj;
+    return cancelado == other.cancelado
+        && categoria == other.categoria
+        && Objects.equals(descripcion, other.descripcion)
+        && Objects.equals(id, other.id)
+        && Objects.equals(nombre, other.nombre)
+        && Objects.equals(ocupacion, other.ocupacion)
+        && Objects.equals(organizador, other.organizador)
+        && plazas == other.plazas;
+  }
 }

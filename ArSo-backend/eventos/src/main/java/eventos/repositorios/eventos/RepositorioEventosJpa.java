@@ -15,20 +15,33 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository<Evento, UUID> {
-	// getEventos del mes
-	@Query("SELECT e " + "FROM Evento e " + "WHERE e.ocupacion IS NOT NULL AND e.cancelado = FALSE "
-			+ "AND FUNCTION('YEAR', e.ocupacion.fechaInicio) = :anio "
-			+ "AND FUNCTION('MONTH', e.ocupacion.fechaInicio) = :mes")
-	public Page<Evento> getEventosPorMesYAnio(@Param("mes") int mes, @Param("anio") int anio, Pageable pageable);
+  // getEventos del mes
+  @Query(
+      "SELECT e "
+          + "FROM Evento e "
+          + "WHERE e.ocupacion IS NOT NULL AND e.cancelado = FALSE "
+          + "AND FUNCTION('YEAR', e.ocupacion.fechaInicio) = :anio "
+          + "AND FUNCTION('MONTH', e.ocupacion.fechaInicio) = :mes")
+  public Page<Evento> getEventosPorMesYAnio(
+      @Param("mes") int mes, @Param("anio") int anio, Pageable pageable);
 
-	@Query("SELECT CASE WHEN (COUNT(e) > 0) THEN TRUE ELSE FALSE END " + "FROM Evento e "
-			+ "WHERE e.ocupacion.espacioFisico.id = :idEspacio " + "AND e.ocupacion.fechaFin > CURRENT_TIMESTAMP")
-	boolean isOcupacionActiva(@Param("idEspacio") UUID idEspacio);
+  @Query(
+      "SELECT CASE WHEN (COUNT(e) > 0) THEN TRUE ELSE FALSE END "
+          + "FROM Evento e "
+          + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
+          + "AND e.ocupacion.fechaFin > CURRENT_TIMESTAMP")
+  boolean isOcupacionActiva(@Param("idEspacio") UUID idEspacio);
 
-	@Query("SELECT e.id " + "FROM EspacioFisico e " + "WHERE e.capacidad >= :capacidadMinima "
-			+ "AND e.estado = 'ACTIVO' " + "AND NOT EXISTS (" + "SELECT ev FROM Evento ev "
-			+ "WHERE ev.ocupacion.espacioFisico.id = e.id " + "AND ev.ocupacion.fechaInicio <= :fechaFin "
-			+ "AND ev.ocupacion.fechaFin >= :fechaInicio)")
-	List<UUID> getEspaciosSinEventosYCapacidadSuficiente(int capacidadMinima, LocalDateTime fechaInicio,
-			LocalDateTime fechaFin);
+  @Query(
+      "SELECT e.id "
+          + "FROM EspacioFisico e "
+          + "WHERE e.capacidad >= :capacidadMinima "
+          + "AND e.estado = 'ACTIVO' "
+          + "AND NOT EXISTS ("
+          + "SELECT ev FROM Evento ev "
+          + "WHERE ev.ocupacion.espacioFisico.id = e.id "
+          + "AND ev.ocupacion.fechaInicio <= :fechaFin "
+          + "AND ev.ocupacion.fechaFin >= :fechaInicio)")
+  List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
+      int capacidadMinima, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }
