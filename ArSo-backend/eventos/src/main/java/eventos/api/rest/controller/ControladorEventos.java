@@ -15,6 +15,7 @@ import eventos.repositorios.excepciones.EntidadNoEncontrada;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -45,24 +46,20 @@ public class ControladorEventos implements EventosApi {
 	public ResponseEntity<Void> darAltaEvento(@Valid @RequestBody CrearEventoDto crearEventoDto) throws Exception {
 		
 		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
-		UUID idEspacio = null;
 		Categoria categoria;
 		try {
 			fechaInicioParse = LocalDateTime.parse(crearEventoDto.getFechaInicio());
 			fechaFinParse = LocalDateTime.parse(crearEventoDto.getFechaFin());
 			categoria = Categoria.valueOf(crearEventoDto.getCategoria());
-			idEspacio = UUID.fromString(crearEventoDto.getIdEspacioFisico());
 		} catch (Exception e) {
 			if(fechaInicioParse == null || fechaFinParse == null)
                 throw new IllegalArgumentException("Formato de fecha no válida");
-			else if(idEspacio == null)
-				throw new IllegalArgumentException("Fórmato de id no válido");
             else throw new IllegalArgumentException("Formato de categoria no válida");
 		}
 		
 		UUID id = this.servicioEventos.darAltaEvento(crearEventoDto.getNombre(), crearEventoDto.getDescripcion(),
 				crearEventoDto.getOrganizador(), categoria, fechaInicioParse,
-				fechaFinParse, crearEventoDto.getPlazas(), idEspacio);
+				fechaFinParse, crearEventoDto.getPlazas(), crearEventoDto.getIdEspacioFisico());
 
 		URI nuevaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
 
@@ -70,45 +67,31 @@ public class ControladorEventos implements EventosApi {
 	}
 
 	@PatchMapping("/eventos/{id}")
-	public ResponseEntity<Void> modificarEvento(@PathVariable String id, 
+	public ResponseEntity<Void> modificarEvento(@PathVariable UUID id, 
             @Valid @RequestBody ModificarEventoDTO modificarEventoDTO) throws Exception {
 		
 		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
-		UUID idEvento = null, idEspacio = null;
 		try {
 			if(modificarEventoDTO.getFechaInicio() != null)
 				fechaInicioParse = LocalDateTime.parse(modificarEventoDTO.getFechaInicio());
 			if(modificarEventoDTO.getFechaFin() != null)
-				fechaFinParse = LocalDateTime.parse(modificarEventoDTO.getFechaFin());
-			if(modificarEventoDTO.getIdEspacioFisico() != null)
-				idEspacio = UUID.fromString(modificarEventoDTO.getIdEspacioFisico());
-			
-			idEvento = UUID.fromString(id);
-			
+				fechaFinParse = LocalDateTime.parse(modificarEventoDTO.getFechaFin());	
 		} catch (Exception e) {
 			if (fechaInicioParse == null || fechaFinParse == null)
 				throw new IllegalArgumentException("Formato de fecha no válida");
 			throw new IllegalArgumentException("Fórmato de id no válido");
 		}
 		
-		this.servicioEventos.modificarEvento(idEvento, modificarEventoDTO.getDescripcion(), fechaInicioParse, 
-				fechaFinParse, modificarEventoDTO.getPlazas(), idEspacio);
+		this.servicioEventos.modificarEvento(id, modificarEventoDTO.getDescripcion(), fechaInicioParse, 
+				fechaFinParse, modificarEventoDTO.getPlazas(), modificarEventoDTO.getIdEspacioFisico());
 		
 		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping("/eventos/{id}")
-	public ResponseEntity<Void> cancelarEvento(@PathVariable String id) throws EntidadNoEncontrada
+	public ResponseEntity<Void> cancelarEvento(@PathVariable UUID id) throws EntidadNoEncontrada
 	{
-		UUID idEvento = null;
-		try {
-			idEvento = UUID.fromString(id);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Fórmato de id no válido");
-		}
-
-		this.servicioEventos.cancelarEvento(idEvento);
-
+		this.servicioEventos.cancelarEvento(id);
 		return ResponseEntity.noContent().build();
 	}
 	
@@ -122,21 +105,35 @@ public class ControladorEventos implements EventosApi {
             throw new IllegalArgumentException("Formato de mes/año no válido");
         }
 		
-		
 		return this.pagedResourcesAssembler.toModel(this.servicioEventos.getEventosDelMes(yearMonth, pageable),eventoDtoAssembler);
 	}
 	
 	@GetMapping("/eventos/{id}")
-	public ResponseEntity<EventoDTO> recuperarEvento(@PathVariable String id) throws EntidadNoEncontrada {
-		
-		UUID idEvento = null;
-		try {
-			idEvento = UUID.fromString(id);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Fórmato de id no válido");
-		}
-		Evento evento = this.servicioEventos.recuperarEvento(idEvento);
+	public ResponseEntity<EventoDTO> recuperarEvento(@PathVariable UUID id) throws EntidadNoEncontrada {
+		Evento evento = this.servicioEventos.recuperarEvento(id);
 		return ResponseEntity.ok(EventoMapper.toDTO(evento));
+	}
+	
+	@GetMapping("/eventos/espaciosLibres")
+	public ResponseEntity<List<UUID>> getEspaciosSinEventosYCapacidadSuficiente(@RequestParam int capacidad,
+			@RequestParam String fechaInicio, @RequestParam String fechaFin) throws EntidadNoEncontrada {
+
+		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
+		try {
+			fechaInicioParse = LocalDateTime.parse(fechaInicio);
+			fechaFinParse = LocalDateTime.parse(fechaFin);
+		} catch (Exception e) {
+			if (fechaInicioParse == null || fechaFinParse == null)
+				throw new IllegalArgumentException("Formato de fecha no válida");
+		}
+
+		return ResponseEntity
+				.ok(this.servicioEventos.getEspaciosSinEventosYCapacidadSuficiente(capacidad, fechaInicioParse, fechaFinParse));
+	}
+	
+	@GetMapping("/eventos/{id}/ocupacion")
+	public ResponseEntity<Boolean> isOcupacionActiva(@PathVariable UUID id) throws EntidadNoEncontrada {
+		return ResponseEntity.ok(this.servicioEventos.isOcupacionActiva(id));
 	}
 
 }

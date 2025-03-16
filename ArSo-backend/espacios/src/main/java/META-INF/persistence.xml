@@ -9,7 +9,7 @@
         <!-- Aquí iremos poniendo las clases que persistamos, es decir, que tengan el atributo entity-->
 
         <class>dominio.EspacioFisico</class>
-        <class>repositorio.UUIDConverter</class>
+        <class>dominio.UUIDConverter</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver"

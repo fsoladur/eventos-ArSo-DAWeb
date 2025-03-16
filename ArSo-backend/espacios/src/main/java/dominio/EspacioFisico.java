@@ -25,7 +25,7 @@ import repositorio.Identificable;
 public class EspacioFisico implements Identificable {
 
 	@Id
-	@Convert(converter = repositorio.UUIDConverter.class) // Usa el convertidor para almacenar UUID como String
+	@Convert(converter = UUIDConverter.class) // Usa el convertidor para almacenar UUID como String
 	@Column(length = 36, nullable = false, unique = true)
 	private UUID id;
 

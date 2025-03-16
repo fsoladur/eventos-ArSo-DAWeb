@@ -6,6 +6,7 @@ import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.DTO.EspacioFisicoDTO;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -54,9 +55,10 @@ public interface ServicioEspacios {
 	 - ruta de acceso: "/espacios/libres?fechaInicio={fechaInicio}&fechaFin={fechaFin}&capacidadRequerida={capacidadRequerida}"
 	 - método: GET
 	 - respuesta: 200 OK, BODY:lista de espacios fisicos libres
+	 * @throws IOException 
 	 */
 	List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadRequerida)
-			throws RepositorioException, EntidadNoEncontrada;
+			throws RepositorioException, EntidadNoEncontrada, IOException;
 
 	/**
 	- ruta de acceso: "/espacios?propietario={propietario}"

@@ -11,29 +11,12 @@ import utils.EntityManagerHelper;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.UUID;
 
-public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicosJPA implements RepositorioEspacioFisicoAdhoc{
-	
-  @Override
-  public List<EspacioFisico> getEspaciosFisicosPorCapacidadYEstado(long capacidadMinima) throws RepositorioException, EntidadNoEncontrada {
-    EntityManager em =  EntityManagerHelper.getEntityManager();
+public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicosJPA
+		implements RepositorioEspacioFisicoAdhoc {
 
-    // TODO este método actualmente no es válido puesto que requiere comunicación entre los microservicios
-    // y todavía no tenemos la interfaz REST para ello
-    String queryString = "SELECT e " +
-            " FROM EspacioFisico e" +
-            " WHERE e.capacidad >= :capacidadMinima"+
-            " AND e.estado = :estado";
-
-    Query query = em.createQuery(queryString);
-    query.setHint(QueryHints.REFRESH, HintValues.TRUE);
-    query.setParameter("capacidadMinima", capacidadMinima);
-    query.setParameter("estado", EstadoEspacioFisico.ACTIVO);
-    
-    return query.getResultList();
-  }
-  
-  @Override
+	@Override
 	public List<EspacioFisico> getEspaciosFisicosByPropietario(String propietario) throws RepositorioException {
 		EntityManager em = EntityManagerHelper.getEntityManager();
 
@@ -45,4 +28,19 @@ public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicos
 
 		return query.getResultList();
 	}
+
+	@Override
+	public List<EspacioFisico> getEspaciosFisicosByIds(List<UUID> ids) throws RepositorioException {
+
+		EntityManager em = EntityManagerHelper.getEntityManager();
+
+		String queryString = "SELECT e " + "FROM EspacioFisico e " + "WHERE e.id IN :ids";
+
+		Query query = em.createQuery(queryString);
+		query.setHint(QueryHints.REFRESH, HintValues.TRUE);
+		query.setParameter("ids", ids);
+
+		return query.getResultList();
+	}
+
 }

@@ -1,4 +1,4 @@
-package repositorio;
+package dominio;
 
 import java.util.UUID;
 import javax.persistence.AttributeConverter;

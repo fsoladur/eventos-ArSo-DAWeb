@@ -52,8 +52,10 @@ public interface ServicioEventos {
 	Evento recuperarEvento(final UUID idEvento) throws EntidadNoEncontrada;
 	
 
-	
-	public List<UUID> recuperarEspaciosPorRangoFechaOcupados(final List<UUID> idsEspacios,
+	/**
+	 * - ruta de acceso: "/eventos/espaciosOcupados?fechaInicio={fechaInicio}&fechaFin={fechaFin}" - método: GET - respuesta: 200 OK
+	 */
+	public List<UUID> getEspaciosSinEventosYCapacidadSuficiente(int capacidad,
 			final LocalDateTime fechaInicio, final LocalDateTime fechaFin) throws EntidadNoEncontrada;
 
 	/**
