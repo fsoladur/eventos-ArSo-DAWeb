@@ -1,5 +1,6 @@
 package api.rest.controller;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -109,7 +110,7 @@ public class ControladorEspacios {
 	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
 	public Response findEspaciosFisicosLibres(@QueryParam("fechaInicio") String fechaInicio,@QueryParam("fechaFin") String fechaFin, 
 			@QueryParam("capacidadRequerida") int capacidadRequerida)
-			throws RepositorioException, EntidadNoEncontrada {
+			throws RepositorioException, EntidadNoEncontrada, IOException {
 		
 		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
 		try {

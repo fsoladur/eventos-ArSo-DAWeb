@@ -100,33 +100,36 @@ public class ServicioEventosImpl implements ServicioEventos {
 		Evento eventoParaModificar = repositorioEventos.findById(idEvento)
 				.orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
-		Optional<EspacioFisico> nuevoEspacioFisico = obtenerEspacioFisicoSiEsNecesario(idEspacioFisico);
-
-		if (plazas > 0) {
-			validarCapacidadEspacioFisico(plazas, eventoParaModificar.getEspacioFisico());
-			eventoParaModificar.setPlazas(plazas);
-		}
-
-		nuevoEspacioFisico.ifPresent(espacioFisico -> {
-			validarCapacidadEspacioFisico(plazas > 0 ? plazas : eventoParaModificar.getPlazas(), espacioFisico);
-			eventoParaModificar.setEspacioFisico(espacioFisico);
-		});
-
 		if (descripcion != null && !descripcion.isEmpty()) {
 			eventoParaModificar.setDescripcion(descripcion);
 		}
 
-		if (fechaInicio != null && fechaInicio.isAfter(LocalDateTime.now())
-				&& eventoParaModificar.getFechaFin().isAfter(fechaInicio)) {
-			eventoParaModificar.setFechaInicio(fechaInicio);
-		}
+		if (eventoParaModificar.getOcupacion() != null) {
+			
+			Optional<EspacioFisico> nuevoEspacioFisico = obtenerEspacioFisicoSiEsNecesario(idEspacioFisico);
 
-		if (fechaFin != null && fechaFin.isAfter(LocalDateTime.now())
-				&& fechaFin.isAfter(eventoParaModificar.getFechaInicio())) {
-			eventoParaModificar.setFechaFin(fechaFin);
+			if (plazas > 0) {
+				validarCapacidadEspacioFisico(plazas, eventoParaModificar.getEspacioFisico());
+				eventoParaModificar.setPlazas(plazas);
+			}
+
+			nuevoEspacioFisico.ifPresent(espacioFisico -> {
+				validarCapacidadEspacioFisico(plazas > 0 ? plazas : eventoParaModificar.getPlazas(), espacioFisico);
+				eventoParaModificar.setEspacioFisico(espacioFisico);
+			});
+			
+			if (fechaInicio != null && fechaInicio.isAfter(LocalDateTime.now())
+					&& eventoParaModificar.getFechaFin().isAfter(fechaInicio)) {
+				eventoParaModificar.setFechaInicio(fechaInicio);
+			}
+
+			if (fechaFin != null && fechaFin.isAfter(LocalDateTime.now())
+					&& fechaFin.isAfter(eventoParaModificar.getFechaInicio())) {
+				eventoParaModificar.setFechaFin(fechaFin);
+			}
+
+			repositorioEventos.save(eventoParaModificar);
 		}
-		
-		repositorioEventos.save(eventoParaModificar);
 
 		return eventoParaModificar;
 	}
@@ -174,14 +177,14 @@ public class ServicioEventosImpl implements ServicioEventos {
 		}
 		Page<Evento> eventosDelMes = repositorioEventos.getEventosPorMesYAnio(mes.getMonthValue(), mes.getYear(),
 				pageable);
-		
+
 		if (eventosDelMes.isEmpty()) {
-	        throw new EntidadNoEncontrada("No se encontraron eventos para el mes especificado");
-	    }
-	
+			throw new EntidadNoEncontrada("No se encontraron eventos para el mes especificado");
+		}
+
 		return eventosDelMes.map(evento -> {
-	        return EventoMapper.toDTO(evento);
-	    });
+			return EventoMapper.toDTO(evento);
+		});
 	}
 
 	@Override
@@ -190,11 +193,8 @@ public class ServicioEventosImpl implements ServicioEventos {
 	}
 
 	@Override
-	public List<UUID> recuperarEspaciosPorRangoFechaOcupados(final List<UUID> idsEspacios,
-			final LocalDateTime fechaInicio, final LocalDateTime fechaFin) throws EntidadNoEncontrada {
-		if (idsEspacios == null || idsEspacios.isEmpty()) {
-			throw new IllegalArgumentException("La lista de ids de espacios no puede ser nula o vacía.");
-		}
+	public List<UUID> getEspaciosSinEventosYCapacidadSuficiente(final int capacidad, final LocalDateTime fechaInicio,
+			final LocalDateTime fechaFin) throws EntidadNoEncontrada {
 
 		if (fechaInicio == null || fechaFin == null) {
 			throw new IllegalArgumentException("Las fechas de inicio y fin no pueden ser nulas.");
@@ -204,7 +204,7 @@ public class ServicioEventosImpl implements ServicioEventos {
 			throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin.");
 		}
 
-		return repositorioEventos.findEspaciosFisicosOcupados(idsEspacios, fechaFin, fechaInicio);
+		return repositorioEventos.getEspaciosSinEventosYCapacidadSuficiente(capacidad, fechaInicio, fechaFin);
 	}
 
 	@Override
@@ -212,6 +212,6 @@ public class ServicioEventosImpl implements ServicioEventos {
 		if (idEspacioFisico == null) {
 			throw new IllegalArgumentException("El id del espacio físico no puede ser nulo o vacío.");
 		}
-		return repositorioEventos.isOcupacionActiva(idEspacioFisico).isPresent();
+		return repositorioEventos.isOcupacionActiva(idEspacioFisico);
 	}
 }

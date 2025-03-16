@@ -17,8 +17,8 @@ import java.util.UUID;
 public interface RepositorioEventos extends CrudRepository<Evento, UUID> {
   public Page<Evento> getEventosPorMesYAnio(int mes, int anio, Pageable pageable);
 
-  Optional<Ocupacion> isOcupacionActiva(UUID idEspacio);
+  boolean isOcupacionActiva(UUID idEspacio);
 
-  List<UUID> findEspaciosFisicosOcupados(
-      List<UUID> ids, LocalDateTime fechaFin, LocalDateTime fechaInicio);
+  List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
+      int capacidadMinima, LocalDateTime fechaFin, LocalDateTime fechaInicio);
 }

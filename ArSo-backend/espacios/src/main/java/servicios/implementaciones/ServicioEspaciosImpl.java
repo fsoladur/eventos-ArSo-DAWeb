@@ -3,9 +3,11 @@ package servicios.implementaciones;
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
-import externalAPIs.eventosAPI.EventosAPI;
+import externalAPIs.eventosAPI.IEventosAPI;
+import externalAPIs.eventosAPI.implementacion.EventosAPI;
 import externalAPIs.factoria.FactoriaServicioExterno;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
@@ -28,6 +30,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
 	private RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
 			.getRepositorio(EspacioFisico.class);
+
+	private EventosAPI eventosAPI = new EventosAPI();
 
 	@Override
 	public UUID darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
@@ -126,15 +130,18 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 		}
 
 		boolean noHayOcupacion = false;
-		EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-		espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
-		repositorioEspacioFisico.update(espacioFisico);
-		/*if (repositorioEventosAdhoc.getOcupacionActivaByEspacioFisico(idEspacio).isEmpty()) {
-			EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-			espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
-			repositorioEspacioFisico.update(espacioFisico);
-			noHayOcupacion = true;
-		}*/
+
+		try {
+			if (!eventosAPI.isOcupacionActiva(idEspacio)) {
+				EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+				espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
+				repositorioEspacioFisico.update(espacioFisico);
+				noHayOcupacion = true;
+			}
+		} catch (IOException | RepositorioException | EntidadNoEncontrada e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return noHayOcupacion;
 	}
@@ -154,7 +161,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
 	@Override
 	public List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
-			int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada {
+			int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada, IOException {
 
 		if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
 			throw new IllegalArgumentException(
@@ -163,21 +170,15 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 		if (capacidadRequerida <= 0) {
 			throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
 		}
-		
-		List<EspacioFisico> listaEspacioFisicosLibres 
-			= repositorioEspacioFisico.getEspaciosFisicosPorCapacidadYEstado(capacidadRequerida);
-		
-		String listaEspaciosIds = listaEspacioFisicosLibres.stream()
-				.map(espacio -> espacio.getId().toString()).collect(Collectors.joining(","));
-		
-		// Llamada a api de enventos
-		EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
-		
-		
-	
-		return listaEspacioFisicosLibres.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
-				.collect(Collectors.toList());
+
+		List<UUID> espaciosLibres = eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(capacidadRequerida,
+				fechaInicio.toString(), fechaFin.toString());
+
+		List<EspacioFisico> espaciosFisicos = repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
+
+		return espaciosFisicos.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
 	}
+	
 
 	@Override
 	public List<EspacioFisicoDTO> findEspaciosFisicosDePropietario(String propietario)

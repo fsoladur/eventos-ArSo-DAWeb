@@ -1,5 +1,7 @@
 package eventos.api.rest.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,15 +25,11 @@ public class ModificarEventoDTO {
     @Schema(description = "Número de plazas disponibles", example = "200")
 	private int plazas;
 	
-    @Pattern(
-        regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-        message = "El ID del espacio físico debe ser un UUID válido"
-    )
     @Schema(description = "Identificador del espacio físico donde se realizará el evento", example = "550e8400-e29b-41d4-a716-446655440000")
-	private String idEspacioFisico;
+	private UUID idEspacioFisico;
 	
 	public ModificarEventoDTO(String descripcion, String organizador, String categoria, String fechaInicio,
-			String fechaFin, int plazas, String idEspacioFisico) {
+			String fechaFin, int plazas, UUID idEspacioFisico) {
 		this.descripcion = descripcion;
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
@@ -73,11 +71,11 @@ public class ModificarEventoDTO {
 		this.plazas = plazas;
 	}
 
-	public String getIdEspacioFisico() {
+	public UUID getIdEspacioFisico() {
 		return idEspacioFisico;
 	}
 
-	public void setIdEspacioFisico(String idEspacioFisico) {
+	public void setIdEspacioFisico(UUID idEspacioFisico) {
 		this.idEspacioFisico = idEspacioFisico;
 	}
 	

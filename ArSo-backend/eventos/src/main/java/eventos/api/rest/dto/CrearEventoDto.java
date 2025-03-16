@@ -1,5 +1,7 @@
 package eventos.api.rest.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -43,14 +45,12 @@ public class CrearEventoDto {
     @Schema(description = "Número de plazas disponibles", example = "100")
 	private int plazas;
     
-	@NotBlank(message = "El ID del espacio físico no puede estar vacío")
-    @Size(min = 36, max = 36, message = "El ID del espacio físico debe ser un UUID de 36 caracteres")
-	@Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", message = "El ID del espacio físico debe ser un UUID válido")
+    @NotNull(message = "El identificador del espacio físico es obligatorio")
     @Schema(description = "Identificador del espacio físico donde se realizará el evento", example = "123e4567-e89b-12d3-a456-426614174000")
-	private String idEspacioFisico;
+	private UUID idEspacioFisico;
 
 	public CrearEventoDto(String nombre, String descripcion, String organizador, String categoria, String fechaInicio,
-			String fechaFin, int plazas, String idEspacioFisico) {
+			String fechaFin, int plazas, UUID idEspacioFisico) {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.organizador = organizador;
@@ -119,11 +119,11 @@ public class CrearEventoDto {
 		this.plazas = plazas;
 	}
 
-	public String getIdEspacioFisico() {
+	public UUID getIdEspacioFisico() {
 		return idEspacioFisico;
 	}
 
-	public void setIdEspacioFisico(String idEspacioFisico) {
+	public void setIdEspacioFisico(UUID idEspacioFisico) {
 		this.idEspacioFisico = idEspacioFisico;
 	}
 

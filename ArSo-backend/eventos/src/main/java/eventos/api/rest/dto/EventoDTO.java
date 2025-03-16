@@ -1,5 +1,7 @@
 package eventos.api.rest.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,13 +12,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "EventoDto", description = "Evento de la aplicación")
 public class EventoDTO {
 	
-	@NotBlank(message = "El ID del evento no puede estar vacío")
-    @Pattern(
-        regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
-        message = "El ID del evento debe ser un UUID válido"
-    )
+	@NotNull(message = "El identificador del evento no puede estar vacío")
 	@Schema(description = "Identificador del evento", example = "123e4567-e89b-12d3-a456-426614174000")
-	private String id;
+	private UUID id;
 	
 	@NotBlank(message = "El nombre del evento no puede estar vacío")
 	@Schema(description = "Nombre del evento", example = "Concierto de rock")
@@ -47,7 +45,7 @@ public class EventoDTO {
 
 	}
 
-	public EventoDTO(String id, String nombre, String descripcion, String organizador, int numPlazas, boolean cancelado,
+	public EventoDTO(UUID id, String nombre, String descripcion, String organizador, int numPlazas, boolean cancelado,
 			String categoria, boolean ocupado) {
 		this.id = id;
 		this.nombre = nombre;
@@ -59,11 +57,11 @@ public class EventoDTO {
 		this.ocupado = ocupado;
 	}
 
-	public String getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
