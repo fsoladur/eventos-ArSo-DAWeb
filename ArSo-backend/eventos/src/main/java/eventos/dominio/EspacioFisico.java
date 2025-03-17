@@ -5,16 +5,14 @@ import eventos.dominio.enumerados.EstadoEspacioFisico;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.*;
-
 import org.hibernate.annotations.Type;
 
 @Entity
 public class EspacioFisico {
 
-  @SuppressWarnings("deprecation")
   @Id
+  @SuppressWarnings("deprecation")
   @Type(type = "uuid-char")
-  @Convert(converter = UUIDConverter.class)
   @Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
   private UUID id;
 

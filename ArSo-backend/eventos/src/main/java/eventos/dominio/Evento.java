@@ -3,7 +3,6 @@ package eventos.dominio;
 import eventos.dominio.enumerados.Categoria;
 
 import javax.persistence.*;
-
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
@@ -13,10 +12,9 @@ import java.util.UUID;
 @Entity
 public class Evento {
 
-  @SuppressWarnings("deprecation")
   @Id
+  @SuppressWarnings("deprecation")
   @Type(type = "uuid-char")
-  @Convert(converter = UUIDConverter.class)
   @Column(columnDefinition = "VARCHAR(36)", nullable = false, unique = true)
   private UUID id;
 
