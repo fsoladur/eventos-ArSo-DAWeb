@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -24,156 +25,174 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import api.rest.mapper.EspacioFisicoMapper;
 import api.rest.utils.Listado;
 import api.rest.utils.Listado.ResumenExtendido;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
-import servicios.DTO.CrearEspacioFisicoDTO;
-import servicios.DTO.EspacioFisicoDTO;
-import servicios.DTO.ListaPuntosInteresDTO;
-import servicios.DTO.ModificarEspacioFisicoDTO;
-import servicios.factoria.*;;
+import api.rest.DTO.CrearEspacioFisicoDTO;
+import api.rest.DTO.EspacioFisicoDTO;
+import api.rest.DTO.ListaPuntosInteresDTO;
+import api.rest.DTO.ModificarEspacioFisicoDTO;
+import servicios.factoria.*;
+;
 
 @Path("espacios")
 public class ControladorEspacios {
 
-	private ServicioEspacios servicio = FactoriaServicios.getServicio(ServicioEspacios.class);
+  private ServicioEspacios servicio = FactoriaServicios.getServicio(ServicioEspacios.class);
 
-	@Context
-	private UriInfo uriInfo;
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
-			throws RepositorioException, EntidadNoEncontrada
-	{
-		UUID id = servicio.darAltaEspacioFisico(espacioFisico.getNombre(), espacioFisico.getPropietario(),
-        espacioFisico.getCapacidad(), espacioFisico.getDireccionPostal(), espacioFisico.getLongitud(),
-        espacioFisico.getLatitud(), espacioFisico.getDescripcion());
+  @Context private UriInfo uriInfo;
 
-        URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("PROPIETARIO_ESPACIOS")
+  public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
+      throws RepositorioException, EntidadNoEncontrada {
+    UUID id =
+        servicio.darAltaEspacioFisico(
+            espacioFisico.getNombre(),
+            espacioFisico.getPropietario(),
+            espacioFisico.getCapacidad(),
+            espacioFisico.getDireccionPostal(),
+            espacioFisico.getLongitud(),
+            espacioFisico.getLatitud(),
+            espacioFisico.getDescripcion());
 
-        return Response.created(nuevaURL).entity(id).build();
-	}
-	
-	
-	@PUT
-	@Path("/{id}/puntosinteres")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response asignarPuntosInteres(@PathParam("id") UUID id,
-			ListaPuntosInteresDTO listaPuntosInteres)
-			throws RepositorioException, EntidadNoEncontrada {
+    URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
 
-		servicio.asignarPuntosInteres(id, listaPuntosInteres.getPuntos());
+    return Response.created(nuevaURL).entity(id).build();
+  }
 
-		return Response.status(Response.Status.NO_CONTENT).build();
+  @PUT
+  @Path("/{id}/puntosinteres")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("PROPIETARIO_ESPACIOS")
+  public Response asignarPuntosInteres(
+      @PathParam("id") UUID id, ListaPuntosInteresDTO listaPuntosInteres)
+      throws RepositorioException, EntidadNoEncontrada {
 
-	}
+    servicio.asignarPuntosInteres(id, listaPuntosInteres.getPuntos());
 
-	@PATCH
-	@Path("/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response modificarEspacioFisico(@PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
-			throws RepositorioException, EntidadNoEncontrada {
+    return Response.status(Response.Status.NO_CONTENT).build();
+  }
 
-		servicio.modificarEspacioFisico(id, 
-				espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
+  @PATCH
+  @Path("/{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("PROPIETARIO_ESPACIOS")
+  public Response modificarEspacioFisico(
+      @PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
+      throws RepositorioException, EntidadNoEncontrada {
 
-		return Response.status(Response.Status.NO_CONTENT).build();
-	}
+    servicio.modificarEspacioFisico(
+        id, espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
 
-	@PUT
-	@Path("/{id}/estado")
-	@RolesAllowed("PROPIETARIO_ESPACIOS")
-	public Response cambiarEstadoEspacioFisico(@PathParam("id") UUID id,
-			@FormParam("estado") String estado) throws RepositorioException, EntidadNoEncontrada {
+    return Response.status(Response.Status.NO_CONTENT).build();
+  }
 
-		if ("activo".equalsIgnoreCase(estado)) {
-			servicio.activarEspacioFisico(id);
-		} else if ("cerrado".equalsIgnoreCase(estado)) {
-			servicio.darBajaEspacioFisico(id);
-		} else {
-			return Response.status(Response.Status.BAD_REQUEST).entity("Estado inválido. Use 'activo' o 'cerrado'.")
-					.build();
-		}
+  @PUT
+  @Path("/{id}/estado")
+  @RolesAllowed("PROPIETARIO_ESPACIOS")
+  public Response cambiarEstadoEspacioFisico(
+      @PathParam("id") UUID id, @FormParam("estado") String estado)
+      throws RepositorioException, EntidadNoEncontrada {
 
-		return Response.status(Response.Status.NO_CONTENT).build();
-	}
+    if ("activo".equalsIgnoreCase(estado)) {
+      servicio.activarEspacioFisico(id);
+    } else if ("cerrado".equalsIgnoreCase(estado)) {
+      servicio.darBajaEspacioFisico(id);
+    } else {
+      return Response.status(Response.Status.BAD_REQUEST)
+          .entity("Estado inválido. Use 'activo' o 'cerrado'.")
+          .build();
+    }
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/libres")
-	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
-	public Response findEspaciosFisicosLibres(@QueryParam("fechaInicio") String fechaInicio,@QueryParam("fechaFin") String fechaFin, 
-			@QueryParam("capacidadRequerida") int capacidadRequerida)
-			throws RepositorioException, EntidadNoEncontrada, IOException {
-		
-		LocalDateTime fechaInicioParse = null, fechaFinParse = null;
-		try {
-			fechaInicioParse = LocalDateTime.parse(fechaInicio);
-			fechaFinParse = LocalDateTime.parse(fechaFin);
-		} catch (DateTimeParseException e) {
-			throw new IllegalArgumentException(e);
-		}
+    return Response.status(Response.Status.NO_CONTENT).build();
+  }
 
-		List<EspacioFisicoDTO> listaEspacioFisicosLibres = servicio.findEspaciosFisicosLibres(fechaInicioParse, fechaFinParse,
-				capacidadRequerida);
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/libres")
+  @RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
+  public Response findEspaciosFisicosLibres(
+      @QueryParam("fechaInicio") String fechaInicio,
+      @QueryParam("fechaFin") String fechaFin,
+      @QueryParam("capacidadRequerida") int capacidadRequerida)
+      throws RepositorioException, EntidadNoEncontrada, IOException {
 
-		LinkedList<ResumenExtendido> extendido = new LinkedList<>();
-		for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosLibres) {
-			ResumenExtendido resumenExtendido = new ResumenExtendido();
-			resumenExtendido.setResumen(espacioFisicoDTO);
+    LocalDateTime fechaInicioParse = null, fechaFinParse = null;
+    try {
+      fechaInicioParse = LocalDateTime.parse(fechaInicio);
+      fechaFinParse = LocalDateTime.parse(fechaFin);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException(e);
+    }
 
-			// Construir la URL
-			UUID id = espacioFisicoDTO.getId();
-			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
-			resumenExtendido.setUrl(nuevaURL.toString());
+    List<EspacioFisicoDTO> listaEspacioFisicosLibres =
+        servicio
+            .findEspaciosFisicosLibres(fechaInicioParse, fechaFinParse, capacidadRequerida)
+            .stream()
+            .map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
+            .collect(Collectors.toList());
 
-			extendido.add(resumenExtendido);
-		}
+    LinkedList<ResumenExtendido> extendido = new LinkedList<>();
+    for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosLibres) {
+      ResumenExtendido resumenExtendido = new ResumenExtendido();
+      resumenExtendido.setResumen(espacioFisicoDTO);
 
-		Listado listado = new Listado();
-		listado.setEspacios(extendido);
-		return Response.ok(listado).build();
-	}
+      // Construir la URL
+      UUID id = espacioFisicoDTO.getId();
+      URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
+      resumenExtendido.setUrl(nuevaURL.toString());
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
-	public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
-			throws RepositorioException, EntidadNoEncontrada {
-		List<EspacioFisicoDTO> listaEspacioFisicosPropietario = servicio.findEspaciosFisicosDePropietario(propietario);
- 
-		LinkedList<ResumenExtendido> extendido = new LinkedList<>();
-		for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosPropietario) {
-			ResumenExtendido resumenExtendido = new ResumenExtendido();
-			resumenExtendido.setResumen(espacioFisicoDTO);
+      extendido.add(resumenExtendido);
+    }
 
-			// Construir la URL
-			UUID id = espacioFisicoDTO.getId();
-			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
-			resumenExtendido.setUrl(nuevaURL.toString());
+    Listado listado = new Listado();
+    listado.setEspacios(extendido);
+    return Response.ok(listado).build();
+  }
 
-			extendido.add(resumenExtendido);
-		}
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
+  public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
+      throws RepositorioException, EntidadNoEncontrada {
+    List<EspacioFisicoDTO> listaEspacioFisicosPropietario =
+        servicio.findEspaciosFisicosDePropietario(propietario).stream()
+            .map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
+            .collect(Collectors.toList());
+    ;
 
-		Listado listado = new Listado();
-		listado.setEspacios(extendido);
-		return Response.ok(listado).build();
-	}
+    LinkedList<ResumenExtendido> extendido = new LinkedList<>();
+    for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosPropietario) {
+      ResumenExtendido resumenExtendido = new ResumenExtendido();
+      resumenExtendido.setResumen(espacioFisicoDTO);
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{id}")
-	@RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
-	public Response recuperarEspacioFisico(@PathParam("id") UUID id)
-			throws RepositorioException, EntidadNoEncontrada {
-		EspacioFisicoDTO espacioFisico = servicio.recuperarEspacioFisico(id);
+      // Construir la URL
+      UUID id = espacioFisicoDTO.getId();
+      URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
+      resumenExtendido.setUrl(nuevaURL.toString());
 
-		return Response.ok(espacioFisico).build();
-	}
+      extendido.add(resumenExtendido);
+    }
+
+    Listado listado = new Listado();
+    listado.setEspacios(extendido);
+    return Response.ok(listado).build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  @RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
+  public Response recuperarEspacioFisico(@PathParam("id") UUID id)
+      throws RepositorioException, EntidadNoEncontrada {
+    EspacioFisicoDTO espacioFisico =
+        EspacioFisicoMapper.transformToEspacioFisicoDTO(servicio.recuperarEspacioFisico(id));
+
+    return Response.ok(espacioFisico).build();
+  }
 }

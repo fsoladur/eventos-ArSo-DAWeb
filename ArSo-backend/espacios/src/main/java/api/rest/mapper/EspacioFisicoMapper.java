@@ -1,7 +1,7 @@
 package api.rest.mapper;
 
 import dominio.EspacioFisico;
-import servicios.DTO.EspacioFisicoDTO;
+import api.rest.DTO.EspacioFisicoDTO;
 
 public class EspacioFisicoMapper {
 	

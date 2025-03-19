@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reservas.dominio.Evento;
 import reservas.dominio.Reserva;
-import reservas.repositorios.eventos.RepositorioEventos;
-import reservas.repositorios.excepciones.EntidadNoEncontrada;
-import reservas.repositorios.reservas.RepositorioReservas;
+import reservas.infraestructura.repositorios.eventos.RepositorioEventos;
+import reservas.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import reservas.infraestructura.repositorios.reservas.RepositorioReservas;
 import reservas.servicios.ServicioReservas;
 
 @Service

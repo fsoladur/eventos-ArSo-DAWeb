@@ -9,14 +9,14 @@ import java.util.*;
 
 import eventos.dominio.enumerados.EstadoEspacioFisico;
 
-import eventos.repositorios.eventos.RepositorioEventos;
+import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import eventos.repositorios.espacios.RepositorioEspacios;
-import eventos.repositorios.excepciones.EntidadNoEncontrada;
-import eventos.api.rest.dto.out.EventoDTO;
-import eventos.api.rest.mapper.EventoMapper;
+import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
+import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import eventos.infraestructura.api.rest.dto.out.EventoDTO;
+import eventos.infraestructura.api.rest.mapper.EventoMapper;
 import eventos.servicios.ServicioEventos;
 
 @Service

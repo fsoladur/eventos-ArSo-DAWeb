@@ -16,7 +16,7 @@ public class EventosAPIImpl implements EventosAPI {
   public EventosAPIImpl() {
     Retrofit retrofit =
         new Retrofit.Builder()
-            .baseUrl("http://localhost:8081/api/")
+            .baseUrl("http://localhost:8081")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     eventosAPI = retrofit.create(RetrofitEventosAPI.class);

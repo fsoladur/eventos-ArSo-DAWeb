@@ -20,14 +20,14 @@ import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import repositorio.factoria.FactoriaRepositorios;
 import servicios.ServicioEspacios;
-import servicios.DTO.EspacioFisicoDTO;
+import api.rest.DTO.EspacioFisicoDTO;
 
 public class ServicioEspaciosImpl implements ServicioEspacios {
 
-    private RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
+    private final RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
             .getRepositorio(EspacioFisico.class);
 
-    private EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
+    private final EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
 
     @Override
     public UUID darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
@@ -92,7 +92,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
     }
 
     @Override
-    public EspacioFisicoDTO modificarEspacioFisico(UUID idEspacio, String nombre, String descripcion, int capacidad)
+    public EspacioFisico modificarEspacioFisico(UUID idEspacio, String nombre, String descripcion, int capacidad)
             throws RepositorioException, EntidadNoEncontrada {
 
         if (idEspacio == null) {
@@ -115,7 +115,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
         repositorioEspacioFisico.update(espacioFisico);
 
-        return EspacioFisicoMapper.transformToEspacioFisicoDTO(espacioFisico);
+        return espacioFisico;
     }
 
     @Override
@@ -155,7 +155,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
     }
 
     @Override
-    public List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
+    public List<EspacioFisico> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
                                                             int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada, IOException {
 
         if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
@@ -171,30 +171,29 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
         List<EspacioFisico> espaciosFisicos = repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
 
-        return espaciosFisicos.stream().map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
+        return espaciosFisicos;
     }
 
 
     @Override
-    public List<EspacioFisicoDTO> findEspaciosFisicosDePropietario(String propietario)
+    public List<EspacioFisico> findEspaciosFisicosDePropietario(String propietario)
             throws RepositorioException, EntidadNoEncontrada {
         if (propietario == null || propietario.isEmpty()) {
             throw new IllegalArgumentException("El propietario no puede ser nulo o vacío.");
         }
 
-        return repositorioEspacioFisico.getEspaciosFisicosByPropietario(propietario).stream()
-                .map(EspacioFisicoMapper::transformToEspacioFisicoDTO).collect(Collectors.toList());
+        return repositorioEspacioFisico.getEspaciosFisicosByPropietario(propietario);
     }
 
     @Override
-    public EspacioFisicoDTO recuperarEspacioFisico(final UUID idEspacio)
+    public EspacioFisico recuperarEspacioFisico(final UUID idEspacio)
             throws RepositorioException, EntidadNoEncontrada {
         if (idEspacio == null) {
             throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
         }
         EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
 
-        return EspacioFisicoMapper.transformToEspacioFisicoDTO(espacioFisico);
+        return espacioFisico;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import reservas.dominio.Reserva;
-import reservas.repositorios.excepciones.EntidadNoEncontrada;
+import reservas.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
 
 public interface ServicioReservas {
 

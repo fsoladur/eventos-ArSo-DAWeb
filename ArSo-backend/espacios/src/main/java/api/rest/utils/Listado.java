@@ -2,7 +2,7 @@ package api.rest.utils;
 
 import java.util.List;
 
-import servicios.DTO.EspacioFisicoDTO;
+import api.rest.DTO.EspacioFisicoDTO;
 
 
 public class Listado {

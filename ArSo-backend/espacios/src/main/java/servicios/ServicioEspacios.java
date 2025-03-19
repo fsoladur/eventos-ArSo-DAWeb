@@ -4,7 +4,7 @@ import dominio.EspacioFisico;
 import dominio.PuntoInteres;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
-import servicios.DTO.EspacioFisicoDTO;
+import api.rest.DTO.EspacioFisicoDTO;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public interface ServicioEspacios {
 	 - body: parametros de modificacion de espacio fisico
 	 - respuesta: 204 NO_CONTENT (la habitual) || otra opcion 200 ok más el objeto modificado
 	 */
-	EspacioFisicoDTO modificarEspacioFisico(final UUID idEspacio, final String nombre, final String descripcion,
+	EspacioFisico modificarEspacioFisico(final UUID idEspacio, final String nombre, final String descripcion,
 			final int capacidad) throws RepositorioException, EntidadNoEncontrada;
 
 	/**
@@ -57,7 +57,7 @@ public interface ServicioEspacios {
 	 - respuesta: 200 OK, BODY:lista de espacios fisicos libres
 	 * @throws IOException 
 	 */
-	List<EspacioFisicoDTO> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadRequerida)
+	List<EspacioFisico> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadRequerida)
 			throws RepositorioException, EntidadNoEncontrada, IOException;
 
 	/**
@@ -65,14 +65,14 @@ public interface ServicioEspacios {
 	- método: GET
 	- respuesta: 200 OK, BODY:lista de espacios fisicos de un propietario
 	 */
-	List<EspacioFisicoDTO> findEspaciosFisicosDePropietario(final String propietario) throws RepositorioException, EntidadNoEncontrada;
+	List<EspacioFisico> findEspaciosFisicosDePropietario(final String propietario) throws RepositorioException, EntidadNoEncontrada;
 
 	/**
 	 - ruta de acceso: "/espacios/{idEspacio}"
 	 - método: GET
 	 - respuesta: 200 OK, BODY:espacio fisico
 	 */
-	EspacioFisicoDTO recuperarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
+	EspacioFisico recuperarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
 
 	
 }

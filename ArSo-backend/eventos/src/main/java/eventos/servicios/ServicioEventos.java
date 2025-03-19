@@ -10,8 +10,8 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import eventos.repositorios.excepciones.EntidadNoEncontrada;
-import eventos.api.rest.dto.out.EventoDTO;
+import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import eventos.infraestructura.api.rest.dto.out.EventoDTO;
 
 public interface ServicioEventos {
 
