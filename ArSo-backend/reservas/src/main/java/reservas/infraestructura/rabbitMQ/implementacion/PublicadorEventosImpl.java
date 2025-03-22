@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import reservas.dominio.Reserva;
 import reservas.infraestructura.rabbitMQ.PublicadorEventos;
 import reservas.infraestructura.rabbitMQ.config.RabbitMQConfig;
-import reservas.infraestructura.rabbitMQ.dto.out.TipoEvento;
+import reservas.infraestructura.rabbitMQ.dto.out.ReservaTipoEvento;
 
 @Component
 public class PublicadorEventosImpl implements PublicadorEventos {
@@ -22,6 +22,6 @@ public class PublicadorEventosImpl implements PublicadorEventos {
   public void publicarCreacionReserva(Reserva reserva) throws Exception {
     this.rabbitTemplate.convertAndSend(
         topicExchange.getName(),
-        RabbitMQConfig.ROUTING_KEY_RESERVAS + TipoEvento.RESERVA_CREADA.getNombre());
+        RabbitMQConfig.ROUTING_KEY_RESERVAS + ReservaTipoEvento.RESERVA_CREADA.getNombre());
   }
 }

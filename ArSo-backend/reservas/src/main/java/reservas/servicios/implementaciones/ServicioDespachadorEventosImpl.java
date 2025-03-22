@@ -24,7 +24,11 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
 
   @Override
   public void despacharCancelacionEvento(UUID idEvento) throws Exception {
-    Evento evento = this.repositorioEventos.findById(idEvento).orElseThrow();
+    Evento evento =
+        this.repositorioEventos
+            .findById(idEvento)
+            .orElseThrow(
+                () -> new EntidadNoEncontrada("No se ha encontrado el evento en cuestión"));
     evento.setCancelado(true);
     this.repositorioEventos.save(evento);
   }
@@ -38,7 +42,9 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
                 () -> new EntidadNoEncontrada("No se ha encontrado el evento en cuestión"));
 
     int plazasReservadas =
-        evento.getReservas().stream().mapToInt(Reserva::getPlazasReservadas).sum();
+        (evento.getReservas().isEmpty())
+            ? 0
+            : evento.getReservas().stream().mapToInt(Reserva::getPlazasReservadas).sum();
 
     if (plazasDisponibles < plazasReservadas) {
       throw new IllegalArgumentException(

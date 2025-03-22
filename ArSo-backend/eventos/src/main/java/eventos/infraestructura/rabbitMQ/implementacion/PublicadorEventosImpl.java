@@ -22,29 +22,26 @@ public class PublicadorEventosImpl implements PublicadorEventos {
 
   @Override
   public void publicarEventoCreacion(Evento evento) {
-    EventoCreacion eventoRabbit = (EventoCreacion) EventoRabbitMapper.toEventoCreacion(evento);
+
     this.rabbitTemplate.convertAndSend(
         topicExchange.getName(),
         RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_CREADO.getNombre(),
-        eventoRabbit);
+        (EventoCreacion) EventoRabbitMapper.toEventoCreacion(evento));
   }
 
   @Override
   public void publicarEventoModificacion(Evento evento) {
-    EventoModificacion eventoRabbit =
-        (EventoModificacion) EventoRabbitMapper.toEventoModificacion(evento);
     this.rabbitTemplate.convertAndSend(
         topicExchange.getName(),
         RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_MODIFICADO.getNombre(),
-        eventoRabbit);
+        (EventoModificacion) EventoRabbitMapper.toEventoModificacion(evento));
   }
 
   @Override
   public void publicarEventoBorrado(String entidadId) {
-    EventoBorrado eventoRabbit = (EventoBorrado) EventoRabbitMapper.toEventoBorrado(entidadId);
     this.rabbitTemplate.convertAndSend(
         topicExchange.getName(),
         RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_CANCELADO.getNombre(),
-        eventoRabbit);
+        (EventoBorrado) EventoRabbitMapper.toEventoBorrado(entidadId));
   }
 }

@@ -1,4 +1,4 @@
-package eventos.infraestructura.rabbitMQ.dto.out;
+package reservas.infraestructura.rabbitMQ.dto.in;
 
 public class EventoCreacion extends EventoRabbit {
   private String nombre;

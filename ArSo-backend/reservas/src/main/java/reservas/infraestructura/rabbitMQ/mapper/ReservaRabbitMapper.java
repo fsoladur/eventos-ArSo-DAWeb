@@ -1,11 +1,11 @@
 package reservas.infraestructura.rabbitMQ.mapper;
 
 import reservas.dominio.Reserva;
-import reservas.infraestructura.rabbitMQ.dto.out.EventoRabbit;
 import reservas.infraestructura.rabbitMQ.dto.out.ReservaCreacion;
+import reservas.infraestructura.rabbitMQ.dto.out.ReservaEventoRabbit;
 
 public class ReservaRabbitMapper {
-  public static EventoRabbit toReservaCreada(Reserva reserva) {
+  public static ReservaEventoRabbit toReservaCreada(Reserva reserva) {
     return new ReservaCreacion(
         reserva.getId().toString(),
         reserva.getIdUsuario().toString(),

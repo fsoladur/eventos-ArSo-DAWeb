@@ -7,13 +7,15 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 @Configuration
 public class RabbitMQConfig {
@@ -46,7 +48,20 @@ public class RabbitMQConfig {
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-    MessageConverter converter = new Jackson2JsonMessageConverter(objectMapper);
+    Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter(objectMapper);
+
+    DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
+    typeMapper.setIdClassMapping(
+        Map.of(
+            "eventos.infraestructura.rabbitMQ.dto.out.EventoCreacion",
+            reservas.infraestructura.rabbitMQ.dto.in.EventoCreacion.class,
+            "eventos.infraestructura.rabbitMQ.dto.out.EventoModificacion",
+            reservas.infraestructura.rabbitMQ.dto.in.EventoModificacion.class,
+            "eventos.infraestructura.rabbitMQ.dto.out.EventoBorrado",
+            reservas.infraestructura.rabbitMQ.dto.in.EventoBorrado.class));
+
+    converter.setJavaTypeMapper(typeMapper);
+
     return converter;
   }
 
@@ -56,22 +71,5 @@ public class RabbitMQConfig {
     RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
     rabbitTemplate.setMessageConverter(messageConverter);
     return rabbitTemplate;
-  }
-
-  @Bean
-  public SimpleRabbitListenerContainerFactory manualDeserializationListenerContainerFactory(
-      ConnectionFactory connectionFactory) {
-    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-    factory.setConnectionFactory(connectionFactory);
-    factory.setMessageConverter(null);
-    return factory;
-  }
-
-  @Bean
-  public ObjectMapper objectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    return objectMapper;
   }
 }

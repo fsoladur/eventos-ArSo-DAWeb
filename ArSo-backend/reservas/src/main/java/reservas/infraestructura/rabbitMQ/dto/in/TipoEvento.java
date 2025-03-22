@@ -1,7 +1,9 @@
-package reservas.infraestructura.rabbitMQ.dto.out;
+package reservas.infraestructura.rabbitMQ.dto.in;
 
 public enum TipoEvento {
-  RESERVA_CREADA("reserva-creada");
+  EVENTO_CREADO("evento-creado"),
+  EVENTO_MODIFICADO("evento-modificado"),
+  EVENTO_CANCELADO("evento-cancelado");
 
   private final String nombre;
 

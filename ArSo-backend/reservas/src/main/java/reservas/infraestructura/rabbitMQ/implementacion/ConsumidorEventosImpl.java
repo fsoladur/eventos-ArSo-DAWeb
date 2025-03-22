@@ -1,53 +1,43 @@
 package reservas.infraestructura.rabbitMQ.implementacion;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.UUID;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import reservas.infraestructura.rabbitMQ.config.RabbitMQConfig;
+import reservas.infraestructura.rabbitMQ.dto.in.EventoCreacion;
+import reservas.infraestructura.rabbitMQ.dto.in.EventoModificacion;
+import reservas.infraestructura.rabbitMQ.dto.in.EventoRabbit;
 import reservas.servicios.ServicioDespachadorEventos;
+
+import java.util.UUID;
 
 @Component
 public class ConsumidorEventosImpl {
 
-  private static final String BUS_EVENTOS = "bus.eventos.";
   private final ServicioDespachadorEventos servicioDespachadorEventos;
-  private final ObjectMapper objectMapper;
 
-  public ConsumidorEventosImpl(
-      ServicioDespachadorEventos servicioDespachadorEventos, ObjectMapper objectMapper) {
+  public ConsumidorEventosImpl(ServicioDespachadorEventos servicioDespachadorEventos) {
     this.servicioDespachadorEventos = servicioDespachadorEventos;
-    this.objectMapper = objectMapper;
   }
 
-  @RabbitListener(
-      queues = RabbitMQConfig.QUEUE_NAME,
-      containerFactory = "manualDeserializationListenerContainerFactory")
-  public void consumir(Message message) throws Exception {
-    String routingKey = message.getMessageProperties().getReceivedRoutingKey();
-    JsonNode jsonNode = objectMapper.readTree(message.getBody());
-
-    UUID idEvento = UUID.fromString(jsonNode.get("entidadId").asText());
-    JsonNode plazasNode = jsonNode.get("plazas");
-    int plazas = plazasNode != null ? plazasNode.asInt() : 0;
-
-    JsonNode canceladoNode = jsonNode.get("cancelado");
-    boolean cancelado = canceladoNode != null && canceladoNode.asBoolean();
-
-    switch (routingKey) {
-      case BUS_EVENTOS + "evento-creado":
-        servicioDespachadorEventos.despacharCreacionEvento(idEvento, plazas, cancelado);
+  @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+  public void consumir(EventoRabbit eventoRabbit) throws Exception {
+    switch (eventoRabbit.getTipoEvento()) {
+      case EVENTO_CREADO:
+        EventoCreacion eventoCreacion = (EventoCreacion) eventoRabbit;
+        servicioDespachadorEventos.despacharCreacionEvento(
+            UUID.fromString(eventoCreacion.getEntidadId()),
+            eventoCreacion.getPlazas(),
+            eventoCreacion.isCancelado());
         break;
-      case BUS_EVENTOS + "evento-cancelado":
-        servicioDespachadorEventos.despacharCancelacionEvento(idEvento);
+      case EVENTO_MODIFICADO:
+        EventoModificacion eventoModificacion = (EventoModificacion) eventoRabbit;
+        servicioDespachadorEventos.despacharModificacionEvento(
+            UUID.fromString(eventoModificacion.getEntidadId()), eventoModificacion.getPlazas());
         break;
-      case BUS_EVENTOS + "evento-modificado":
-        servicioDespachadorEventos.despacharModificacionEvento(idEvento, plazas);
+      case EVENTO_CANCELADO:
+        servicioDespachadorEventos.despacharCancelacionEvento(
+            UUID.fromString(eventoRabbit.getEntidadId()));
         break;
-      default:
-        throw new IllegalStateException("Routing key no soportada: " + routingKey);
     }
   }
 }
