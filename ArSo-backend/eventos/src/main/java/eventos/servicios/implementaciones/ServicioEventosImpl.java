@@ -9,6 +9,7 @@ import java.util.*;
 
 import eventos.dominio.enumerados.EstadoEspacioFisico;
 
+import eventos.infraestructura.rabbitMQ.PublicadorEventos;
 import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +25,15 @@ public class ServicioEventosImpl implements ServicioEventos {
 
   private final RepositorioEventos repositorioEventos;
   private final RepositorioEspacios repositorioEspacios;
+  private final PublicadorEventos publicadorEventos;
 
   public ServicioEventosImpl(
-      RepositorioEventos repositorioEventos, RepositorioEspacios repositorioEspacios) {
+      RepositorioEventos repositorioEventos,
+      RepositorioEspacios repositorioEspacios,
+      PublicadorEventos publicadorEventos) {
     this.repositorioEventos = repositorioEventos;
     this.repositorioEspacios = repositorioEspacios;
+    this.publicadorEventos = publicadorEventos;
   }
 
   @Override
@@ -104,7 +109,11 @@ public class ServicioEventosImpl implements ServicioEventos {
             espacioFisico,
             categoria);
 
-    return repositorioEventos.save(evento).getId();
+    repositorioEventos.save(evento);
+
+    publicadorEventos.publicarEventoCreacion(evento);
+
+    return evento.getId();
   }
 
   public Evento modificarEvento(
@@ -162,6 +171,8 @@ public class ServicioEventosImpl implements ServicioEventos {
       }
 
       repositorioEventos.save(eventoParaModificar);
+      // publicamos el evento modificado
+      publicadorEventos.publicarEventoModificacion(eventoParaModificar);
     }
 
     return eventoParaModificar;
@@ -200,6 +211,9 @@ public class ServicioEventosImpl implements ServicioEventos {
     evento.setOcupacion(null);
 
     repositorioEventos.save(evento);
+
+    // publicamos el evento cancelado
+    publicadorEventos.publicarEventoBorrado(evento.getId().toString());
     return true;
   }
 
@@ -221,10 +235,7 @@ public class ServicioEventosImpl implements ServicioEventos {
       throw new EntidadNoEncontrada("No se encontraron eventos para el mes especificado");
     }
 
-    return eventosDelMes.map(
-        evento -> {
-          return EventoMapper.toDTO(evento);
-        });
+    return eventosDelMes.map(EventoMapper::toDTO);
   }
 
   @Override

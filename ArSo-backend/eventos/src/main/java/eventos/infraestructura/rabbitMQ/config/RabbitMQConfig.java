@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-  public static final String QUEUE_NAME = "eventos";
   public static final String EXCHANGE_NAME = "bus";
+  public static final String QUEUE_NAME = "eventos";
   public static final String ROUTING_KEY = "bus.eventos.";
   public static final String BINDING_KEY_ESPACIOS = "bus.espacios.#";
 
@@ -53,6 +53,4 @@ public class RabbitMQConfig {
     rabbitTemplate.setMessageConverter(messageConverter);
     return rabbitTemplate;
   }
-
-
 }

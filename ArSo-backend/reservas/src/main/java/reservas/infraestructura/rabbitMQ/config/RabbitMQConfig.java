@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -16,38 +17,61 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String QUEUE_NAME = "reservas";
-    public static final String BINDING_KEY_EVENTOS = "bus.eventos.#";
+  public static final String QUEUE_NAME = "reservas";
+  public static final String BINDING_KEY_EVENTOS = "bus.eventos.#";
+  public static final String EXCHANGE_NAME = "bus";
+  public static final String ROUTING_KEY_RESERVAS = "bus.reservas.";
 
-    @Bean
-    public Queue queue() {
-        boolean durable = true;
-        boolean exclusive = false;
-        boolean autoDelete = false;
-        return new Queue(QUEUE_NAME, durable, exclusive, autoDelete);
-    }
+  @Bean
+  public TopicExchange exchange() {
+    return new TopicExchange(EXCHANGE_NAME);
+  }
 
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(BINDING_KEY_EVENTOS);
-    }
+  @Bean
+  public Queue queue() {
+    boolean durable = true;
+    boolean exclusive = false;
+    boolean autoDelete = false;
+    return new Queue(QUEUE_NAME, durable, exclusive, autoDelete);
+  }
 
-    @Bean
-    public MessageConverter messageConverter() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+  @Bean
+  public Binding binding(Queue queue, TopicExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(BINDING_KEY_EVENTOS);
+  }
 
-        return new Jackson2JsonMessageConverter(objectMapper);
-    }
+  @Bean
+  public MessageConverter messageConverter() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-    @Bean
-    public RabbitTemplate rabbitTemplate(
-            ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(messageConverter);
-        return rabbitTemplate;
-    }
+    MessageConverter converter = new Jackson2JsonMessageConverter(objectMapper);
+    return converter;
+  }
 
+  @Bean
+  public RabbitTemplate rabbitTemplate(
+      ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+    RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    rabbitTemplate.setMessageConverter(messageConverter);
+    return rabbitTemplate;
+  }
 
+  @Bean
+  public SimpleRabbitListenerContainerFactory manualDeserializationListenerContainerFactory(
+      ConnectionFactory connectionFactory) {
+    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+    factory.setConnectionFactory(connectionFactory);
+    factory.setMessageConverter(null);
+    return factory;
+  }
+
+  @Bean
+  public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    return objectMapper;
+  }
 }

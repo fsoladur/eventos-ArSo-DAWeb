@@ -1,7 +1,12 @@
 package eventos.infraestructura.rabbitMQ;
 
-import eventos.infraestructura.rabbitMQ.eventos.PublicacionEvento;
+import eventos.dominio.Evento;
+import eventos.infraestructura.rabbitMQ.dto.out.EventoRabbit;
+
+import java.util.Map;
 
 public interface PublicadorEventos {
-  void publicar(String entidadId, String tipoEvento, Object entity) throws Exception;
+  void publicarEventoCreacion(Evento evento);
+  void publicarEventoModificacion(Evento evento);
+  void publicarEventoBorrado(String entidadId);
 }
