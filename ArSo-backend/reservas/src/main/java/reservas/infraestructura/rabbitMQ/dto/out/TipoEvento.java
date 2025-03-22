@@ -1,25 +1,20 @@
-package reservas.infraestructura.rabbitMQ.eventos;
+package reservas.infraestructura.rabbitMQ.dto.out;
 
 public enum TipoEvento {
-    ESPACIO_CREADO("espacio-creado"),
-    ESPACIO_ACTUALIZADO("espacio-actualizado"),
-    ESPACIO_ELIMINADO("espacio-eliminado"),
-    EVENTO_CREADO("evento-creado"),
-    EVENTO_ACTUALIZADO("evento-actualizado"),
-    EVENTO_ELIMINADO("evento-eliminado");
+  RESERVA_CREADA("reserva-creada");
 
-    private final String nombre;
+  private final String nombre;
 
-    TipoEvento(String nombre) {
-        this.nombre = nombre;
-    }
+  TipoEvento(String nombre) {
+    this.nombre = nombre;
+  }
 
-    public String getNombre() {
-        return nombre;
-    }
+  public String getNombre() {
+    return nombre;
+  }
 
-    @Override
-    public String toString() {
-        return nombre;
-    }
+  @Override
+  public String toString() {
+    return nombre;
+  }
 }

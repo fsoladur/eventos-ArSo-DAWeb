@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reservas.dominio.Evento;
 import reservas.dominio.Reserva;
+import reservas.infraestructura.rabbitMQ.PublicadorEventos;
 import reservas.infraestructura.repositorios.eventos.RepositorioEventos;
 import reservas.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
 import reservas.infraestructura.repositorios.reservas.RepositorioReservas;
@@ -16,16 +17,18 @@ public class ServicioReservasImpl implements ServicioReservas {
 
   private final RepositorioReservas repositorioReservas;
   private final RepositorioEventos repositorioEventos;
+  private final PublicadorEventos publicadorEventos;
 
   public ServicioReservasImpl(
-      RepositorioReservas repositorioReservas, RepositorioEventos repositorioEventos) {
+      RepositorioReservas repositorioReservas, RepositorioEventos repositorioEventos, PublicadorEventos publicadorEventos) {
     this.repositorioReservas = repositorioReservas;
     this.repositorioEventos = repositorioEventos;
+    this.publicadorEventos = publicadorEventos;
   }
 
   @Override
   public UUID reservar(UUID idEvento, UUID idUsuario, int plazasReservadas)
-      throws EntidadNoEncontrada {
+      throws Exception {
     if (idEvento == null || idUsuario == null) {
       throw new IllegalArgumentException(
           "El id del evento y el id del usuario no pueden ser nulos ni estar vacios");
@@ -47,6 +50,8 @@ public class ServicioReservasImpl implements ServicioReservas {
     Reserva reserva =
         this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
 
+    publicadorEventos.publicarCreacionReserva(reserva);
+
     evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
     evento.add(reserva);
     repositorioEventos.save(evento);
@@ -55,14 +60,14 @@ public class ServicioReservasImpl implements ServicioReservas {
   }
 
   @Override
-  public Reserva get(UUID idReserva) throws EntidadNoEncontrada {
+  public Reserva get(UUID idReserva) throws Exception {
     return repositorioReservas
         .findById(idReserva)
         .orElseThrow(() -> new EntidadNoEncontrada("Reserva no encontrada"));
   }
 
   @Override
-  public Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws EntidadNoEncontrada {
+  public Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws Exception{
     if (!repositorioEventos.existsById(idEvento)) {
       throw new EntidadNoEncontrada("Evento no encontrado");
     }
