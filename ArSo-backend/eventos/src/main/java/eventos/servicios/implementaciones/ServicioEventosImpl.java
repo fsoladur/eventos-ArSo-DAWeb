@@ -183,10 +183,13 @@ public class ServicioEventosImpl implements ServicioEventos {
     if (idEspacioFisico == null) {
       return Optional.empty();
     }
-    return Optional.of(
-        repositorioEspacios
-            .findById(idEspacioFisico)
-            .orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado")));
+	EspacioFisico espacio = repositorioEspacios.findById(idEspacioFisico)
+			.orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado"));
+	if(espacio.getEstado() != EstadoEspacioFisico.ACTIVO) {
+		throw new IllegalArgumentException("El espacio físico no está activo.");
+	}
+	
+	return Optional.of(espacio);
   }
 
   private void validarCapacidadEspacioFisico(int plazas, EspacioFisico espacioFisico) {

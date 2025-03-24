@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import api.rest.mapper.EspacioFisicoMapper;
 import externalAPIs.eventosAPI.EventosAPI;
 import externalAPIs.factoria.FactoriaServicioExterno;
+import externalAPIs.rabbitMQ.PublicadorEspacios;
+import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import repositorio.RepositorioEspacioFisicoAdhoc;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
@@ -28,10 +30,12 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
             .getRepositorio(EspacioFisico.class);
 
     private final EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
+    
+    private final PublicadorEspacios publicadorEspacios = FactoriaServicioExterno.getServicioExterno(PublicadorEspacios.class);
 
     @Override
     public UUID darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
-                                     double longitud, double latitud, String descripcion) throws RepositorioException, EntidadNoEncontrada {
+                                     double longitud, double latitud, String descripcion) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
         // TODO Auto-generated method stub
         // Comprobar que los parámetros no son nulos o vacíos
         if (nombre == null || nombre.isEmpty()) {
@@ -66,6 +70,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
                 direccionPostal, descripcion);
 
         espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
+        
+        publicadorEspacios.publicarEspacioCreacion(espacioFisico);
 
         return repositorioEspacioFisico.add(espacioFisico);
     }
@@ -93,7 +99,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
     @Override
     public EspacioFisico modificarEspacioFisico(UUID idEspacio, String nombre, String descripcion, int capacidad)
-            throws RepositorioException, EntidadNoEncontrada {
+            throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
 
         if (idEspacio == null) {
             throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
@@ -114,12 +120,14 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
         }
 
         repositorioEspacioFisico.update(espacioFisico);
+        
+        publicadorEspacios.publicarEspacioModificacion(espacioFisico);
 
         return espacioFisico;
     }
 
     @Override
-    public boolean darBajaEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada {
+    public boolean darBajaEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
 
         if (idEspacio == null) {
             throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
@@ -137,12 +145,16 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
         } catch (IOException | RepositorioException | EntidadNoEncontrada e) {
             e.printStackTrace();
         }
+        
+		if (noHayOcupacion) {
+			publicadorEspacios.publicarEspacioBorrado(idEspacio.toString());
+		}
 
         return noHayOcupacion;
     }
 
     @Override
-    public boolean activarEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada {
+    public boolean activarEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
         if (idEspacio == null) {
             throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
         }
@@ -150,6 +162,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
         EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
         espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
         repositorioEspacioFisico.update(espacioFisico);
+        
+        publicadorEspacios.publicarEspacioActivado(idEspacio.toString());
 
         return true;
     }

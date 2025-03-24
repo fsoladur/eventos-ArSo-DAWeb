@@ -2,6 +2,7 @@ package servicios;
 
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
+import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import api.rest.DTO.EspacioFisicoDTO;
@@ -22,7 +23,7 @@ public interface ServicioEspacios {
 	 */
 	UUID darAltaEspacioFisico(final String nombre, final String propietario, final int capacidad,
 			final String direccionPostal, final double longitud, final double latitud, final String descripcion)
-			throws RepositorioException, EntidadNoEncontrada;
+					throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
 
 	/**
 	 - ruta de acceso: "/espacios/{idEspacio}/puntosinteres"
@@ -40,7 +41,7 @@ public interface ServicioEspacios {
 	 - respuesta: 204 NO_CONTENT (la habitual) || otra opcion 200 ok más el objeto modificado
 	 */
 	EspacioFisico modificarEspacioFisico(final UUID idEspacio, final String nombre, final String descripcion,
-			final int capacidad) throws RepositorioException, EntidadNoEncontrada;
+			final int capacidad) throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
 
 	/**
 	 - ruta de acceso: "/espacios/{idEspacio}/estado"
@@ -48,8 +49,8 @@ public interface ServicioEspacios {
 	 - body: enum("activo", "cerrado")
 	 - respuesta: 204 NO_CONTENT
 	 */
-	boolean darBajaEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
-	boolean activarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada;
+	boolean darBajaEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
+	boolean activarEspacioFisico(final UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
 
 	/**
 	 - ruta de acceso: "/espacios/libres?fechaInicio={fechaInicio}&fechaFin={fechaFin}&capacidadRequerida={capacidadRequerida}"

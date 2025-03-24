@@ -28,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 import api.rest.mapper.EspacioFisicoMapper;
 import api.rest.utils.Listado;
 import api.rest.utils.Listado.ResumenExtendido;
+import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import repositorio.excepciones.EntidadNoEncontrada;
 import repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
@@ -49,7 +50,7 @@ public class ControladorEspacios {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
-      throws RepositorioException, EntidadNoEncontrada {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
     UUID id =
         servicio.darAltaEspacioFisico(
             espacioFisico.getNombre(),
@@ -84,7 +85,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response modificarEspacioFisico(
       @PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
-      throws RepositorioException, EntidadNoEncontrada {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
 
     servicio.modificarEspacioFisico(
         id, espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
@@ -97,7 +98,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response cambiarEstadoEspacioFisico(
       @PathParam("id") UUID id, @FormParam("estado") String estado)
-      throws RepositorioException, EntidadNoEncontrada {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
 
     if ("activo".equalsIgnoreCase(estado)) {
       servicio.activarEspacioFisico(id);
