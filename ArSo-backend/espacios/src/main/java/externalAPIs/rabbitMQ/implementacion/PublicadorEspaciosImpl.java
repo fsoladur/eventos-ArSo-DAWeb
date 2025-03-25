@@ -31,6 +31,10 @@ public class PublicadorEspaciosImpl implements PublicadorEspacios {
     try (Connection connection = RabbitConfig.crearFactoria().newConnection();
         Channel channel = connection.createChannel()) {
 
+      RabbitConfig.queue(channel);
+        RabbitConfig.bind(channel);
+        RabbitConfig.exchange(channel);
+        
       String mensaje = objectMapper.writeValueAsString(evento);
 
       channel.basicPublish(
