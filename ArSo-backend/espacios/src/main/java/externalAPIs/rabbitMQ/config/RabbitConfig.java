@@ -13,7 +13,7 @@ public class RabbitConfig {
 	public static final String ROUTING_KEY = "bus.espacios.";
 	public static final String BINDING_KEY_ESPACIOS = "bus.espacios.#";
 	
-	public static ConnectionFactory crearFactory() throws Exception {
+	public static ConnectionFactory crearFactoria() throws Exception {
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setUri(URI);
         return factory;

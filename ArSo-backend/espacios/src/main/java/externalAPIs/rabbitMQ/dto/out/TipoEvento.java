@@ -1,10 +1,10 @@
 package externalAPIs.rabbitMQ.dto.out;
 
 public enum TipoEvento {
-  EVENTO_CREADO("espacio-creado"),
-  EVENTO_MODIFICADO("espacio-modificado"),
-  EVENTO_CANCELADO("espacio-cancelado"),
-  EVENTO_ACTIVADO("espacio-activado");
+  ESPACIO_CREADO("espacio-creado"),
+  ESPACIO_MODIFICADO("espacio-modificado"),
+  ESPACIO_CANCELADO("espacio-cancelado"),
+  ESPACIO_ACTIVADO("espacio-activado");
 
   private final String nombre;
 

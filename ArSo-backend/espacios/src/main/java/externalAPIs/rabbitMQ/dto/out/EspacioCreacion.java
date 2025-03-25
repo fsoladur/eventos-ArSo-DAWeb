@@ -1,6 +1,6 @@
 package externalAPIs.rabbitMQ.dto.out;
 
-public class EventoCreacion extends EventoRabbit {
+public class EspacioCreacion extends EventoRabbit {
   
   private String nombre;
   private String propietario;
@@ -10,13 +10,13 @@ public class EventoCreacion extends EventoRabbit {
   private double latitud;
   private String descripcion;
 
-  public EventoCreacion() {
-    super(TipoEvento.EVENTO_CREADO, null);
+  public EspacioCreacion() {
+    super(TipoEvento.ESPACIO_CREADO, null);
   }
   
-	public EventoCreacion(String entidadId, String nombre, String propietario, int capacidad, String direccionPostal,
-			double longitud, double latitud, String descripcion) {
-		super(TipoEvento.EVENTO_CREADO, entidadId);
+	public EspacioCreacion(String entidadId, String nombre, String propietario, int capacidad, String direccionPostal,
+						   double longitud, double latitud, String descripcion) {
+		super(TipoEvento.ESPACIO_CREADO, entidadId);
 		this.nombre = nombre;
 		this.propietario = propietario;
 		this.capacidad = capacidad;

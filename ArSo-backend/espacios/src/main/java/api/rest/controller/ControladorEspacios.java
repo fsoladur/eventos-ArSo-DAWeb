@@ -98,7 +98,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response cambiarEstadoEspacioFisico(
       @PathParam("id") UUID id, @FormParam("estado") String estado)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
 
     if ("activo".equalsIgnoreCase(estado)) {
       servicio.activarEspacioFisico(id);

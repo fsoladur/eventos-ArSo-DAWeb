@@ -26,188 +26,194 @@ import api.rest.DTO.EspacioFisicoDTO;
 
 public class ServicioEspaciosImpl implements ServicioEspacios {
 
-    private final RepositorioEspacioFisicoAdhoc repositorioEspacioFisico = FactoriaRepositorios
-            .getRepositorio(EspacioFisico.class);
+  private final RepositorioEspacioFisicoAdhoc repositorioEspacioFisico =
+      FactoriaRepositorios.getRepositorio(EspacioFisico.class);
 
-    private final EventosAPI eventosAPI = FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
-    
-    private final PublicadorEspacios publicadorEspacios = FactoriaServicioExterno.getServicioExterno(PublicadorEspacios.class);
+  private final EventosAPI eventosAPI =
+      FactoriaServicioExterno.getServicioExterno(EventosAPI.class);
 
-    @Override
-    public UUID darAltaEspacioFisico(String nombre, String propietario, int capacidad, String direccionPostal,
-                                     double longitud, double latitud, String descripcion) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-        // TODO Auto-generated method stub
-        // Comprobar que los parámetros no son nulos o vacíos
-        if (nombre == null || nombre.isEmpty()) {
-            throw new IllegalArgumentException("El nombre del espacio no puede ser nulo o vacío.");
-        }
+  private final PublicadorEspacios publicadorEspacios =
+      FactoriaServicioExterno.getServicioExterno(PublicadorEspacios.class);
 
-        if (propietario == null || propietario.isEmpty()) {
-            throw new IllegalArgumentException("El propietario del espacio no puede ser nulo o vacío.");
-        }
-
-        if (capacidad <= 0) {
-            throw new IllegalArgumentException("La capacidad del espacio debe ser mayor que 0.");
-        }
-
-        if (latitud < -90 || latitud > 90) {
-            throw new IllegalArgumentException("La latitud debe estar entre -90 y 90 grados");
-        }
-
-        if (longitud < -180 || longitud > 180) {
-            throw new IllegalArgumentException("La longitud debe estar entre -180 y 180 grados");
-        }
-
-        if (direccionPostal == null || direccionPostal.isEmpty()) {
-            throw new IllegalArgumentException("La dirección del espacio no puede ser nula o vacía.");
-        }
-
-        if (descripcion == null || descripcion.isEmpty()) {
-            throw new IllegalArgumentException("La descripción del espacio no puede ser nula o vacía.");
-        }
-
-        EspacioFisico espacioFisico = new EspacioFisico(nombre, propietario, capacidad, longitud, latitud,
-                direccionPostal, descripcion);
-
-        espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
-        
-        publicadorEspacios.publicarEspacioCreacion(espacioFisico);
-
-        return repositorioEspacioFisico.add(espacioFisico);
+  @Override
+  public UUID darAltaEspacioFisico(
+      String nombre,
+      String propietario,
+      int capacidad,
+      String direccionPostal,
+      double longitud,
+      double latitud,
+      String descripcion)
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+    // TODO Auto-generated method stub
+    // Comprobar que los parámetros no son nulos o vacíos
+    if (nombre == null || nombre.isEmpty()) {
+      throw new IllegalArgumentException("El nombre del espacio no puede ser nulo o vacío.");
     }
 
-    @Override
-    public boolean asignarPuntosInteres(UUID idEspacio, Collection<PuntoInteres> puntosInteres)
-            throws RepositorioException, EntidadNoEncontrada {
-
-        if (idEspacio == null) {
-            throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
-        }
-
-        if (puntosInteres == null || puntosInteres.isEmpty()) {
-            throw new IllegalArgumentException("La colección de puntos de interés no puede ser nula o vacía.");
-        }
-
-        EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-
-        espacioFisico.setPuntosInteres(new HashSet<>(puntosInteres));
-
-        repositorioEspacioFisico.update(espacioFisico);
-
-        return true;
+    if (propietario == null || propietario.isEmpty()) {
+      throw new IllegalArgumentException("El propietario del espacio no puede ser nulo o vacío.");
     }
 
-    @Override
-    public EspacioFisico modificarEspacioFisico(UUID idEspacio, String nombre, String descripcion, int capacidad)
-            throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-
-        if (idEspacio == null) {
-            throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
-        }
-
-        EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-
-        if (nombre != null && !nombre.isEmpty()) {
-            espacioFisico.setNombre(nombre);
-        }
-
-        if (descripcion != null && !descripcion.isEmpty()) {
-            espacioFisico.setDescripcion(descripcion);
-        }
-
-        if (capacidad > 0) {
-            espacioFisico.setCapacidad(capacidad);
-        }
-
-        repositorioEspacioFisico.update(espacioFisico);
-        
-        publicadorEspacios.publicarEspacioModificacion(espacioFisico);
-
-        return espacioFisico;
+    if (capacidad <= 0) {
+      throw new IllegalArgumentException("La capacidad del espacio debe ser mayor que 0.");
     }
 
-    @Override
-    public boolean darBajaEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-
-        if (idEspacio == null) {
-            throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
-        }
-
-        boolean noHayOcupacion = false;
-
-        try {
-            if (!eventosAPI.isOcupacionActiva(idEspacio)) {
-                EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-                espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
-                repositorioEspacioFisico.update(espacioFisico);
-                noHayOcupacion = true;
-            }
-        } catch (IOException | RepositorioException | EntidadNoEncontrada e) {
-            e.printStackTrace();
-        }
-        
-		if (noHayOcupacion) {
-			publicadorEspacios.publicarEspacioBorrado(idEspacio.toString());
-		}
-
-        return noHayOcupacion;
+    if (latitud < -90 || latitud > 90) {
+      throw new IllegalArgumentException("La latitud debe estar entre -90 y 90 grados");
     }
 
-    @Override
-    public boolean activarEspacioFisico(UUID idEspacio) throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-        if (idEspacio == null) {
-            throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
-        }
-
-        EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
-        espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
-        repositorioEspacioFisico.update(espacioFisico);
-        
-        publicadorEspacios.publicarEspacioActivado(idEspacio.toString());
-
-        return true;
+    if (longitud < -180 || longitud > 180) {
+      throw new IllegalArgumentException("La longitud debe estar entre -180 y 180 grados");
     }
 
-    @Override
-    public List<EspacioFisico> findEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
-                                                            int capacidadRequerida) throws RepositorioException, EntidadNoEncontrada, IOException {
-
-        if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
-            throw new IllegalArgumentException(
-                    "Las fechas de inicio y fin no pueden ser nulas o la fecha de inicio no puede ser posterior a la de fin.");
-        }
-        if (capacidadRequerida <= 0) {
-            throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
-        }
-
-        List<UUID> espaciosLibres = eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(capacidadRequerida,
-                fechaInicio.toString(), fechaFin.toString());
-
-        List<EspacioFisico> espaciosFisicos = repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
-
-        return espaciosFisicos;
+    if (direccionPostal == null || direccionPostal.isEmpty()) {
+      throw new IllegalArgumentException("La dirección del espacio no puede ser nula o vacía.");
     }
 
-
-    @Override
-    public List<EspacioFisico> findEspaciosFisicosDePropietario(String propietario)
-            throws RepositorioException, EntidadNoEncontrada {
-        if (propietario == null || propietario.isEmpty()) {
-            throw new IllegalArgumentException("El propietario no puede ser nulo o vacío.");
-        }
-
-        return repositorioEspacioFisico.getEspaciosFisicosByPropietario(propietario);
+    if (descripcion == null || descripcion.isEmpty()) {
+      throw new IllegalArgumentException("La descripción del espacio no puede ser nula o vacía.");
     }
 
-    @Override
-    public EspacioFisico recuperarEspacioFisico(final UUID idEspacio)
-            throws RepositorioException, EntidadNoEncontrada {
-        if (idEspacio == null) {
-            throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
-        }
-        EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+    EspacioFisico espacioFisico =
+        new EspacioFisico(
+            nombre, propietario, capacidad, longitud, latitud, direccionPostal, descripcion);
 
-        return espacioFisico;
+    espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
+
+    UUID idEspacio = repositorioEspacioFisico.add(espacioFisico);
+
+    publicadorEspacios.publicarEspacioCreacion(espacioFisico);
+
+    return idEspacio;
+  }
+
+  @Override
+  public boolean asignarPuntosInteres(UUID idEspacio, Collection<PuntoInteres> puntosInteres)
+      throws RepositorioException, EntidadNoEncontrada {
+
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
     }
 
+    if (puntosInteres == null || puntosInteres.isEmpty()) {
+      throw new IllegalArgumentException(
+          "La colección de puntos de interés no puede ser nula o vacía.");
+    }
+
+    EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+
+    espacioFisico.setPuntosInteres(new HashSet<>(puntosInteres));
+
+    repositorioEspacioFisico.update(espacioFisico);
+
+    return true;
+  }
+
+  @Override
+  public EspacioFisico modificarEspacioFisico(
+      UUID idEspacio, String nombre, String descripcion, int capacidad)
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+    }
+
+    EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+
+    if (nombre != null && !nombre.isEmpty()) {
+      espacioFisico.setNombre(nombre);
+    }
+
+    if (descripcion != null && !descripcion.isEmpty()) {
+      espacioFisico.setDescripcion(descripcion);
+    }
+
+    if (capacidad > 0) {
+      espacioFisico.setCapacidad(capacidad);
+    }
+
+    repositorioEspacioFisico.update(espacioFisico);
+
+    publicadorEspacios.publicarEspacioModificacion(espacioFisico);
+
+    return espacioFisico;
+  }
+
+  @Override
+  public boolean darBajaEspacioFisico(UUID idEspacio)
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
+
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+    }
+
+    boolean noHayOcupacion = false;
+
+    if (!eventosAPI.isOcupacionActiva(idEspacio)) {
+      EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+      espacioFisico.setEstado(EstadoEspacioFisico.CERRADO_TEMPORALMENTE);
+      repositorioEspacioFisico.update(espacioFisico);
+      publicadorEspacios.publicarEspacioBorrado(idEspacio.toString());
+      noHayOcupacion = true;
+    }
+
+    return noHayOcupacion;
+  }
+
+  @Override
+  public boolean activarEspacioFisico(UUID idEspacio)
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+    }
+
+    EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
+    espacioFisico.setEstado(EstadoEspacioFisico.ACTIVO);
+    repositorioEspacioFisico.update(espacioFisico);
+
+    publicadorEspacios.publicarEspacioActivado(idEspacio.toString());
+
+    return true;
+  }
+
+  @Override
+  public List<EspacioFisico> findEspaciosFisicosLibres(
+      LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadRequerida)
+      throws RepositorioException, EntidadNoEncontrada, IOException {
+
+    if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
+      throw new IllegalArgumentException(
+          "Las fechas de inicio y fin no pueden ser nulas o la fecha de inicio no puede ser posterior a la de fin.");
+    }
+    if (capacidadRequerida <= 0) {
+      throw new IllegalArgumentException("La capacidad requerida debe ser mayor que 0.");
+    }
+
+    List<UUID> espaciosLibres =
+        eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(
+            capacidadRequerida, fechaInicio.toString(), fechaFin.toString());
+
+      return repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
+  }
+
+  @Override
+  public List<EspacioFisico> findEspaciosFisicosDePropietario(String propietario)
+      throws RepositorioException, EntidadNoEncontrada {
+    if (propietario == null || propietario.isEmpty()) {
+      throw new IllegalArgumentException("El propietario no puede ser nulo o vacío.");
+    }
+
+    return repositorioEspacioFisico.getEspaciosFisicosByPropietario(propietario);
+  }
+
+  @Override
+  public EspacioFisico recuperarEspacioFisico(final UUID idEspacio)
+      throws RepositorioException, EntidadNoEncontrada {
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+    }
+
+      return repositorioEspacioFisico.getById(idEspacio);
+  }
 }
