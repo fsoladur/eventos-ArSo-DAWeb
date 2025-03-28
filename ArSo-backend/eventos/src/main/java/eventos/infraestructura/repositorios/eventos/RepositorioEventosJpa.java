@@ -22,6 +22,7 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
           + "WHERE e.ocupacion IS NOT NULL AND e.cancelado = FALSE "
           + "AND FUNCTION('YEAR', e.ocupacion.fechaInicio) = :anio "
           + "AND FUNCTION('MONTH', e.ocupacion.fechaInicio) = :mes")
+  @Override
   public Page<Evento> getEventosPorMesYAnio(
       @Param("mes") int mes, @Param("anio") int anio, Pageable pageable);
 
@@ -30,6 +31,7 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
           + "FROM Evento e "
           + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
           + "AND e.ocupacion.fechaFin > CURRENT_TIMESTAMP")
+  @Override
   boolean isOcupacionActiva(@Param("idEspacio") UUID idEspacio);
 
   @Query(
@@ -42,6 +44,16 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
           + "WHERE ev.ocupacion.espacioFisico.id = e.id "
           + "AND ev.ocupacion.fechaInicio <= :fechaFin "
           + "AND ev.ocupacion.fechaFin >= :fechaInicio)")
+  @Override
   List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
       int capacidadMinima, LocalDateTime fechaInicio, LocalDateTime fechaFin);
+
+  @Query(
+      "SELECT COUNT(e) FROM Evento e "
+          + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
+          + "AND e.ocupacion.fechaFin > CURRENT_TIMESTAMP "
+          + "AND e.plazas > :nuevaCapacidad")
+  @Override
+  Long getEventosConCapacidadMayorQueNuevaCapacidad(
+      @Param("idEspacio") UUID idEspacio, @Param("nuevaCapacidad") int nuevaCapacidad);
 }

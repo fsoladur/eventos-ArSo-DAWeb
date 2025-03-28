@@ -1,5 +1,8 @@
 package eventos.infraestructura.rabbitMQ.dto.out;
 
+import eventos.infraestructura.rabbitMQ.dto.EventoRabbit;
+import eventos.infraestructura.rabbitMQ.dto.TipoEvento;
+
 public class EventoModificacion extends EventoRabbit {
   private String descripcion;
   private String fechaInicio;

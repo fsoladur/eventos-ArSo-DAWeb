@@ -3,7 +3,8 @@ package eventos.infraestructura.rabbitMQ.implementacion;
 import eventos.dominio.Evento;
 import eventos.infraestructura.rabbitMQ.PublicadorEventos;
 import eventos.infraestructura.rabbitMQ.config.RabbitMQConfig;
-import eventos.infraestructura.rabbitMQ.dto.out.*;
+import eventos.infraestructura.rabbitMQ.dto.EventoRabbit;
+import eventos.infraestructura.rabbitMQ.dto.TipoEvento;
 import eventos.infraestructura.rabbitMQ.mapper.EventoRabbitMapper;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.TopicExchange;
@@ -22,26 +23,30 @@ public class PublicadorEventosImpl implements PublicadorEventos {
 
   @Override
   public void publicarEventoCreacion(Evento evento) {
-
-    this.rabbitTemplate.convertAndSend(
-        topicExchange.getName(),
-        RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_CREADO.getNombre(),
-        (EventoCreacion) EventoRabbitMapper.toEventoCreacion(evento));
+    publicarEvento(
+        EventoRabbitMapper.toEventoCreacion(evento), TipoEvento.EVENTO_CREADO.getNombre());
   }
 
   @Override
   public void publicarEventoModificacion(Evento evento) {
-    this.rabbitTemplate.convertAndSend(
-        topicExchange.getName(),
-        RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_MODIFICADO.getNombre(),
-        (EventoModificacion) EventoRabbitMapper.toEventoModificacion(evento));
+    publicarEvento(
+        EventoRabbitMapper.toEventoModificacion(evento), TipoEvento.EVENTO_MODIFICADO.getNombre());
   }
 
   @Override
   public void publicarEventoBorrado(String entidadId) {
+    publicarEvento(
+        EventoRabbitMapper.toEventoBorrado(entidadId), TipoEvento.EVENTO_CANCELADO.getNombre());
+  }
+
+  private void publicarEvento(EventoRabbit eventoRabbit, String tipoEvento) {
     this.rabbitTemplate.convertAndSend(
         topicExchange.getName(),
-        RabbitMQConfig.ROUTING_KEY + TipoEvento.EVENTO_CANCELADO.getNombre(),
-        (EventoBorrado) EventoRabbitMapper.toEventoBorrado(entidadId));
+        RabbitMQConfig.ROUTING_KEY + tipoEvento,
+        eventoRabbit,
+        message -> {
+          message.getMessageProperties().setHeader("__TypeId__", tipoEvento);
+          return message;
+        });
   }
 }

@@ -3,14 +3,17 @@ package eventos.infraestructura.rabbitMQ.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import eventos.infraestructura.rabbitMQ.dto.TipoEvento;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
 
 @Configuration
 public class RabbitMQConfig {
@@ -42,8 +45,22 @@ public class RabbitMQConfig {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter(objectMapper);
 
-    return new Jackson2JsonMessageConverter(objectMapper);
+    DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
+    typeMapper.setIdClassMapping(
+        Map.of(
+            TipoEvento.ESPACIO_CREADO.getNombre(),
+            eventos.infraestructura.rabbitMQ.dto.in.EspacioCreacion.class,
+            TipoEvento.ESPACIO_MODIFICADO.getNombre(),
+            eventos.infraestructura.rabbitMQ.dto.in.EspacioModificacion.class,
+            TipoEvento.ESPACIO_CANCELADO.getNombre(),
+            eventos.infraestructura.rabbitMQ.dto.in.EspacioCerrado.class,
+            TipoEvento.ESPACIO_ACTIVADO.getNombre(),
+            eventos.infraestructura.rabbitMQ.dto.in.EspacioActivado.class));
+    converter.setJavaTypeMapper(typeMapper);
+
+    return converter;
   }
 
   @Bean

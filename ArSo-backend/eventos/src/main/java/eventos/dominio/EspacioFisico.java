@@ -31,11 +31,13 @@ public class EspacioFisico {
 
   public EspacioFisico() {}
 
-  public EspacioFisico(String nombre, int capacidad, String direccion, EstadoEspacioFisico estado) {
+  public EspacioFisico(
+      UUID id, String nombre, int capacidad, EstadoEspacioFisico estado, String direccion) {
+    this.id = id;
     this.nombre = nombre;
     this.capacidad = capacidad;
-    this.direccion = direccion;
     this.estado = estado;
+    this.direccion = direccion;
   }
 
   // Setters y getters
