@@ -14,12 +14,13 @@ import java.util.UUID;
 @Component
 public class ReservasApiImpl implements ReservasAPI {
 
+  private final static String BASE_URL_RESERVAS = "http://localhost:8082";
   private final RetrofitReservasAPI reservasAPI;
 
   public ReservasApiImpl() {
     Retrofit retrofit =
         new Retrofit.Builder()
-            .baseUrl("http://localhost:8082")
+            .baseUrl(BASE_URL_RESERVAS)
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
     reservasAPI = retrofit.create(RetrofitReservasAPI.class);

@@ -56,4 +56,12 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
   @Override
   Long getEventosConCapacidadMayorQueNuevaCapacidad(
       @Param("idEspacio") UUID idEspacio, @Param("nuevaCapacidad") int nuevaCapacidad);
+
+  @Override
+    @Query(
+        "SELECT e "
+            + "FROM Evento e "
+            + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
+            + "AND e.cancelado = FALSE")
+  List<Evento> getEventosPorEspacio(UUID idEspacio);
 }

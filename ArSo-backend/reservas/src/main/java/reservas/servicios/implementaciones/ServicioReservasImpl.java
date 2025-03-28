@@ -20,15 +20,16 @@ public class ServicioReservasImpl implements ServicioReservas {
   private final PublicadorEventos publicadorEventos;
 
   public ServicioReservasImpl(
-      RepositorioReservas repositorioReservas, RepositorioEventos repositorioEventos, PublicadorEventos publicadorEventos) {
+      RepositorioReservas repositorioReservas,
+      RepositorioEventos repositorioEventos,
+      PublicadorEventos publicadorEventos) {
     this.repositorioReservas = repositorioReservas;
     this.repositorioEventos = repositorioEventos;
     this.publicadorEventos = publicadorEventos;
   }
 
   @Override
-  public UUID reservar(UUID idEvento, UUID idUsuario, int plazasReservadas)
-      throws Exception {
+  public UUID reservar(UUID idEvento, UUID idUsuario, int plazasReservadas) throws Exception {
     if (idEvento == null || idUsuario == null) {
       throw new IllegalArgumentException(
           "El id del evento y el id del usuario no pueden ser nulos ni estar vacios");
@@ -50,11 +51,11 @@ public class ServicioReservasImpl implements ServicioReservas {
     Reserva reserva =
         this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
 
-    publicadorEventos.publicarCreacionReserva(reserva);
-
     evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
     evento.add(reserva);
     repositorioEventos.save(evento);
+
+    publicadorEventos.publicarCreacionReserva(reserva);
 
     return reserva.getId();
   }
@@ -67,10 +68,26 @@ public class ServicioReservasImpl implements ServicioReservas {
   }
 
   @Override
-  public Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws Exception{
+  public Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws Exception {
     if (!repositorioEventos.existsById(idEvento)) {
       throw new EntidadNoEncontrada("Evento no encontrado");
     }
     return repositorioReservas.findAllByEventoId(idEvento, pageable);
+  }
+
+  @Override
+  public Boolean validarNuevasPlazasEvento(UUID idEvento, int plazas) {
+    if (idEvento == null) {
+      throw new IllegalArgumentException("El id del evento no puede ser nulo");
+    }
+    if (plazas <= 0) {
+      throw new IllegalArgumentException("El número de plazas debe ser mayor que 0");
+    }
+
+    Evento evento =
+        repositorioEventos
+            .findById(idEvento)
+            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+    return evento.getPlazasReservadas() <= plazas;
   }
 }

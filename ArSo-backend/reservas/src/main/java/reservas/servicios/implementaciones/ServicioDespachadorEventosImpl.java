@@ -1,19 +1,23 @@
 package reservas.servicios.implementaciones;
 
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import reservas.dominio.Evento;
-import reservas.dominio.Reserva;
 import reservas.infraestructura.repositorios.eventos.RepositorioEventos;
 import reservas.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import reservas.infraestructura.repositorios.reservas.RepositorioReservas;
 import reservas.servicios.ServicioDespachadorEventos;
 
 @Service
 public class ServicioDespachadorEventosImpl implements ServicioDespachadorEventos {
   private final RepositorioEventos repositorioEventos;
+  private final RepositorioReservas repositorioReservas;
 
-  public ServicioDespachadorEventosImpl(RepositorioEventos repositorioEventos) {
+  public ServicioDespachadorEventosImpl(
+      RepositorioEventos repositorioEventos, RepositorioReservas repositorioReservas) {
     this.repositorioEventos = repositorioEventos;
+    this.repositorioReservas = repositorioReservas;
   }
 
   @Override
@@ -27,9 +31,16 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
     Evento evento =
         this.repositorioEventos
             .findById(idEvento)
-            .orElseThrow(
-                () -> new EntidadNoEncontrada("No se ha encontrado el evento en cuestión"));
+            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
     evento.setCancelado(true);
+    evento
+        .getReservas()
+        .forEach(
+            reserva -> {
+              reserva.cancelar();
+              this.repositorioReservas.save(reserva);
+            });
+    evento.setReservas(List.of());
     this.repositorioEventos.save(evento);
   }
 
@@ -38,20 +49,10 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
     Evento evento =
         this.repositorioEventos
             .findById(idEvento)
-            .orElseThrow(
-                () -> new EntidadNoEncontrada("No se ha encontrado el evento en cuestión"));
-
-    int plazasReservadas =
-        (evento.getReservas().isEmpty())
-            ? 0
-            : evento.getReservas().stream().mapToInt(Reserva::getPlazasReservadas).sum();
-
-    if (plazasDisponibles < plazasReservadas) {
-      throw new IllegalArgumentException(
-          "No se puede reducir el número de plazas disponibles por debajo del número de plazas ya reservadas.");
+            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+    if (plazasDisponibles != evento.getPlazasDisponibles()) {
+      evento.setPlazasDisponibles(plazasDisponibles - evento.getPlazasReservadas());
     }
-
-    evento.setPlazasDisponibles(plazasDisponibles);
     this.repositorioEventos.save(evento);
   }
 }

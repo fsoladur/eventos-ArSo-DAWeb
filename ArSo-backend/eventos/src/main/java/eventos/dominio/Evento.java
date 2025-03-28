@@ -126,6 +126,10 @@ public class Evento {
     this.cancelado = cancelado;
   }
 
+  public void cancelar() {
+    this.setCancelado(true);
+  }
+
   public Categoria getCategoria() {
     return categoria;
   }

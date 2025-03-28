@@ -22,4 +22,6 @@ public interface RepositorioEventos extends CrudRepository<Evento, UUID>, Paging
       int capacidadMinima, LocalDateTime fechaFin, LocalDateTime fechaInicio);
 
   Long getEventosConCapacidadMayorQueNuevaCapacidad(UUID idEspacio,  int nuevaCapacidad);
+
+    List<Evento> getEventosPorEspacio(UUID idEspacio);
 }

@@ -62,4 +62,10 @@ public class ControladorReservas implements ReservasApi {
         this.servicioReservas.getAll(idEvento, pageable).map(ReservaMapper::toDTO),
         reservaDtoAssembler);
   }
+
+  @GetMapping("/eventos/{idEvento}/plazas")
+  public ResponseEntity<Boolean> validarNuevasPlazas(
+      @PathVariable UUID idEvento, @RequestParam int plazas) throws Exception {
+    return ResponseEntity.ok(this.servicioReservas.validarNuevasPlazasEvento(idEvento, plazas));
+  }
 }
