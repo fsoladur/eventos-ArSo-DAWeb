@@ -3,15 +3,13 @@ package servicios;
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
 import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
-import api.rest.DTO.EspacioFisicoDTO;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import repositorio.excepciones.EntidadNoEncontrada;
+import repositorio.excepciones.RepositorioException;
 
 public interface ServicioEspacios {
 
@@ -44,7 +42,7 @@ public interface ServicioEspacios {
    */
   EspacioFisico modificarEspacioFisico(
       final UUID idEspacio, final String nombre, final String descripcion, final int capacidad)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException;
 
   /**
    * - ruta de acceso: "/espacios/{idEspacio}/estado" - método: PUT - body: enum("activo",

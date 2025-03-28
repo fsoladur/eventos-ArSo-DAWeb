@@ -1,9 +1,11 @@
-package eventos.infraestructura.rabbitMQ.dto.out;
+package eventos.infraestructura.rabbitMQ.dto;
 
 public enum TipoEvento {
   EVENTO_CREADO("evento-creado"),
   EVENTO_MODIFICADO("evento-modificado"),
   EVENTO_CANCELADO("evento-cancelado");
+
+  
 
   private final String nombre;
 

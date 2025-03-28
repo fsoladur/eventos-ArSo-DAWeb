@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface EventosAPI {
     List<UUID> getEspaciosSinEventosYCapacidadSuficiente(int capacidad, String fechaInicio, String fechaFin) throws IOException;
     boolean isOcupacionActiva(UUID id) throws IOException;
+    boolean validarNuevaCapacidadEspacio(UUID idEspacio, int nuevaCapacidad) throws IOException;
 }

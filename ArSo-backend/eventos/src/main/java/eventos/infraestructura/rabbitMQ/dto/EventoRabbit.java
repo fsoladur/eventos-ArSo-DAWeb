@@ -1,4 +1,4 @@
-package eventos.infraestructura.rabbitMQ.dto.out;
+package eventos.infraestructura.rabbitMQ.dto;
 
 import java.time.LocalDateTime;
 

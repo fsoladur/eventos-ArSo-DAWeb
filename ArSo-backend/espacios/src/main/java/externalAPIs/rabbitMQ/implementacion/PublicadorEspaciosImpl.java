@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import dominio.EspacioFisico;
 import externalAPIs.rabbitMQ.PublicadorEspacios;
-import externalAPIs.rabbitMQ.config.RabbitConfig;
 import externalAPIs.rabbitMQ.dto.out.EventoRabbit;
 import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import externalAPIs.rabbitMQ.mapper.EspacioRabbitMapper;
+import externalAPIs.rabbitMQ.RabbitMQInitializer;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static externalAPIs.rabbitMQ.config.RabbitConfig.*;
 
@@ -28,24 +28,28 @@ public class PublicadorEspaciosImpl implements PublicadorEspacios {
   }
 
   private void sendMessage(EventoRabbit evento) throws RabbitMQException {
-    try (Connection connection = RabbitConfig.crearFactoria().newConnection();
-        Channel channel = connection.createChannel()) {
+    try {
+      Channel channel = RabbitMQInitializer.getChannel();
 
-      RabbitConfig.queue(channel);
-        RabbitConfig.bind(channel);
-        RabbitConfig.exchange(channel);
-        
-      String mensaje = objectMapper.writeValueAsString(evento);
+      if (channel == null || !channel.isOpen()) {
+        throw new RabbitMQException("El canal de Rabbit no se encuentra disponible");
+      }
+
+      byte[] mensaje = objectMapper.writeValueAsBytes(evento);
 
       channel.basicPublish(
           EXCHANGE_NAME,
           ROUTING_KEY + evento.getTipoEvento().getNombre(),
-          new AMQP.BasicProperties.Builder().contentType("application/json").build(),
-          mensaje.getBytes(StandardCharsets.UTF_8));
+          new AMQP.BasicProperties.Builder()
+              .contentType("application/json")
+              .deliveryMode(2)
+              .headers(Map.of("__TypeId__", evento.getTipoEvento().getNombre()))
+              .build(),
+          mensaje);
 
     } catch (Exception e) {
       throw new RabbitMQException(
-          "Error al publicar el evento de tipo " + evento.getTipoEvento(), e);
+          "Error al publicar el evento de tipo " + evento.getTipoEvento().getNombre(), e);
     }
   }
 

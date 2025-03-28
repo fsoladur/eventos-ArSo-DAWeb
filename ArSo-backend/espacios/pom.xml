@@ -32,11 +32,6 @@
 			<artifactId>eclipselink</artifactId>
 			<version>2.7.15</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>javax.persistence-api</artifactId>
-			<version>2.2</version>
-		</dependency>
 
 		<!--SLF4J-->
 		<dependency>
@@ -84,6 +79,15 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-gson</artifactId>
 			<version>2.41</version>
+		</dependency>
+
+		<!-- Dependencia necesaria para utilizar la anotación WebListener y el api de javax -->
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- JAXB: solo es necesario si JDK > 8 -->

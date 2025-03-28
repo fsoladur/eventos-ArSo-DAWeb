@@ -11,7 +11,7 @@ public class RabbitConfig {
 	public static final String EXCHANGE_NAME = "bus";
 	public static final String QUEUE_NAME = "espacios";
 	public static final String ROUTING_KEY = "bus.espacios.";
-	public static final String BINDING_KEY_ESPACIOS = "bus.espacios.#";
+	public static final String BINDING_KEY_ESPACIOS = "bus.eventos.#";
 	
 	public static ConnectionFactory crearFactoria() throws Exception {
 		ConnectionFactory factory = new ConnectionFactory();
