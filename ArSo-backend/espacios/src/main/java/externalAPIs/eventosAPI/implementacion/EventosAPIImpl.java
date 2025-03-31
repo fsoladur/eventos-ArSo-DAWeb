@@ -27,21 +27,20 @@ public class EventosAPIImpl implements EventosAPI {
     Call<List<UUID>> call =
         eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(capacidad, fechaInicio, fechaFin);
     Response<List<UUID>> response = call.execute();
-    if (response.isSuccessful()) {
-      return response.body();
-    } else {
-      return List.of();
-    }
+    return response.isSuccessful() ? response.body() : List.of();
   }
 
   public boolean isOcupacionActiva(UUID id) throws IOException {
     Call<Boolean> call = eventosAPI.isOcupacionActiva(id);
     Response<Boolean> response = call.execute();
-    if (response.isSuccessful()) {
-      return Boolean.TRUE.equals(response.body());
-    } else {
-      // TODO: Se deberia lanzar una excepcion?
-      return true;
-    }
+    return !response.isSuccessful() || Boolean.TRUE.equals(response.body());
+  }
+
+  @Override
+  public boolean validarNuevaCapacidadEspacio(UUID idEspacio, int nuevaCapacidad)
+      throws IOException {
+    Call<Boolean> call = eventosAPI.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad);
+    Response<Boolean> response = call.execute();
+    return response.isSuccessful() && Boolean.TRUE.equals(response.body());
   }
 }

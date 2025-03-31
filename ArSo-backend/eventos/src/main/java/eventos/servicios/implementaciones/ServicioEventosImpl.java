@@ -3,37 +3,39 @@ package eventos.servicios.implementaciones;
 import eventos.dominio.EspacioFisico;
 import eventos.dominio.Evento;
 import eventos.dominio.enumerados.Categoria;
+import eventos.dominio.enumerados.EstadoEspacioFisico;
+import eventos.infraestructura.api.rest.dto.out.EventoDTO;
+import eventos.infraestructura.api.rest.mapper.EventoMapper;
+import eventos.infraestructura.externalAPIs.reservas.ReservasAPI;
+import eventos.infraestructura.rabbitMQ.PublicadorEventos;
+import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
+import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
+import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import eventos.servicios.ServicioEventos;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
-
-import eventos.dominio.enumerados.EstadoEspacioFisico;
-
-import eventos.infraestructura.rabbitMQ.PublicadorEventos;
-import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
-import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
-import eventos.infraestructura.api.rest.dto.out.EventoDTO;
-import eventos.infraestructura.api.rest.mapper.EventoMapper;
-import eventos.servicios.ServicioEventos;
 
 @Service
 public class ServicioEventosImpl implements ServicioEventos {
-
   private final RepositorioEventos repositorioEventos;
   private final RepositorioEspacios repositorioEspacios;
   private final PublicadorEventos publicadorEventos;
+  private final ReservasAPI reservasAPI;
 
   public ServicioEventosImpl(
       RepositorioEventos repositorioEventos,
       RepositorioEspacios repositorioEspacios,
-      PublicadorEventos publicadorEventos) {
+      PublicadorEventos publicadorEventos,
+      ReservasAPI reservasAPI) {
     this.repositorioEventos = repositorioEventos;
     this.repositorioEspacios = repositorioEspacios;
     this.publicadorEventos = publicadorEventos;
+    this.reservasAPI = reservasAPI;
   }
 
   @Override
@@ -129,7 +131,7 @@ public class ServicioEventosImpl implements ServicioEventos {
     }
 
     if (plazas < 0) {
-      throw new IllegalArgumentException("El número de plazas no puede ser negativo.");
+      throw new IllegalArgumentException("El número de plazas no puede ser negativo ni igual a 0");
     }
 
     Evento eventoParaModificar =
@@ -137,26 +139,37 @@ public class ServicioEventosImpl implements ServicioEventos {
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
+    if (eventoParaModificar.isCancelado()) {
+      throw new IllegalArgumentException("No se puede modificar un evento cancelado");
+    }
+
+    if (eventoParaModificar.getOcupacion() == null && (fechaInicio != null || fechaFin != null)) {
+      throw new IllegalArgumentException(
+          "No se puede modificar la fecha de un evento sin ocupación ya que está cancelado");
+    }
+
+    if (eventoParaModificar.getOcupacion() == null && idEspacioFisico != null) {
+      throw new IllegalArgumentException(
+          "No se puede modificar el espacio de un evento sin ocupación ya que está cancelado");
+    }
+
     if (descripcion != null && !descripcion.isEmpty()) {
       eventoParaModificar.setDescripcion(descripcion);
     }
 
     if (eventoParaModificar.getOcupacion() != null) {
-
-      Optional<EspacioFisico> nuevoEspacioFisico =
-          obtenerEspacioFisicoSiEsNecesario(idEspacioFisico);
+      EspacioFisico espacio = obtenerEspacioDestino(eventoParaModificar, idEspacioFisico);
+      int plazasActualizadas = plazas > 0 ? plazas : eventoParaModificar.getPlazas();
+      validarCapacidadEspacioFisico(plazasActualizadas, espacio);
 
       if (plazas > 0) {
-        validarCapacidadEspacioFisico(plazas, eventoParaModificar.getEspacioFisico());
+        validarNuevasPlazas(plazas, eventoParaModificar);
         eventoParaModificar.setPlazas(plazas);
       }
 
-      nuevoEspacioFisico.ifPresent(
-          espacioFisico -> {
-            validarCapacidadEspacioFisico(
-                plazas > 0 ? plazas : eventoParaModificar.getPlazas(), espacioFisico);
-            eventoParaModificar.setEspacioFisico(espacioFisico);
-          });
+      if (idEspacioFisico != null) {
+        eventoParaModificar.setEspacioFisico(espacio);
+      }
 
       if (fechaInicio != null
           && fechaInicio.isAfter(LocalDateTime.now())
@@ -169,33 +182,44 @@ public class ServicioEventosImpl implements ServicioEventos {
           && fechaFin.isAfter(eventoParaModificar.getFechaInicio())) {
         eventoParaModificar.setFechaFin(fechaFin);
       }
-
-      repositorioEventos.save(eventoParaModificar);
-      // publicamos el evento modificado
-      publicadorEventos.publicarEventoModificacion(eventoParaModificar);
     }
-
+    repositorioEventos.save(eventoParaModificar);
+    publicadorEventos.publicarEventoModificacion(eventoParaModificar);
     return eventoParaModificar;
   }
 
-  private Optional<EspacioFisico> obtenerEspacioFisicoSiEsNecesario(UUID idEspacioFisico)
+  private EspacioFisico obtenerEspacioDestino(Evento eventoParaModificar, UUID idEspacioFisico)
       throws EntidadNoEncontrada {
     if (idEspacioFisico == null) {
-      return Optional.empty();
+      return eventoParaModificar.getEspacioFisico();
     }
-	EspacioFisico espacio = repositorioEspacios.findById(idEspacioFisico)
-			.orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado"));
-	if(espacio.getEstado() != EstadoEspacioFisico.ACTIVO) {
-		throw new IllegalArgumentException("El espacio físico no está activo.");
-	}
-	
-	return Optional.of(espacio);
+    EspacioFisico espacioDestino =
+        repositorioEspacios
+            .findById(idEspacioFisico)
+            .orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado"));
+    if (espacioDestino.getEstado() != EstadoEspacioFisico.ACTIVO) {
+      throw new IllegalArgumentException("El espacio físico no está activo.");
+    }
+    return espacioDestino;
   }
 
   private void validarCapacidadEspacioFisico(int plazas, EspacioFisico espacioFisico) {
     if (espacioFisico != null && plazas > espacioFisico.getCapacidad()) {
       throw new IllegalArgumentException(
           "El número de plazas no puede ser mayor a la capacidad del espacio físico.");
+    }
+  }
+
+  private void validarNuevasPlazas(int plazas, Evento evento) {
+    if (plazas < evento.getPlazas()) {
+      try {
+        if (!reservasAPI.validarNuevasPlazasEvento(evento.getId(), plazas)) {
+          throw new IllegalArgumentException(
+              "No es posible reducir las plazas del evento porque hay más reservas que el nuevo límite propuesto");
+        }
+      } catch (IOException e) {
+        throw new RuntimeException("Error al validar plazas con el sistema de reservas", e);
+      }
     }
   }
 
@@ -216,7 +240,7 @@ public class ServicioEventosImpl implements ServicioEventos {
     repositorioEventos.save(evento);
 
     // publicamos el evento cancelado
-    publicadorEventos.publicarEventoBorrado(evento.getId().toString());
+    publicadorEventos.publicarEventoCancelado(evento.getId().toString());
     return true;
   }
 
@@ -272,5 +296,23 @@ public class ServicioEventosImpl implements ServicioEventos {
       throw new IllegalArgumentException("El id del espacio físico no puede ser nulo o vacío.");
     }
     return repositorioEventos.isOcupacionActiva(idEspacioFisico);
+  }
+
+  @Override
+  public boolean validarNuevaCapacidadEspacio(UUID idEspacio, int nuevaCapacidad)
+      throws EntidadNoEncontrada {
+    if (idEspacio == null) {
+      throw new IllegalArgumentException("El id del espacio físico no puede ser nulo o vacío.");
+    }
+    if (nuevaCapacidad < 0) {
+      throw new IllegalArgumentException("La nueva capacidad del espacio debe ser mayor que 0.");
+    }
+    if (!repositorioEspacios.existsById(idEspacio)) {
+      throw new EntidadNoEncontrada("El espacio físico especificado no existe.");
+    }
+    long eventosConCapacidadMayorQueNuevaCapacidad =
+        this.repositorioEventos.getEventosConCapacidadMayorQueNuevaCapacidad(
+            idEspacio, nuevaCapacidad);
+    return eventosConCapacidadMayorQueNuevaCapacidad == 0;
   }
 }

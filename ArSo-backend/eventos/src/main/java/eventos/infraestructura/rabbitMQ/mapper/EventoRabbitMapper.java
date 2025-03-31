@@ -1,9 +1,8 @@
 package eventos.infraestructura.rabbitMQ.mapper;
 
 import eventos.dominio.Evento;
+import eventos.infraestructura.rabbitMQ.dto.EventoRabbit;
 import eventos.infraestructura.rabbitMQ.dto.out.*;
-
-import java.util.Map;
 
 public class EventoRabbitMapper {
   public static EventoRabbit toEventoCreacion(Evento evento) {

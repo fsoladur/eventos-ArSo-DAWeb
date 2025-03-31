@@ -109,4 +109,32 @@ public interface ReservasApi {
           UUID idEvento,
       @Parameter(description = "Opciones de paginación") Pageable pageable)
       throws Exception;
+
+  @Operation(
+      operationId = "validarNuevasPlazas",
+      summary = "Validar nuevas plazas para un evento",
+      description =
+          "Valida si se pueden añadir nuevas plazas a un evento. Devuelve true si se pueden definir esas plazas, false en caso contrario.",
+      tags = {"reservas"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Validación exitosa",
+        content = @Content(schema = @Schema(implementation = Boolean.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Solicitud inválida",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Evento no encontrado",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Error interno del servidor",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class)))
+  })
+  @GetMapping("/eventos/{idEvento}/plazas")
+  public ResponseEntity<Boolean> validarNuevasPlazas(
+      @PathVariable UUID idEvento, @RequestParam int plazas) throws Exception;
 }

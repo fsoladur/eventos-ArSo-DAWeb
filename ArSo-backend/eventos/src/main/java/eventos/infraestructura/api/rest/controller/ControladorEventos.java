@@ -124,6 +124,12 @@ public class ControladorEventos implements EventosApi {
     return ResponseEntity.ok(this.servicioEventos.isOcupacionActiva(id));
   }
 
+  @GetMapping("/eventos/ocupaciones/espacios/{idEspacio}/capacidad")
+  public ResponseEntity<Boolean> validarNuevaCapacidadEspacio(
+      @PathVariable UUID idEspacio, @RequestParam int nuevaCapacidad) throws EntidadNoEncontrada {
+    return ResponseEntity.ok(this.servicioEventos.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad));
+  }
+
   private LocalDateTime parseFecha(String fecha) {
     try {
       return LocalDateTime.parse(fecha);

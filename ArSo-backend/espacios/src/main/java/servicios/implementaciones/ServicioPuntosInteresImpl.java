@@ -1,9 +1,9 @@
 package servicios.implementaciones;
 
-import externalAPIs.geonamesAPI.exception.*;
+import dominio.PuntoInteres;
 import externalAPIs.factoria.FactoriaServicioExterno;
 import externalAPIs.geonamesAPI.GeoNamesAPI;
-import dominio.PuntoInteres;
+import externalAPIs.geonamesAPI.exception.*;
 import java.util.List;
 import servicios.ServicioPuntosInteres;
 
@@ -22,7 +22,7 @@ public class ServicioPuntosInteresImpl implements ServicioPuntosInteres {
     if (longitud < -180 || longitud > 180) {
       throw new IllegalArgumentException("La longitud debe estar entre -180 y 180 grados");
     }
-    
+
     return geoNamesAPI.findNearByPuntosInteres(latitud, longitud);
   }
 }
