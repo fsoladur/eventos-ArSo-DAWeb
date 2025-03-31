@@ -34,7 +34,7 @@ public class PublicadorEventosImpl implements PublicadorEventos {
   }
 
   @Override
-  public void publicarEventoBorrado(String entidadId) {
+  public void publicarEventoCancelado(String entidadId) {
     publicarEvento(
         EventoRabbitMapper.toEventoBorrado(entidadId), TipoEvento.EVENTO_CANCELADO.getNombre());
   }

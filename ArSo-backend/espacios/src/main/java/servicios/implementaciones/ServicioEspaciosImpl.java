@@ -40,8 +40,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       double latitud,
       String descripcion)
       throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-    // TODO Auto-generated method stub
-    // Comprobar que los parámetros no son nulos o vacíos
+
     if (nombre == null || nombre.isEmpty()) {
       throw new IllegalArgumentException("El nombre del espacio no puede ser nulo o vacío.");
     }
@@ -114,6 +113,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
     }
 
+    if(capacidad < 0) {
+        throw new IllegalArgumentException("La capacidad no puede ser negativa.");
+    }
+
     EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
 
     if (nombre != null && !nombre.isEmpty()) {
@@ -125,7 +128,6 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
     }
 
     if (capacidad > 0) {
-
       if (capacidad < espacioFisico.getCapacidad()
           && !eventosAPI.validarNuevaCapacidadEspacio(idEspacio, capacidad)) {
         throw new IllegalArgumentException(

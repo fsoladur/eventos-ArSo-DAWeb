@@ -1,7 +1,6 @@
 package eventos.servicios.implementaciones;
 
 import eventos.dominio.EspacioFisico;
-import eventos.dominio.Evento;
 import eventos.dominio.enumerados.EstadoEspacioFisico;
 import eventos.infraestructura.rabbitMQ.PublicadorEventos;
 import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
@@ -9,7 +8,6 @@ import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
 import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
 import eventos.servicios.ServicioDespachadorEspacios;
 
-import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +61,7 @@ public class ServicioDespachadorEspaciosImpl implements ServicioDespachadorEspac
             evento -> {
               evento.cancelar();
               this.repositorioEventos.save(evento);
-              this.publicadorEventos.publicarEventoBorrado(evento.getId().toString());
+              this.publicadorEventos.publicarEventoCancelado(evento.getId().toString());
             });
     this.repositorioEspacios.save(espacio);
   }

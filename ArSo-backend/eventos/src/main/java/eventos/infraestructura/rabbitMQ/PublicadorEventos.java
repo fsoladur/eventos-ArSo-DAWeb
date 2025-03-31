@@ -5,5 +5,5 @@ import eventos.dominio.Evento;
 public interface PublicadorEventos {
   void publicarEventoCreacion(Evento evento);
   void publicarEventoModificacion(Evento evento);
-  void publicarEventoBorrado(String entidadId);
+  void publicarEventoCancelado(String entidadId);
 }

@@ -3,25 +3,22 @@ package eventos.servicios.implementaciones;
 import eventos.dominio.EspacioFisico;
 import eventos.dominio.Evento;
 import eventos.dominio.enumerados.Categoria;
-
+import eventos.dominio.enumerados.EstadoEspacioFisico;
+import eventos.infraestructura.api.rest.dto.out.EventoDTO;
+import eventos.infraestructura.api.rest.mapper.EventoMapper;
+import eventos.infraestructura.externalAPIs.reservas.ReservasAPI;
+import eventos.infraestructura.rabbitMQ.PublicadorEventos;
+import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
+import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
+import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
+import eventos.servicios.ServicioEventos;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
-
-import eventos.dominio.enumerados.EstadoEspacioFisico;
-
-import eventos.infraestructura.externalAPIs.reservas.ReservasAPI;
-import eventos.infraestructura.rabbitMQ.PublicadorEventos;
-import eventos.infraestructura.repositorios.eventos.RepositorioEventos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import eventos.infraestructura.repositorios.espacios.RepositorioEspacios;
-import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
-import eventos.infraestructura.api.rest.dto.out.EventoDTO;
-import eventos.infraestructura.api.rest.mapper.EventoMapper;
-import eventos.servicios.ServicioEventos;
 
 @Service
 public class ServicioEventosImpl implements ServicioEventos {
@@ -142,6 +139,20 @@ public class ServicioEventosImpl implements ServicioEventos {
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
+    if (eventoParaModificar.isCancelado()) {
+      throw new IllegalArgumentException("No se puede modificar un evento cancelado");
+    }
+
+    if (eventoParaModificar.getOcupacion() == null && (fechaInicio != null || fechaFin != null)) {
+      throw new IllegalArgumentException(
+          "No se puede modificar la fecha de un evento sin ocupación ya que está cancelado");
+    }
+
+    if (eventoParaModificar.getOcupacion() == null && idEspacioFisico != null) {
+      throw new IllegalArgumentException(
+          "No se puede modificar el espacio de un evento sin ocupación ya que está cancelado");
+    }
+
     if (descripcion != null && !descripcion.isEmpty()) {
       eventoParaModificar.setDescripcion(descripcion);
     }
@@ -172,7 +183,6 @@ public class ServicioEventosImpl implements ServicioEventos {
         eventoParaModificar.setFechaFin(fechaFin);
       }
     }
-
     repositorioEventos.save(eventoParaModificar);
     publicadorEventos.publicarEventoModificacion(eventoParaModificar);
     return eventoParaModificar;
@@ -230,7 +240,7 @@ public class ServicioEventosImpl implements ServicioEventos {
     repositorioEventos.save(evento);
 
     // publicamos el evento cancelado
-    publicadorEventos.publicarEventoBorrado(evento.getId().toString());
+    publicadorEventos.publicarEventoCancelado(evento.getId().toString());
     return true;
   }
 

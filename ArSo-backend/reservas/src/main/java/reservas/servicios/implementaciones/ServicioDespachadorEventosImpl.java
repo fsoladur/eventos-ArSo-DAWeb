@@ -32,7 +32,7 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
         this.repositorioEventos
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
-    evento.setCancelado(true);
+    evento.cancelar();
     evento
         .getReservas()
         .forEach(
@@ -45,14 +45,12 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
   }
 
   @Override
-  public void despacharModificacionEvento(UUID idEvento, int plazasDisponibles) throws Exception {
+  public void despacharModificacionEvento(UUID idEvento, int plazasMaximasDisponibles) throws Exception {
     Evento evento =
         this.repositorioEventos
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
-    if (plazasDisponibles != evento.getPlazasDisponibles()) {
-      evento.setPlazasDisponibles(plazasDisponibles - evento.getPlazasReservadas());
-    }
+    evento.setPlazasDisponibles(plazasMaximasDisponibles - evento.getPlazasReservadas());
     this.repositorioEventos.save(evento);
   }
 }

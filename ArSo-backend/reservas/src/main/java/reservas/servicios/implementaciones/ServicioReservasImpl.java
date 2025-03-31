@@ -84,10 +84,12 @@ public class ServicioReservasImpl implements ServicioReservas {
       throw new IllegalArgumentException("El número de plazas debe ser mayor que 0");
     }
 
+    //TODO : Esto se puede hacer con una agregación en MongoDB que devuelva directamente el número de reservas asociadas al evento
     Evento evento =
         repositorioEventos
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+
     return evento.getPlazasReservadas() <= plazas;
   }
 }

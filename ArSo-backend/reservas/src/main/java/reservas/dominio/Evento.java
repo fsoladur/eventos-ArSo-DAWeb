@@ -64,6 +64,10 @@ public class Evento {
     this.cancelado = cancelado;
   }
 
+  public void cancelar() {
+    this.setCancelado(true);
+  }
+
   public List<Reserva> getReservas() {
     return Collections.unmodifiableList(reservas);
   }
