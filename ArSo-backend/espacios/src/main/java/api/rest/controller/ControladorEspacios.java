@@ -85,7 +85,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response modificarEspacioFisico(
       @PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
 
     servicio.modificarEspacioFisico(
         id, espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());

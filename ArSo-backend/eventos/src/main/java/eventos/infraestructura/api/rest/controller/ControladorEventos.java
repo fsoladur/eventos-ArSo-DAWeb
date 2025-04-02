@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -45,6 +46,7 @@ public class ControladorEventos implements EventosApi {
   }
 
   @PostMapping("/eventos")
+  @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
   public ResponseEntity<Void> darAltaEvento(@Valid @RequestBody CrearEventoDto crearEventoDto)
       throws Exception {
 
@@ -66,6 +68,7 @@ public class ControladorEventos implements EventosApi {
   }
 
   @PatchMapping("/eventos/{id}")
+  @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
   public ResponseEntity<Void> modificarEvento(
       @PathVariable UUID id, @Valid @RequestBody ModificarEventoDTO modificarEventoDTO)
       throws Exception {
@@ -90,12 +93,14 @@ public class ControladorEventos implements EventosApi {
   }
 
   @PutMapping("/eventos/{id}")
+  @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
   public ResponseEntity<Void> cancelarEvento(@PathVariable UUID id) throws EntidadNoEncontrada {
     this.servicioEventos.cancelarEvento(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/eventos")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
   public PagedModel<EntityModel<EventoDTO>> getEventosDelMes(
       @RequestParam String mes, @RequestParam String anio, Pageable pageable) throws Exception {
 
@@ -105,11 +110,13 @@ public class ControladorEventos implements EventosApi {
   }
 
   @GetMapping("/eventos/{id}")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
   public EntityModel<EventoDTO> recuperarEvento(@PathVariable UUID id) throws EntidadNoEncontrada {
     return eventoDtoAssembler.toModel(EventoMapper.toDTO(this.servicioEventos.recuperarEvento(id)));
   }
 
   @GetMapping("/eventos/espaciosLibres")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
   public ResponseEntity<List<UUID>> getEspaciosSinEventosYCapacidadSuficiente(
       @RequestParam int capacidad, @RequestParam String fechaInicio, @RequestParam String fechaFin)
       throws EntidadNoEncontrada {
