@@ -35,12 +35,7 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		
-		String path = requestContext.getUriInfo().getPath();
-		// Rutas públicas
-		if (path.equals("auth/login")) {
-			return;
-		}
-		
+
 		// Implementación del control de autorización
 		String authorization = requestContext.getHeaderString("Authorization");
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
