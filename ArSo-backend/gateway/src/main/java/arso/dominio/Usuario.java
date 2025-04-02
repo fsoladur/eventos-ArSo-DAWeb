@@ -1,4 +1,4 @@
-package arso.servicios.dominio;
+package arso.dominio;
 
 import java.util.ArrayList;
 import java.util.UUID;

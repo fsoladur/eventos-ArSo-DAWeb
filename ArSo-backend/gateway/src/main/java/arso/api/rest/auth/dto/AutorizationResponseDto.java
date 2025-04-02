@@ -1,4 +1,4 @@
-package arso.auth.dto;
+package arso.api.rest.auth.dto;
 
 import java.util.ArrayList;
 import java.util.UUID;
