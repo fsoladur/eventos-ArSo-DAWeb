@@ -3,20 +3,20 @@ package servicios.implementaciones;
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
-import externalAPIs.eventosAPI.EventosAPI;
-import externalAPIs.factoria.FactoriaServicioExterno;
-import externalAPIs.rabbitMQ.PublicadorEspacios;
-import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.eventosAPI.EventosAPI;
+import infraestructura.externalAPIs.factoria.FactoriaServicioExterno;
+import infraestructura.externalAPIs.rabbitMQ.PublicadorEspacios;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import repositorio.RepositorioEspacioFisicoAdhoc;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
-import repositorio.factoria.FactoriaRepositorios;
+import infraestructura.repositorio.RepositorioEspacioFisicoAdhoc;
+import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
+import infraestructura.repositorio.excepciones.RepositorioException;
+import infraestructura.repositorio.factoria.FactoriaRepositorios;
 import servicios.ServicioEspacios;
 
 public class ServicioEspaciosImpl implements ServicioEspacios {
