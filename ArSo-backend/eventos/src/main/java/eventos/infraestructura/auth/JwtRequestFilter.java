@@ -1,16 +1,19 @@
-package arso.api.rest.auth.filter;
+package eventos.infraestructura.auth;
 
-import arso.servicios.ServicioAuth;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,28 +24,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-  private final ServicioAuth servicioAuth;
-
-  public JwtRequestFilter(ServicioAuth servicioAuth) {
-    this.servicioAuth = servicioAuth;
-  }
-
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    String path = request.getRequestURI();
-    return path.startsWith("/auth/login");
-  }
-
-  // curl -X GET -H "Authorization: Bearer %token_jwt%"
-  // http://localhost:8080/api/espacios/1
-  // curl -i http://localhost:8080/api/espacios/1
   @Override
   protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain chain)
-      throws IOException, ServletException {
-
+      HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+      throws ServletException, IOException {
     String jwtToken = extractToken(request);
 
     if (jwtToken == null) {
@@ -50,23 +35,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
           HttpServletResponse.SC_UNAUTHORIZED, "No se ha proporcionado el token JWT");
       return;
     }
-    try {
-      Claims claims = servicioAuth.validateToken(jwtToken);
-      String[] roles = claims.get("roles", String.class).split(",");
 
-      // Establece el contexto de seguridad
-      ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-      Arrays.stream(roles).forEach(rol -> authorities.add(new SimpleGrantedAuthority(rol)));
+    Claims claims = decodeToken(jwtToken);
+    String[] roles = claims.get("roles").toString().split(",");
 
-      UsernamePasswordAuthenticationToken auth =
-          new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
-      // Establecemos la autenticación en el contexto de seguridad
-      // Se interpreta como que el usuario ha superado la autenticación
-      SecurityContextHolder.getContext().setAuthentication(auth);
-    } catch (Exception e) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "El token JWT no es correcto");
-      return;
-    }
+    // Establece el contexto de seguridad
+    ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+    Arrays.stream(roles).forEach(rol -> authorities.add(new SimpleGrantedAuthority(rol)));
+
+    UsernamePasswordAuthenticationToken auth =
+        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+    SecurityContextHolder.getContext().setAuthentication(auth);
 
     chain.doFilter(request, response);
   }
@@ -86,5 +65,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       }
     }
     return null;
+  }
+
+  private Claims decodeToken(String token) throws JsonProcessingException {
+    String[] parts = token.split("\\.");
+    if (parts.length < 2) throw new IllegalArgumentException("Token inválido");
+
+    String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, Object> payloadMap = mapper.readValue(payload, Map.class);
+
+    // Convertimos el Map en un objeto Claims compatible con el resto del código
+    Claims claims = Jwts.claims();
+    claims.putAll(payloadMap);
+    return claims;
   }
 }
