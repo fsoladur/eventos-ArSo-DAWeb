@@ -1,10 +1,12 @@
 package servicios.implementaciones;
 
 import dominio.PuntoInteres;
-import externalAPIs.factoria.FactoriaServicioExterno;
-import externalAPIs.geonamesAPI.GeoNamesAPI;
-import externalAPIs.geonamesAPI.exception.*;
+import infraestructura.externalAPIs.factoria.FactoriaServicioExterno;
+import infraestructura.externalAPIs.geonamesAPI.GeoNamesAPI;
+
 import java.util.List;
+
+import infraestructura.externalAPIs.geonamesAPI.exception.GeoNamesAPIFailException;
 import servicios.ServicioPuntosInteres;
 
 public class ServicioPuntosInteresImpl implements ServicioPuntosInteres {

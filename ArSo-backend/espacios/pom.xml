@@ -32,13 +32,11 @@
 			<artifactId>eclipselink</artifactId>
 			<version>2.7.15</version>
 		</dependency>
-
 		<!--SLF4J-->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-
 		<!-- test lib -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

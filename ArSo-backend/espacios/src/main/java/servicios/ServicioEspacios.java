@@ -2,14 +2,14 @@ package servicios;
 
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
-import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
+import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
+import infraestructura.repositorio.excepciones.RepositorioException;
 
 public interface ServicioEspacios {
 
