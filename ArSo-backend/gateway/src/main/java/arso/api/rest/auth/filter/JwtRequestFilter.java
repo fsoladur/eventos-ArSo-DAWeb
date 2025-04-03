@@ -45,28 +45,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     String jwtToken = extractToken(request);
 
-    if (jwtToken != null) {
-      try {
-
-        Claims claims = servicioAuth.validateToken(jwtToken);
-        String[] roles = claims.get("roles", String.class).split(",");
-
-        // Establece el contexto de seguridad
-        ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        Arrays.stream(roles).forEach(rol -> authorities.add(new SimpleGrantedAuthority(rol)));
-
-        UsernamePasswordAuthenticationToken auth =
-            new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
-        // Establecemos la autenticación en el contexto de seguridad
-        // Se interpreta como que el usuario ha superado la autenticación
-        SecurityContextHolder.getContext().setAuthentication(auth);
-      } catch (Exception e) {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "El token JWT no es correcto");
-        return;
-      }
-    } else {
+    if (jwtToken == null) {
       response.sendError(
           HttpServletResponse.SC_UNAUTHORIZED, "No se ha proporcionado el token JWT");
+      return;
+    }
+    try {
+      Claims claims = servicioAuth.validateToken(jwtToken);
+      String[] roles = claims.get("roles", String.class).split(",");
+
+      // Establece el contexto de seguridad
+      ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+      Arrays.stream(roles).forEach(rol -> authorities.add(new SimpleGrantedAuthority(rol)));
+
+      UsernamePasswordAuthenticationToken auth =
+          new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+      // Establecemos la autenticación en el contexto de seguridad
+      // Se interpreta como que el usuario ha superado la autenticación
+      SecurityContextHolder.getContext().setAuthentication(auth);
+    } catch (Exception e) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "El token JWT no es correcto");
       return;
     }
 

@@ -39,7 +39,6 @@ public class ServicioAuthImpl implements ServicioAuth {
   @Override
   public Claims validateToken(String token) {
     Claims claims = Jwts.parser().setSigningKey(SECRETO).parseClaimsJws(token).getBody();
-
     return claims;
   }
 
