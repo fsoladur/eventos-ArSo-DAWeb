@@ -6,15 +6,4 @@ Los integrantes encargados de realizar este proyecto serán:
 - Antonio Pérez Serrano
 
 En este repositorio dividiremos el contenido del mismo en dos directorios uno para cada asignatura.
-
-Tareas por realizar:
-
-- Hacer un método en el api de eventos que cumpla la siguiente especificacion:
-
-```java
-"SELECT ev " +
-"FROM Evento ev " +
-"WHERE ev.ocupacion.espacioFisico.id = e.id " +
-"AND ev.ocupacion.fechaInicio <= :fechaFin " +
-"AND ev.ocupacion.fechaFin >= :fechaInicio)
-```
+El directorio de ArSo contendrá el contenido relacionado con la asignatura de Arquitectura de Software y el directorio de DAWeb contendrá el contenido relacionado con la asignatura de Desarrollo de Aplicaciones Web.
