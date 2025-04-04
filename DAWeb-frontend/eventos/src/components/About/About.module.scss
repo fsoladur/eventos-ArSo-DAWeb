@@ -1,0 +1,45 @@
+// src/components/About/About.module.scss
+@use '../../styles/variables' as *;
+
+.aboutSection {
+  background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/about-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 0;
+}
+
+.imageWrapper {
+  position: relative;
+
+  img {
+    border-radius: 1rem;
+  }
+}
+
+.overlayCard {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  max-width: 80%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  i {
+    font-size: 2rem;
+    color: $secondary;
+  }
+
+  h5 {
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}

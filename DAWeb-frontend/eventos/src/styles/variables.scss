@@ -1,0 +1,30 @@
+// src/styles/_variables.scss
+
+$white: #ffffff;
+$black: #000000;
+$festava-yellow: #F8CB2E;
+$festava-orange: #EE5007;
+$festava-red: #c01f27;
+$festava-gray: #717275;
+$festava-border: #7fffd4;
+
+// Bootstrap overrides
+$primary: $festava-yellow;
+$secondary: $festava-orange;
+$danger: $festava-red;
+$dark: $black;
+$body-color: $festava-gray;
+
+// new variables
+$custom-btn-bg-color: $festava-orange;
+$custom-btn-bg-hover-color: $festava-red;
+
+$theme-colors: (
+  "primary": $festava-yellow,
+  "secondary": $festava-orange,
+  "danger": $festava-red,
+  "dark": $black,
+  "white": $white
+);
+
+$border-radius-large: 100px;
