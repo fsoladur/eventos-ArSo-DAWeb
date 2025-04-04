@@ -1,11 +1,9 @@
 package eventos.infraestructura.repositorios.eventos;
 
 import eventos.dominio.Evento;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -58,10 +56,20 @@ public interface RepositorioEventosJpa extends RepositorioEventos, JpaRepository
       @Param("idEspacio") UUID idEspacio, @Param("nuevaCapacidad") int nuevaCapacidad);
 
   @Override
-    @Query(
-        "SELECT e "
-            + "FROM Evento e "
-            + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
-            + "AND e.cancelado = FALSE")
+  @Query(
+      "SELECT e "
+          + "FROM Evento e "
+          + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
+          + "AND e.cancelado = FALSE")
   List<Evento> getEventosPorEspacio(UUID idEspacio);
+
+  @Override
+  @Query(
+      "SELECT CASE WHEN (COUNT(e) > 0) THEN TRUE ELSE FALSE END "
+          + "FROM Evento e "
+          + "WHERE e.ocupacion.espacioFisico.id = :idEspacio "
+          + "AND e.cancelado = FALSE "
+          + "AND (e.ocupacion.fechaInicio < :fechaFin AND e.ocupacion.fechaFin > :fechaInicio)")
+  boolean existeEventoSolapado(
+      @Param("idEspacio") UUID idEspacio,@Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);
 }

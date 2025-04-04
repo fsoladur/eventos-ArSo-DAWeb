@@ -24,10 +24,17 @@ public final class ErrorDto {
       example = "El número de plazas a reservar debe ser mayor que 0")
   private final String mensaje;
 
+  @Schema(
+      description =
+          "Nombre del microservicio que ha generado el error, útil para identificar la fuente del problema.",
+      example = "reservas")
+  private final String microservicio;
+
   public ErrorDto(String estado, String titulo, String mensaje) {
     this.estado = estado;
     this.titulo = titulo;
     this.mensaje = mensaje;
+    this.microservicio = "/eventos";
   }
 
   public String getEstado() {
@@ -40,5 +47,9 @@ public final class ErrorDto {
 
   public String getTitulo() {
     return titulo;
+  }
+
+  public String getMicroservicio() {
+    return microservicio;
   }
 }

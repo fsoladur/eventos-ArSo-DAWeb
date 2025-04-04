@@ -77,7 +77,7 @@ public class ServicioReservasImpl implements ServicioReservas {
   }
 
   @Override
-  public Boolean validarNuevasPlazasEvento(UUID idEvento, int plazas) {
+  public boolean validarNuevasPlazasEvento(UUID idEvento, int plazas) {
     if (idEvento == null) {
       throw new IllegalArgumentException("El id del evento no puede ser nulo");
     }
@@ -89,6 +89,6 @@ public class ServicioReservasImpl implements ServicioReservas {
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
-    return evento.getPlazasReservadas() <= plazas;
+    return evento.getPlazasReservadas() >= plazas;
   }
 }

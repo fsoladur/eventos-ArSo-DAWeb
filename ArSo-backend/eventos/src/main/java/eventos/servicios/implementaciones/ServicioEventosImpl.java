@@ -89,6 +89,11 @@ public class ServicioEventosImpl implements ServicioEventos {
             .findById(idEspacioFisico)
             .orElseThrow(() -> new EntidadNoEncontrada("Espacio físico no encontrado"));
 
+    if (repositorioEventos.existeEventoSolapado(espacioFisico.getId(), fechaInicio, fechaFin)) {
+      throw new IllegalArgumentException(
+          "El evento no puede solaparse con otro evento existente en el mismo espacio físico. Debes elegir otro espacio físico o modificar las fechas del evento.");
+    }
+
     // LA CAPACIDAD TAMBIÉN ES IMPORTANTE
     if (plazas > espacioFisico.getCapacidad()) {
       throw new IllegalArgumentException(
