@@ -14,6 +14,7 @@ public class Evento {
 
   @MongoId(FieldType.STRING)
   private UUID id;
+
   private int plazasDisponibles;
   private boolean cancelado;
   @DBRef private List<Reserva> reservas;
@@ -43,6 +44,10 @@ public class Evento {
     this.id = id;
   }
 
+  public int getPlazasReservadas() {
+    return this.reservas.stream().mapToInt(Reserva::getPlazasReservadas).sum();
+  }
+
   public int getPlazasDisponibles() {
     return plazasDisponibles;
   }
@@ -57,6 +62,10 @@ public class Evento {
 
   public void setCancelado(boolean cancelado) {
     this.cancelado = cancelado;
+  }
+
+  public void cancelar() {
+    this.setCancelado(true);
   }
 
   public List<Reserva> getReservas() {

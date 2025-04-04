@@ -24,4 +24,6 @@ public interface ServicioReservas {
    * List<ReservaDTO>
    */
   Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws Exception;
+
+  Boolean validarNuevasPlazasEvento(UUID idEvento, int plazas);
 }

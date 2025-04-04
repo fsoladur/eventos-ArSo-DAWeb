@@ -19,7 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import dominio.enumerados.EstadoEspacioFisico;
-import repositorio.Identificable;
+import infraestructura.repositorio.Identificable;
 
 @Entity
 public class EspacioFisico implements Identificable {

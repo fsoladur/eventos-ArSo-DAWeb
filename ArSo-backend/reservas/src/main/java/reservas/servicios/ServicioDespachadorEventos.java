@@ -8,6 +8,6 @@ public interface ServicioDespachadorEventos {
 
   void despacharCancelacionEvento(UUID idEvento) throws Exception;
 
-  void despacharModificacionEvento(UUID idEvento, int plazasDisponibles)
+  void despacharModificacionEvento(UUID idEvento, int plazasMaximasDisponibles)
       throws Exception;
 }

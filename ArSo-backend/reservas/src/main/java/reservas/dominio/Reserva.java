@@ -7,9 +7,11 @@ import org.springframework.data.mongodb.core.mapping.*;
 public class Reserva {
   @MongoId(FieldType.STRING)
   private UUID id;
+
   @Field(name = "idUsuario", targetType = FieldType.STRING)
   private UUID idUsuario;
 
+  private boolean cancelado;
   private int plazasReservadas;
   @DBRef private Evento evento;
 
@@ -18,6 +20,7 @@ public class Reserva {
     this.idUsuario = idUsuario;
     this.plazasReservadas = plazasReservadas;
     this.evento = evento;
+    this.cancelado = false;
   }
 
   public UUID getId() {
@@ -50,5 +53,17 @@ public class Reserva {
 
   public void setEvento(Evento evento) {
     this.evento = evento;
+  }
+
+  public boolean isCancelado() {
+    return cancelado;
+  }
+
+  public void setCancelado(boolean cancelado) {
+    this.cancelado = cancelado;
+  }
+
+  public void cancelar() {
+    this.setCancelado(true);
   }
 }

@@ -3,26 +3,21 @@ package servicios.implementaciones;
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
 import dominio.enumerados.EstadoEspacioFisico;
-
+import infraestructura.externalAPIs.eventosAPI.EventosAPI;
+import infraestructura.externalAPIs.factoria.FactoriaServicioExterno;
+import infraestructura.externalAPIs.rabbitMQ.PublicadorEspacios;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import api.rest.mapper.EspacioFisicoMapper;
-import externalAPIs.eventosAPI.EventosAPI;
-import externalAPIs.factoria.FactoriaServicioExterno;
-import externalAPIs.rabbitMQ.PublicadorEspacios;
-import externalAPIs.rabbitMQ.excepciones.RabbitMQException;
-import repositorio.RepositorioEspacioFisicoAdhoc;
-import repositorio.excepciones.EntidadNoEncontrada;
-import repositorio.excepciones.RepositorioException;
-import repositorio.factoria.FactoriaRepositorios;
+import infraestructura.repositorio.RepositorioEspacioFisicoAdhoc;
+import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
+import infraestructura.repositorio.excepciones.RepositorioException;
+import infraestructura.repositorio.factoria.FactoriaRepositorios;
 import servicios.ServicioEspacios;
-import api.rest.DTO.EspacioFisicoDTO;
 
 public class ServicioEspaciosImpl implements ServicioEspacios {
 
@@ -45,8 +40,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       double latitud,
       String descripcion)
       throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
-    // TODO Auto-generated method stub
-    // Comprobar que los parámetros no son nulos o vacíos
+
     if (nombre == null || nombre.isEmpty()) {
       throw new IllegalArgumentException("El nombre del espacio no puede ser nulo o vacío.");
     }
@@ -113,10 +107,14 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
   @Override
   public EspacioFisico modificarEspacioFisico(
       UUID idEspacio, String nombre, String descripcion, int capacidad)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
 
     if (idEspacio == null) {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
+    }
+
+    if(capacidad < 0) {
+        throw new IllegalArgumentException("La capacidad no puede ser negativa.");
     }
 
     EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
@@ -130,6 +128,11 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
     }
 
     if (capacidad > 0) {
+      if (capacidad < espacioFisico.getCapacidad()
+          && !eventosAPI.validarNuevaCapacidadEspacio(idEspacio, capacidad)) {
+        throw new IllegalArgumentException(
+            "No es posible puede reducir la capacidad del espacio ya que existe un evento asociado a él cuyas plazas son superiores a la nueva capacidad");
+      }
       espacioFisico.setCapacidad(capacidad);
     }
 
@@ -194,7 +197,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
         eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(
             capacidadRequerida, fechaInicio.toString(), fechaFin.toString());
 
-      return repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
+    return repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
   }
 
   @Override
@@ -214,6 +217,6 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
     }
 
-      return repositorioEspacioFisico.getById(idEspacio);
+    return repositorioEspacioFisico.getById(idEspacio);
   }
 }

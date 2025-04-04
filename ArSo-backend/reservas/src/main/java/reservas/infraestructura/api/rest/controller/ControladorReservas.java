@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import reservas.infraestructura.api.rest.assembler.PagedReservaDtoAssembler;
@@ -37,6 +38,7 @@ public class ControladorReservas implements ReservasApi {
   }
 
   @PostMapping("/reservas")
+  @PreAuthorize("hasAuthority('USUARIO')")
   public ResponseEntity<Void> crearReserva(@Valid @RequestBody CrearReservaDto crearReservaDto)
       throws Exception {
     UUID id =
@@ -51,6 +53,7 @@ public class ControladorReservas implements ReservasApi {
   }
 
   @GetMapping("/reservas/{idReserva}")
+  @PreAuthorize("hasAuthority('USUARIO')")
   public EntityModel<ReservaDto> getReserva(@PathVariable UUID idReserva) throws Exception {
     return reservaDtoAssembler.toModel(ReservaMapper.toDTO(this.servicioReservas.get(idReserva)));
   }
@@ -61,5 +64,12 @@ public class ControladorReservas implements ReservasApi {
     return this.pagedResourcesAssembler.toModel(
         this.servicioReservas.getAll(idEvento, pageable).map(ReservaMapper::toDTO),
         reservaDtoAssembler);
+  }
+  
+  @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
+  @GetMapping("/eventos/{idEvento}/plazas")
+  public ResponseEntity<Boolean> validarNuevasPlazas(
+      @PathVariable UUID idEvento, @RequestParam int plazas) throws Exception {
+    return ResponseEntity.ok(this.servicioReservas.validarNuevasPlazasEvento(idEvento, plazas));
   }
 }

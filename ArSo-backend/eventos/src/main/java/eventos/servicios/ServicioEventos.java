@@ -72,4 +72,6 @@ public interface ServicioEventos {
    * o "no"
    */
   boolean isOcupacionActiva(final UUID idEspacioFisico) throws EntidadNoEncontrada;
+
+  boolean validarNuevaCapacidadEspacio(final UUID idEspacio, final int nuevaCapacidad) throws EntidadNoEncontrada;
 }

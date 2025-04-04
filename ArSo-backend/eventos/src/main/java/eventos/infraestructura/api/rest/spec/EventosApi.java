@@ -214,7 +214,7 @@ public interface EventosApi {
 
   @Operation(
       operationId = "isOcupacionActiva",
-      summary = "Verificar ocupación activa para un espacio físico",
+      summary = "Verificar si existe una ocupación activa para un espacio físico indicado",
       description =
           "Devuelve un indicador booleano que especifica si existe una ocupación activa para el espacio físico indicado por su UUID.",
       tags = {"eventos"})
@@ -243,5 +243,45 @@ public interface EventosApi {
               required = true,
               example = "123e4567-e89b-12d3-a456-426614174000")
           UUID id)
+      throws EntidadNoEncontrada;
+
+  @Operation(
+      operationId = "validarNuevaCapacidadEspacio",
+      summary = "Validar nueva capacidad para un espacio físico",
+      description =
+          "Verifica si la nueva capacidad de un espacio físico es válida, asegurando que no haya eventos programados con una capacidad mayor.",
+      tags = {"eventos"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Validación de nueva capacidad realizada correctamente",
+        content = @Content(schema = @Schema(implementation = Boolean.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Solicitud inválida",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "No existe un espacio físico con el ID proporcionado.",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Error interno del servidor",
+        content = @Content(schema = @Schema(implementation = ErrorDto.class)))
+  })
+  @GetMapping("/eventos/ocupaciones/espacios/{idEspacio}/capacidad")
+  ResponseEntity<Boolean> validarNuevaCapacidadEspacio(
+      @PathVariable
+          @Parameter(
+              description = "Identificador del espacio físico",
+              required = true,
+              example = "123e4567-e89b-12d3-a456-426614174000")
+          UUID idEspacio,
+      @RequestParam
+          @Parameter(
+              description = "Nueva capacidad propuesta para el espacio físico",
+              required = true,
+              example = "64")
+          int nuevaCapacidad)
       throws EntidadNoEncontrada;
 }

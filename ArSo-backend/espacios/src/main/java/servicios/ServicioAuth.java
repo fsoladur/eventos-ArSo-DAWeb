@@ -1,12 +1,11 @@
 package servicios;
 
+import io.jsonwebtoken.Claims;
 import java.util.Map;
 
-import io.jsonwebtoken.Claims;
-
 public interface ServicioAuth {
-	
-	String generarToken(Map<String, Object> claims);
-	Claims validateToken(String token);
 
+  String generarToken(Map<String, Object> claims);
+
+  Claims validateToken(String token);
 }
