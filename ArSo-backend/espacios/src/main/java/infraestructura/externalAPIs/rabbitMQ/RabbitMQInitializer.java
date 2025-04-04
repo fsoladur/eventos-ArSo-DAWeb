@@ -15,10 +15,9 @@ public class RabbitMQInitializer implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    int retries = 0;
     boolean connected = false;
 
-    while (retries < MAX_RETRIES && !connected) {
+    while (!connected) {
       try {
         connection = RabbitConfig.crearFactoria().newConnection();
         channel = connection.createChannel();
@@ -26,13 +25,16 @@ public class RabbitMQInitializer implements ServletContextListener {
         RabbitConfig.queue(channel);
         RabbitConfig.bind(channel);
         connected = true;
+        System.out.println("RabbitMQ conectado correctamente");
       } catch (Exception e) {
-        retries++;
+        try {
+        
+          System.out.println("Esperando a que RabbitMQ esté disponible...");
+          Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+          throw new RuntimeException(ex);
+        }
       }
-    }
-    if (!connected) {
-      throw new RuntimeException(
-          "No se pudo conectar a RabbitMQ después de " + MAX_RETRIES + " intentos");
     }
   }
 

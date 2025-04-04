@@ -7,7 +7,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitConfig {
 	
-	public static final String URI = "amqps://pccsneoy:Z9NGAuFzisSy7LcimpnFzaPLeo0sH6Sd@rat.rmq2.cloudamqp.com/pccsneoy";
+	public static final String URI = "amqp://arso:practicas@rabbitmq:5672";
 	public static final String EXCHANGE_NAME = "bus";
 	public static final String QUEUE_NAME = "espacios";
 	public static final String ROUTING_KEY = "bus.espacios.";

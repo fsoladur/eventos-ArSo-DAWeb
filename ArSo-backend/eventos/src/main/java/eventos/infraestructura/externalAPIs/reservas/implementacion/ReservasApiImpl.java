@@ -14,7 +14,7 @@ import java.util.UUID;
 @Component
 public class ReservasApiImpl implements ReservasAPI {
 
-  private final static String BASE_URL_RESERVAS = "http://localhost:8082";
+  private final static String BASE_URL_RESERVAS = "http://reservas-app:8082";
   private final RetrofitReservasAPI reservasAPI;
 
   public ReservasApiImpl() {
