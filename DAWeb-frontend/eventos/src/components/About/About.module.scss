@@ -1,5 +1,5 @@
 // src/components/About/About.module.scss
-@use '../../styles/variables' as *;
+@use '../../styles/main.scss' as *;
 
 .aboutSection {
   background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/about-bg.jpg');

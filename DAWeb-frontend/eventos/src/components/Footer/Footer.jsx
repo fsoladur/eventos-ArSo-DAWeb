@@ -67,9 +67,9 @@ const Footer = () => {
           <div className="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 mb-md-0">
             <h5 className={styles.footerTitle + ' mb-3'}>Suscríbete a nuestro boletín</h5>
             <p className="text-white mb-3">Recibe las últimas novedades y ofertas exclusivas.</p>
-            <form>
+            <form className='d-flex gap-1'>
                 <input type="email" className='form-control-sm' placeholder="Tu correo electrónico" />
-                <button type="submit" className='btn btn-primary btn-sm mt-2'>Suscribirse</button>
+                <button type="submit" className='btn btn-primary btn-sm'>Suscribirse</button>
             </form>
           </div>
 
@@ -96,7 +96,6 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
-
           </div>
         </div>
       </div>
