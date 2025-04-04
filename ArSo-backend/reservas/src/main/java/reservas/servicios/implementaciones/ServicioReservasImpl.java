@@ -44,15 +44,16 @@ public class ServicioReservasImpl implements ServicioReservas {
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
-    if (evento.getPlazasDisponibles() < plazasReservadas) {
+    if (plazasReservadas > evento.getPlazasDisponibles()) {
       throw new IllegalArgumentException("No hay suficientes plazas disponibles");
     }
 
     Reserva reserva =
         this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
-
-    evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
+    
     evento.add(reserva);
+    evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
+    
     repositorioEventos.save(evento);
 
     publicadorEventos.publicarCreacionReserva(reserva);
@@ -83,8 +84,6 @@ public class ServicioReservasImpl implements ServicioReservas {
     if (plazas <= 0) {
       throw new IllegalArgumentException("El número de plazas debe ser mayor que 0");
     }
-
-    //TODO : Esto se puede hacer con una agregación en MongoDB que devuelva directamente el número de reservas asociadas al evento
     Evento evento =
         repositorioEventos
             .findById(idEvento)
