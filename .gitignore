@@ -202,3 +202,4 @@ fabric.properties
 *.mysql-data*
 *.rabbitmq-data*
 *.rabbitmq.conf*
+*node_modules*

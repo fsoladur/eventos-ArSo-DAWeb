@@ -1,17 +1,15 @@
-
 // esto lo hago por que customizar un botón de bootstrap es un poco complicado
 // si no se pone, bootstrap se renderiza antes que la clase custom y sobreescribe los valores a los suyos por defecto
 :global(.btn).customBtn {
-    background-color: $custom-btn-bg-color; 
-    color: $white;
-    border-radius: $border-radius-large;
-    padding: 10px 20px;
-    font-weight: 700;
-    transition: background-color 0.3s ease;
-  
-    &:hover {
-      background-color: $custom-btn-bg-hover-color;
-      color: $white;
-    }
-  }
+  background-color: $custom-btn-bg-color;
+  color: $white;
+  border-radius: $border-radius-large;
+  padding: 10px 20px;
+  font-weight: 700;
+  transition: background-color 0.3s ease;
 
+  &:hover {
+    background-color: $custom-btn-bg-hover-color;
+    color: $white;
+  }
+}

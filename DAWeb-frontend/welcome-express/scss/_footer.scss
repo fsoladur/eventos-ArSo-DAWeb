@@ -1,0 +1,93 @@
+@use "./variables" as *;
+.footer {
+  background-color: $dark;
+  padding-bottom: 2rem;
+}
+
+.footerTop {
+  background: $secondary;
+  background-image: url("/images/nainoa-shizuru-NcdG9mK3PBY-unsplash.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 2rem 0;
+  margin-bottom: 4rem;
+}
+
+.footerBottom {
+  border-top: 1px solid #1f1c1c;
+  margin-top: 3rem;
+}
+
+.footerTitle {
+  color: $primary;
+}
+
+.footerLink {
+  color: $white;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.footerLinks {
+  padding-left: 0;
+  gap: 0.5rem;
+}
+
+.footerLinkItem {
+  list-style: none;
+  margin-right: 1rem;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  color: $white;
+}
+
+.socialIcon {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+
+  a {
+    background-color: $secondary;
+    border-radius: $border-radius-large;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: $primary;
+    }
+  }
+}
+
+.location {
+  color: $white;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.linkFx {
+  display: inline-flex;
+  align-items: center;
+  color: $white;
+  position: relative;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $primary;
+  }
+
+  svg {
+    margin-left: 0.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}

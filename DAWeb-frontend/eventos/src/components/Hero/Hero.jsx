@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './Hero.module.scss';
-import SocialIcons from '../Footer/SocialIcons';
+import React from "react";
+import styles from "./Hero.module.scss";
+import SocialIcons from "../Footer/SocialIcons";
 
 const Hero = () => {
   return (
@@ -22,9 +22,11 @@ const Hero = () => {
       </div>
 
       <div className={`container ${styles.heroInfo}`}>
-        <div className="row "> 
+        <div className="row ">
           <div className="col-lg-9 d-flex align-items-center text-white mb-3 mb-lg-0">
-          <h4 className="text-white mb-3 fw-bold">Próximo Macroevento: 29 de julio</h4>
+            <h4 className="text-white mb-3 fw-bold">
+              Próximo Macroevento: 29 de julio
+            </h4>
           </div>
           <div className="col-lg-3 d-flex align-items-center">
             <h4 className="text-white mb-3 fw-bold">Share:</h4>

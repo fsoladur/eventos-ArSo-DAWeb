@@ -1,0 +1,17 @@
+{
+  "name": "welcome-express",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "sass": "sass --load-path=node_modules scss:public/css --no-source-map --style=expanded --watch"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.5",
+    "express": "~4.16.1",
+    "express-handlebars": "^8.0.1"
+  },
+  "devDependencies": {
+    "sass": "^1.86.3"
+  }
+}
