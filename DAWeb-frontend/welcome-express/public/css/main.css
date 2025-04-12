@@ -11850,7 +11850,7 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-:global(.btn).customBtn {
+.btn.customBtn {
   background-color: #ee5007;
   color: #ffffff;
   border-radius: 100px;
@@ -11858,7 +11858,7 @@ textarea.form-control-lg {
   font-weight: 700;
   transition: background-color 0.3s ease;
 }
-:global(.btn).customBtn:hover {
+.btn.customBtn:hover {
   background-color: #c01f27;
   color: #ffffff;
 }
@@ -12085,5 +12085,3 @@ textarea.form-control-lg {
   margin: 0;
   font-size: 0.9rem;
 }
-
-/*# sourceMappingURL=main.css.map */

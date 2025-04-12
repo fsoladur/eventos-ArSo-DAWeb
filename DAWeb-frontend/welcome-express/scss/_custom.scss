@@ -1,6 +1,6 @@
 @use "./variables" as *;
 
-:global(.btn).customBtn {
+.btn.customBtn {
   background-color: $custom-btn-bg-color;
   color: $white;
   border-radius: $border-radius-large;
