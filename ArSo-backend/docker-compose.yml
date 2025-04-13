@@ -6,12 +6,21 @@ services:
     ports:
       - "8090:8090"
     depends_on:
-      - eventos-app
-      - reservas-app
-      - espacios-app
-      - mysql-db
-      - mongo-db
-      - rabbitmq
+      eventos-app:
+        condition: service_started
+      reservas-app:
+        condition: service_started
+      espacios-app:
+        condition: service_started
+      mysql-db:
+        condition: service_healthy
+        restart: true
+      mongo-db:
+        condition: service_healthy
+        restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     networks:
       - arso-net
     env_file:
@@ -21,8 +30,12 @@ services:
     container_name: espacios-app
     restart: always
     depends_on:
-      - mysql-db
-      - rabbitmq
+      mysql-db:
+        condition: service_healthy
+        restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     networks:
       - arso-net
     env_file:
@@ -32,8 +45,12 @@ services:
     container_name: eventos-app
     restart: always
     depends_on:
-      - mysql-db
-      - rabbitmq
+      mysql-db:
+        condition: service_healthy
+        restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     networks:
       - arso-net
     env_file:
@@ -43,12 +60,17 @@ services:
     container_name: reservas-app
     restart: always
     depends_on:
-      - mongo-db
-      - rabbitmq
+      mongo-db:
+        condition: service_healthy
+        restart: true
+      rabbitmq:
+        condition: service_healthy
+        restart: true
     networks:
       - arso-net
     env_file:
       - .env
+
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
@@ -61,6 +83,12 @@ services:
       MYSQL_ROOT_PASSWORD: practicas
     networks:
       - arso-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   mongo-db:
     image: mongo:5.0
     container_name: mongo-db
@@ -75,6 +103,12 @@ services:
       MONGO_INITDB_DATABASE: arso
     networks:
       - arso-net
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   mongo-express:
     image: mongo-express
     restart: always
@@ -86,11 +120,11 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: practicas
       ME_CONFIG_MONGODB_URL: mongodb://root:practicas@mongo-db:27017/
     depends_on:
-      - mongo-db
+      mongo-db:
+        condition: service_healthy
+        restart: true
     networks:
       - arso-net
-    env_file:
-      - .env
   rabbitmq:
     image: rabbitmq:3.8-management
     container_name: rabbitmq
@@ -104,6 +138,12 @@ services:
       - ./.rabbitmq-data:/var/lib/rabbitmq
     networks:
       - arso-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_protocol_listener", "amqp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 networks:
   arso-net:
     driver: bridge
