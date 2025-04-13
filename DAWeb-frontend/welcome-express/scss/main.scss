@@ -1,6 +1,19 @@
-@use "./variables" as *;
+@use "./variables" as v;
 
-@use "bootstrap/scss/bootstrap" as *;
+@use "bootstrap/scss/bootstrap" with (
+  $primary: v.$festava-yellow,
+  $secondary: v.$festava-orange,
+  $danger: v.$festava-red,
+  $dark: v.$black,
+  $body-color: v.$festava-gray,
+  $theme-colors: (
+    "primary": v.$festava-yellow,
+    "secondary": v.$festava-orange,
+    "danger": v.$festava-red,
+    "dark": v.$black,
+    "white": v.$white
+  )
+);
 
 // 3. Resto de tus estilos
 @use "./custom" as *;

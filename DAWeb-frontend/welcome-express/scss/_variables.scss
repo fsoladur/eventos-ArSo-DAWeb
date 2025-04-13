@@ -1,31 +1,20 @@
-// src/styles/_variables.scss
-@forward "bootstrap/scss/functions";
-
+// scss/_variables.scss
 $white: #ffffff;
 $black: #000000;
-$festava-yellow: #f8cb2e;
-$festava-orange: #ee5007;
+$festava-yellow: #f0d05a;
+$festava-orange: #f77e47;
 $festava-red: #c01f27;
 $festava-gray: #717275;
 $festava-border: #7fffd4;
 
-// Bootstrap overrides
+// Define tú mismo las variables de Bootstrap para poder usarlas
 $primary: $festava-yellow;
 $secondary: $festava-orange;
 $danger: $festava-red;
 $dark: $black;
 $body-color: $festava-gray;
 
-// new variables
 $custom-btn-bg-color: $festava-orange;
 $custom-btn-bg-hover-color: $festava-red;
-
-$theme-colors: (
-  "primary": $festava-yellow,
-  "secondary": $festava-orange,
-  "danger": $festava-red,
-  "dark": $black,
-  "white": $white,
-);
 
 $border-radius-large: 100px;
