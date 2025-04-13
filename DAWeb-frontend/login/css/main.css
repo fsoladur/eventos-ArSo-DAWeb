@@ -1,0 +1,154 @@
+/** HEADER STYLES **/
+.logoImg {
+  max-width: 40px;
+  height: auto;
+  @media (min-width: 1400px) {
+    max-width: 60px;
+  }
+}
+
+/** Article STYLES **/
+
+article {
+  margin: 20px;
+  padding: 2rem 1rem;
+  max-width: 800px;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #888;
+  font-weight: bold;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ccc;
+}
+
+.separator::before {
+  margin-right: 0.75rem;
+}
+
+.separator::after {
+  margin-left: 0.75rem;
+}
+
+.custom-container {
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/** FOOTER STYLES **/
+.footer {
+  background-color: #212529;
+  padding-bottom: 2rem;
+}
+
+.footer .footerTop {
+  background: #ee5007;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 2rem 0;
+  margin-bottom: 4rem;
+}
+
+.footer .footerBottom {
+  border-top: 1px solid #1f1c1c;
+  margin-top: 3rem;
+}
+
+.footer .footerTitle {
+  color: #f2cb2e;
+}
+
+.footerLink {
+  color: white;
+  transition: color 0.2s;
+}
+
+.footerLink:hover {
+  color: #f2cb2e;
+}
+
+.footerLinks {
+  padding-left: 0;
+  gap: 0.5rem;
+}
+
+.footerLinkItem {
+  list-style: none;
+  margin-right: 1rem;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.socialIcon {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.socialIcon a {
+  border-radius: 100px;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: ease background 0.2s;
+}
+
+.socialIcon a:hover {
+  background-color: #f2cb2e;
+}
+
+.location {
+  color: #fff;
+  margin: 1rem 0;
+}
+
+.linkFx {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.linkFx:hover {
+  color: #0d6efd;
+}
+
+.linkFx svg {
+  margin-left: 0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/** custom btn **/
+.custom-btn {
+  background-color: #ee5007; /* $festava-orange */
+  color: #ffffff; /* $white */
+  border-radius: 100px; /* $border-radius-large */
+  padding: 10px 20px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+  background-color: #c01f27; /* $festava-red */
+  color: #ffffff; /* $white */
+}

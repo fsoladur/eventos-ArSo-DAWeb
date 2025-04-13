@@ -1,11 +1,9 @@
 @use "./variables" as *;
 
-// Estructura principal del footer
 .footer {
   background-color: $dark;
   padding-bottom: 2rem;
 
-  // Secciones principales del footer
   &Top {
     background: $secondary;
     background-repeat: no-repeat;
@@ -19,13 +17,11 @@
     margin-top: 3rem;
   }
 
-  // Elementos del footer
   &Title {
     color: $primary;
   }
 }
 
-// Enlaces en el footer
 .footerLink {
   color: $white;
   transition: color 0.2s;
@@ -44,14 +40,11 @@
   list-style: none;
   margin-right: 1rem;
 }
-
-// Texto de copyright
 .copyright {
   font-size: 0.9rem;
   color: $white;
 }
 
-// Iconos sociales
 .socialIcon {
   display: flex;
   gap: 0.5rem;
