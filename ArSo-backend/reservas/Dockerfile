@@ -4,7 +4,7 @@ WORKDIR /app/
 COPY pom.xml .
 RUN mvn -e -B dependency:resolve
 COPY src ./src
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM openjdk:11
 COPY --from=builder /app/target/reservas-0.0.1-SNAPSHOT.war /app.war

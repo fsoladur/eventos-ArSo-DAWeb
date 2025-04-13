@@ -14,6 +14,8 @@ services:
       - rabbitmq
     networks:
       - arso-net
+    env_file:
+      - .env
   espacios-app:
     build: ./espacios
     container_name: espacios-app
@@ -23,6 +25,8 @@ services:
       - rabbitmq
     networks:
       - arso-net
+    env_file:
+      - .env
   eventos-app:
     build: ./eventos
     container_name: eventos-app
@@ -32,6 +36,8 @@ services:
       - rabbitmq
     networks:
       - arso-net
+    env_file:
+      - .env
   reservas-app:
     build: ./reservas
     container_name: reservas-app
@@ -41,6 +47,8 @@ services:
       - rabbitmq
     networks:
       - arso-net
+    env_file:
+      - .env
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
@@ -81,6 +89,8 @@ services:
       - mongo-db
     networks:
       - arso-net
+    env_file:
+      - .env
   rabbitmq:
     image: rabbitmq:3.8-management
     container_name: rabbitmq

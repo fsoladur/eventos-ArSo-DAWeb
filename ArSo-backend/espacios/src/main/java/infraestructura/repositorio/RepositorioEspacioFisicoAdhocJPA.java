@@ -8,6 +8,8 @@ import utils.EntityManagerHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +31,6 @@ public class RepositorioEspacioFisicoAdhocJPA extends RepositorioEspaciosFisicos
 
 	@Override
 	public List<EspacioFisico> getEspaciosFisicosByIds(List<UUID> ids) throws RepositorioException {
-
 		EntityManager em = EntityManagerHelper.getEntityManager();
 
 		String queryString = "SELECT e " + "FROM EspacioFisico e " + "WHERE e.id IN :ids";

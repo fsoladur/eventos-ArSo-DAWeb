@@ -197,6 +197,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
         eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(
             capacidadRequerida, fechaInicio.toString(), fechaFin.toString());
 
+    if (espaciosLibres == null || espaciosLibres.isEmpty()) {
+      throw new EntidadNoEncontrada("No hay espacios libres disponibles en el rango de fechas y con capacidad suficiente.");
+    }
+
     return repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
   }
 

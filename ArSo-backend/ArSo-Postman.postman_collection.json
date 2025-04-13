@@ -428,12 +428,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{puerto}}/api/espacios?propietario=Juan",
+							"raw": "{{url}}{{puerto3}}/espacios?propietario=Juan",
 							"host": [
-								"{{url}}{{puerto}}"
+								"{{url}}{{puerto3}}"
 							],
 							"path": [
-								"api",
 								"espacios"
 							],
 							"query": [
@@ -462,12 +461,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}{{puerto}}/api/espacios/libres?fechaInicio=2025-06-01T09:00:00&fechaFin=2025-06-01T11:00:00&capacidadRequerida=-1",
+							"raw": "{{url}}{{puerto3}}/espacios/libres?fechaInicio=2025-06-01T09:00:00&fechaFin=2025-06-01T11:00:00&capacidadRequerida=-1",
 							"host": [
-								"{{url}}{{puerto}}"
+								"{{url}}{{puerto3}}"
 							],
 							"path": [
-								"api",
 								"espacios",
 								"libres"
 							],
@@ -483,49 +481,6 @@
 								{
 									"key": "capacidadRequerida",
 									"value": "-1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "findEspaciosFisicosLibres Copy",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token_jwt}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}{{puerto}}/api/espacios/libres?fechaInicio=2025-06-01T09:00:00&fechaFin=2025-06-01T11:00:00&capacidadRequerida=50",
-							"host": [
-								"{{url}}{{puerto}}"
-							],
-							"path": [
-								"api",
-								"espacios",
-								"libres"
-							],
-							"query": [
-								{
-									"key": "fechaInicio",
-									"value": "2025-06-01T09:00:00"
-								},
-								{
-									"key": "fechaFin",
-									"value": "2025-06-01T11:00:00"
-								},
-								{
-									"key": "capacidadRequerida",
-									"value": "50"
 								}
 							]
 						}
@@ -557,9 +512,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}{{puerto}}/api/espacios/:id/puntosinteres",
+							"raw": "{{url}}{{puerto3}}/api/espacios/:id/puntosinteres",
 							"host": [
-								"{{url}}{{puerto}}"
+								"{{url}}{{puerto3}}"
 							],
 							"path": [
 								"api",
@@ -611,7 +566,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"nombre\": \"Concierto Funky\",\r\n  \"descripcion\": \"Concierto funk en el parque\",\r\n  \"organizador\": \"Ayuntamiento de Murcia\",\r\n  \"categoria\": \"CULTURAL\",\r\n  \"fechaInicio\": \"2025-04-15T20:00:00\",\r\n  \"fechaFin\": \"2025-04-20T22:00:00\",\r\n  \"plazas\": 49,\r\n  \"idEspacioFisico\": {{idEspacio}}\r\n}",
+									"raw": "{\r\n  \"nombre\": \"Concierto Funky\",\r\n  \"descripcion\": \"Concierto funk en el parque\",\r\n  \"organizador\": \"Ayuntamiento de Murcia\",\r\n  \"categoria\": \"CULTURAL\",\r\n  \"fechaInicio\": \"2025-04-15T20:00:00\",\r\n  \"fechaFin\": \"2025-04-20T22:00:00\",\r\n  \"plazas\": 49,\r\n  \"idEspacioFisico\": \"{{idEspacio}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -969,7 +924,7 @@
 											"if (locationHeader) {\r",
 											"    let match = locationHeader.match(/\\/([^\\/]+)$/);\r",
 											"    if(match){\r",
-											"        pm.environment.set(\"idEvento\", match[1]);\r",
+											"        pm.environment.set(\"idReserva\", match[1]);\r",
 											"    }\r",
 											"}"
 										],
