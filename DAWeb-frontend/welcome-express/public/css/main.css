@@ -11963,21 +11963,17 @@ textarea.form-control-lg {
   background-color: #000000;
   padding-bottom: 2rem;
 }
-
 .footerTop {
   background: #ee5007;
-  background-image: url("/images/nainoa-shizuru-NcdG9mK3PBY-unsplash.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   padding: 2rem 0;
   margin-bottom: 4rem;
 }
-
 .footerBottom {
   border-top: 1px solid #1f1c1c;
   margin-top: 3rem;
 }
-
 .footerTitle {
   color: #f8cb2e;
 }
@@ -12027,8 +12023,7 @@ textarea.form-control-lg {
 
 .location {
   color: #ffffff;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 
 .linkFx {

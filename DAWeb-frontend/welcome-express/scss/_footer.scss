@@ -1,27 +1,31 @@
 @use "./variables" as *;
+
+// Estructura principal del footer
 .footer {
   background-color: $dark;
   padding-bottom: 2rem;
+
+  // Secciones principales del footer
+  &Top {
+    background: $secondary;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 2rem 0;
+    margin-bottom: 4rem;
+  }
+
+  &Bottom {
+    border-top: 1px solid #1f1c1c;
+    margin-top: 3rem;
+  }
+
+  // Elementos del footer
+  &Title {
+    color: $primary;
+  }
 }
 
-.footerTop {
-  background: $secondary;
-  background-image: url("/images/nainoa-shizuru-NcdG9mK3PBY-unsplash.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding: 2rem 0;
-  margin-bottom: 4rem;
-}
-
-.footerBottom {
-  border-top: 1px solid #1f1c1c;
-  margin-top: 3rem;
-}
-
-.footerTitle {
-  color: $primary;
-}
-
+// Enlaces en el footer
 .footerLink {
   color: $white;
   transition: color 0.2s;
@@ -41,11 +45,13 @@
   margin-right: 1rem;
 }
 
+// Texto de copyright
 .copyright {
   font-size: 0.9rem;
   color: $white;
 }
 
+// Iconos sociales
 .socialIcon {
   display: flex;
   gap: 0.5rem;
@@ -68,12 +74,13 @@
   }
 }
 
+// Información de ubicación
 .location {
   color: $white;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 
+// Efecto especial para enlaces
 .linkFx {
   display: inline-flex;
   align-items: center;
