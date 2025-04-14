@@ -1,18 +1,26 @@
 // src/components/Navbar/Navbar.module.scss
 @use '../../styles/main.scss' as *;
 
-.siteHeader {
-  padding: 12px 0;
-  position: absolute;
-  top: 0;
-  left: 0;
+.navbar {
+  background: $secondary;
   width: 100%;
-  z-index: 10;
 }
 
-.navbar {
-  background: transparent;
-  width: 100%;
+.navLink {
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $festava-yellow; // o tu color preferido
+  }
+}
+
+.active {
+  color: $festava-yellow;
+  font-weight: 700;
 }
 
 .logoImg {

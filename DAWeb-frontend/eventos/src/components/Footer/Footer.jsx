@@ -69,7 +69,7 @@ const Footer = () => {
             <p className="text-white mb-3">Recibe las últimas novedades y ofertas exclusivas.</p>
             <form className='d-flex gap-1'>
                 <input type="email" className='form-control-sm' placeholder="Tu correo electrónico" />
-                <button type="submit" className='btn btn-primary btn-sm'>Suscribirse</button>
+                <button type="submit" className='btn btn-secondary text-white fw-bold btn-sm'>Suscribirse</button>
             </form>
           </div>
 
