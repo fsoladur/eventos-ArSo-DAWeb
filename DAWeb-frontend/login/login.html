@@ -23,38 +23,31 @@
       defer
     ></script>
     <link rel="stylesheet" href="css/main.css" />
+    <script src="./js/util.js" defer></script>
   </head>
 
   <body>
-    <header class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container py-2 px-3">
-        <div class="row w-100 align-items-center text-center">
-          <div class="col-4 text-start">
-            <a
-              href="./"
-              class="text-decoration-none d-inline-flex align-items-center"
-            >
-              <img
-                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9IiNGMDU1MzciLz48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTE3LjQ3NSA4Mi43MjljMTkuMjk3LTQuMjg4IDM4LjU5NSAzLjU3NCA0OS4zMTUgMTguNTgyTDgxLjUwMiAxMjAuNjFjMi44NTktMTguMzQ1IDE2LjY3Ni0zMy41OTIgMzUuOTczLTM3Ljg4bTQ5Ljc5MiA3MC43NTZjLTYuNjcxIDkuNzY4LTE2LjkxNSAxNi42NzctMjguNTg5IDE5LjI5N2MtMTkuMjk3IDQuMjg4LTM4LjgzMi0zLjU3My00OS41NTMtMTguODJsODUuNTI3LTE5LjI5OGwxMy44MTgtMy4wOTdsMjYuNjgyLTUuOTU2Yy0uMjM4LTUuNzE3LS45NTMtMTEuNDM1LTIuMTQ0LTE2LjkxNGMtMTAuNzItNDUuOTgtNTcuNjUzLTc0LjgwNi0xMDQuNTg2LTY0LjA4NnMtNzYuMjM1IDU2LjQ2Mi02NS4yNzYgMTAyLjY4czU3LjY1MyA3NC44MDYgMTA0LjU4NSA2NC4wODVjMjcuNjM2LTYuMTk0IDQ5LjA3Ny0yNC43NzYgNjAuMDM2LTQ4LjM2MXoiLz48L3N2Zz4="
-                class="logoImg me-2"
-                alt="Logo"
-              />
-            </a>
-          </div>
-          <div class="col-4 d-flex justify-content-center">
-            <h1 class="h4 mb-0 text-white">Eventos Fabi&Anto</h1>
-          </div>
-          <div class="col-4 text-end">
-            <a href="#" class="btn custom-btn">Volver a inicio</a>
-          </div>
-        </div>
+    <header class="navbar custom-header">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          href="./"
+          class="brand d-flex align-items-center text-decoration-none"
+        >
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9IiNGMDU1MzciLz48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTE3LjQ3NSA4Mi43MjljMTkuMjk3LTQuMjg4IDM4LjU5NSAzLjU3NCA0OS4zMTUgMTguNTgyTDgxLjUwMiAxMjAuNjFjMi44NTktMTguMzQ1IDE2LjY3Ni0zMy41OTIgMzUuOTczLTM3Ljg4bTQ5Ljc5MiA3MC43NTZjLTYuNjcxIDkuNzY4LTE2LjkxNSAxNi42NzctMjguNTg5IDE5LjI5N2MtMTkuMjk3IDQuMjg4LTM4LjgzMi0zLjU3My00OS41NTMtMTguODJsODUuNTI3LTE5LjI5OGwxMy44MTgtMy4wOTdsMjYuNjgyLTUuOTU2Yy0uMjM4LTUuNzE3LS45NTMtMTEuNDM1LTIuMTQ0LTE2LjkxNGMtMTAuNzItNDUuOTgtNTcuNjUzLTc0LjgwNi0xMDQuNTg2LTY0LjA4NnMtNzYuMjM1IDU2LjQ2Mi02NS4yNzYgMTAyLjY4czU3LjY1MyA3NC44MDYgMTA0LjU4NSA2NC4wODVjMjcuNjM2LTYuMTk0IDQ5LjA3Ny0yNC43NzYgNjAuMDM2LTQ4LjM2MXoiLz48L3N2Zz4="
+            class="logoImg me-3"
+            alt="Logo"
+          />
+          <span class="brand-title">Eventos Fabi&Anto</span>
+        </a>
+        <a href="#" class="custom-btn">Volver a inicio</a>
       </div>
     </header>
 
     <article
       class="container d-flex flex-column justify-content-center align-items-center mt-5"
     >
-      <section class="col-lg-4 col-md-6 col-12 p-4 border rounded shadow-sm">
+      <section class="col-lg-4 col-md-6 col-12 custom-container">
         <h2 class="mb-4 text-center">Inicio de sesión</h2>
         <form class="needs-validation" novalidate>
           <div class="mb-4">
@@ -66,7 +59,7 @@
               class="form-control"
               id="email"
               name="email"
-              placeholder="Introduce un correo o nombre de usuario "
+              placeholder="Correo o nombre de usuario "
               required
             />
             <div class="invalid-feedback">
@@ -81,13 +74,17 @@
               class="form-control"
               id="password"
               name="password"
-              placeholder="Introduce la contraseña"
+              placeholder="Contraseña asociada"
               required
             />
             <div class="invalid-feedback">La contraseña es obligatoria.</div>
           </div>
 
-          <button type="submit" class="btn custom-btn w-100 mb-2">
+          <button
+            type="submit"
+            class="btn custom-btn w-100 mb-2"
+            onclick="login({ url: 'http://localhost:8090/auth/login', isCallingGithub: false })"
+          >
             Iniciar sesión
           </button>
 
@@ -96,7 +93,11 @@
           </div>
 
           <div class="text-center">
-            <a href="#" class="btn btn-dark w-100">
+            <a
+              href="javascript:void(0);"
+              onclick="login({ url: 'http://localhost:8090/oauth2/authorization/github', isCallingGithub: true })"
+              class="btn btn-dark w-100 rounded-pill"
+            >
               <i class="bi bi-github me-2"></i> Iniciar sesión con GitHub
             </a>
           </div>
