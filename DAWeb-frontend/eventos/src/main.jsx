@@ -8,27 +8,30 @@ import EventosPage from "./pages/EventosPage";
 import UsuarioPage from "./pages/UsuarioPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./routes/PrivateRoute";
+import LoginPage from "./pages/LoginPage";
 
-import "./styles/main.css";
-import { AuthProvider } from "./context/AuthContext";
+import "./styles/custom.css";
+import {AuthProvider} from "./context/AuthContext";
+import ConditionalRedirect from "./routes/ConditionalRedirect";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<ConditionalRedirect />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/home" element={<Lobby />}>
             <Route element={<PrivateRoute allowedRoles={["USUARIO"]} />}>
-              <Route path="usuarios" element={<UsuarioPage />} />
+              <Route path="/home/usuarios" element={<UsuarioPage />} />
             </Route>
             <Route
               element={<PrivateRoute allowedRoles={["PROPIETARIO_ESPACIOS"]} />}
             >
-              <Route path="espacios" element={<EspaciosPage />} />
+              <Route path="/home/espacios" element={<EspaciosPage />} />
             </Route>
             <Route element={<PrivateRoute allowedRoles={["GESTOR_EVENTOS"]} />}>
-              <Route path="eventos" element={<EventosPage />} />
+              <Route path="/home/eventos" element={<EventosPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Route>

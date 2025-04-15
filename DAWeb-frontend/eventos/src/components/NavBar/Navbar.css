@@ -1,25 +1,24 @@
-// src/components/Navbar/Navbar.module.scss
-@use '../../styles/main.scss' as *;
+@import "../../styles/variables.css";
 
 .navbar {
-  background: $secondary;
+  background: var(--black-bg-footer-header);
   width: 100%;
 }
 
 .navLink {
-  color: white;
+  color: white; 
   font-weight: 500;
   text-decoration: none;
   padding: 0.5rem 1rem;
   transition: color 0.2s ease;
 
   &:hover {
-    color: $festava-yellow; // o tu color preferido
+    color: var(--yellow); 
   }
 }
 
 .active {
-  color: $festava-yellow;
+  color: var(--yellow);
   font-weight: 700;
 }
 
@@ -32,5 +31,9 @@
     }
 }
 
-
- 
+.brand-title{
+  color: var(--orange);
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
