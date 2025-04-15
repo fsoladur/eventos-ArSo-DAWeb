@@ -1,5 +1,6 @@
 package arso.servicios.implementaciones;
 
+import arso.api.rest.auth.config.SecretConfig;
 import arso.servicios.ServicioAuth;
 import arso.dominio.Usuario;
 import io.jsonwebtoken.Claims;
@@ -15,13 +16,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServicioAuthImpl implements ServicioAuth {
 
-  private static final String SECRETO = "SECRET_KEY";
+  private final String secreto;
   private static final long TIEMPO = 3600;
   private Map<String, Usuario> usuarios;
 
-  public ServicioAuthImpl() {
+  public ServicioAuthImpl(SecretConfig secretConfig) {
     // Crear usuarios estáticos
     crearUsuarios();
+    secreto = secretConfig.getKey();
   }
 
   @Override
@@ -31,14 +33,14 @@ public class ServicioAuthImpl implements ServicioAuth {
 
     return Jwts.builder()
         .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, SECRETO)
+        .signWith(SignatureAlgorithm.HS256, secreto)
         .setExpiration(caducidad)
         .compact();
   }
 
   @Override
   public Claims validateToken(String token) {
-    Claims claims = Jwts.parser().setSigningKey(SECRETO).parseClaimsJws(token).getBody();
+    Claims claims = Jwts.parser().setSigningKey(secreto).parseClaimsJws(token).getBody();
     return claims;
   }
 
