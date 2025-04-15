@@ -1,8 +1,6 @@
-// src/components/Navbar/Navbar.jsx
 import React from "react";
-import styles from "./Navbar.module.scss";
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -12,41 +10,40 @@ const Navbar = () => {
 
   return (
     <header>
-      <nav className={styles.navbar}>
+      <nav className="navbar">
         <div className="container d-flex justify-content-between align-items-center">
-
           <a className="navbar-brand fw-bold text-white" href="./">
             <img
               src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9IiNGMDU1MzciLz48cGF0aCBmaWxsPSIjRkZGIiBkPSJNMTE3LjQ3NSA4Mi43MjljMTkuMjk3LTQuMjg4IDM4LjU5NSAzLjU3NCA0OS4zMTUgMTguNTgyTDgxLjUwMiAxMjAuNjFjMi44NTktMTguMzQ1IDE2LjY3Ni0zMy41OTIgMzUuOTczLTM3Ljg4bTQ5Ljc5MiA3MC43NTZjLTYuNjcxIDkuNzY4LTE2LjkxNSAxNi42NzctMjguNTg5IDE5LjI5N2MtMTkuMjk3IDQuMjg4LTM4LjgzMi0zLjU3My00OS41NTMtMTguODJsODUuNTI3LTE5LjI5OGwxMy44MTgtMy4wOTdsMjYuNjgyLTUuOTU2Yy0uMjM4LTUuNzE3LS45NTMtMTEuNDM1LTIuMTQ0LTE2LjkxNGMtMTAuNzItNDUuOTgtNTcuNjUzLTc0LjgwNi0xMDQuNTg2LTY0LjA4NnMtNzYuMjM1IDU2LjQ2Mi02NS4yNzYgMTAyLjY4czU3LjY1MyA3NC44MDYgMTA0LjU4NSA2NC4wODVjMjcuNjM2LTYuMTk0IDQ5LjA3Ny0yNC43NzYgNjAuMDM2LTQ4LjM2MXoiLz48L3N2Zz4="
-              className={styles.logoImg}
+              className="logoImg"
               alt="Logo"
-            /> 
+            />
           </a>
 
           {user && (
             <div className="d-flex align-items-center gap-3">
-              {user.roles.includes('USUARIO') && (
+              {user.roles.includes("USUARIO") && (
                 <Link
                   to="/usuarios"
-                  className={`${styles.navLink} ${isActive('/usuarios') ? styles.active : ''}`}
+                  className={`navLink ${isActive("/usuarios") ? "active" : ""}`}
                 >
                   Usuario
                 </Link>
               )}
 
-              {user.roles.includes('PROPIETARIO_ESPACIOS') && (
+              {user.roles.includes("PROPIETARIO_ESPACIOS") && (
                 <Link
                   to="/espacios"
-                  className={`${styles.navLink} ${isActive('/espacios') ? styles.active : ''}`}
+                  className={`navLink ${isActive("/espacios") ? "active" : ""}`}
                 >
                   Espacios
                 </Link>
               )}
 
-              {user.roles.includes('GESTOR_EVENTOS') && (
+              {user.roles.includes("GESTOR_EVENTOS") && (
                 <Link
                   to="/eventos"
-                  className={`${styles.navLink} ${isActive('/eventos') ? styles.active : ''}`}
+                  className={`navLink ${isActive("/eventos") ? "active" : ""}`}
                 >
                   Eventos
                 </Link>

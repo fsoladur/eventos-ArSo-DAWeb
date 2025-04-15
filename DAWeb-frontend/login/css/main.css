@@ -2,11 +2,13 @@
 .logoImg {
   max-width: 40px;
   height: auto;
-  @media (min-width: 1400px) {
+}
+
+@media (min-width: 1400px) {
+  .logoImg {
     max-width: 60px;
   }
 }
-
 /** Article STYLES **/
 
 article {
