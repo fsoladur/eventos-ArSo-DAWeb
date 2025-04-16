@@ -5,7 +5,7 @@
   padding-bottom: 2rem;
 }
 
-.footerTop { 
+.footerTop {
   background: var(--orange);
   background-repeat: no-repeat;
   background-size: cover;
@@ -15,7 +15,7 @@
 
 .footerBottom {
   border-top: 1px solid #1f1c1c;
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 .footerTitle {

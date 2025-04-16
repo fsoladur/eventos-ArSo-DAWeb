@@ -6,14 +6,14 @@
 }
 
 .navLink {
-  color: white; 
+  color: white;
   font-weight: 500;
   text-decoration: none;
   padding: 0.5rem 1rem;
   transition: color 0.2s ease;
 
   &:hover {
-    color: var(--yellow); 
+    color: var(--yellow);
   }
 }
 
@@ -22,18 +22,52 @@
   font-weight: 700;
 }
 
-.logoImg {
-    max-width: 50px;
-    height: auto; 
-  
-    @media (min-width: 1400px) {
-      max-width: 60px; 
-    }
-}
-
-.brand-title{
+.brand-title {
   color: var(--orange);
   font-weight: 700;
   font-size: 1.5rem;
   letter-spacing: 0.5px;
+}
+
+/** HEADER STYLES **/
+.custom-header {
+  background-color: var(--black-bg-footer-header);
+  padding: 1rem 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+}
+
+.logoImg {
+  max-width: 40px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.logoImg:hover {
+  transform: scale(1.1);
+}
+
+@media (min-width: 1400px) {
+  .logoImg {
+    max-width: 60px;
+  }
+  .brand-title {
+    font-size: 1.75rem;
+  }
+}
+
+.custom-btn {
+  background-color: var(--orange);
+  color: #ffffff;
+  border-radius: 50px;
+  padding: 10px 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+  background-color: var(--red); /* $festava-red */
+  color: white; /* $white */
 }
