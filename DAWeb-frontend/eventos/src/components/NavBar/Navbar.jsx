@@ -1,15 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
-import "../../styles/custom.css";
 import PropTypes from "prop-types";
+import NavbarLinks from "./NavLink";
 
 const Navbar = ({ session }) => {
   const { user, logout } = useAuth();
-  const location = useLocation();
-
-  const isActive = (path) => location.pathname === path;
 
   return (
     <header className="custom-header">
@@ -27,36 +23,7 @@ const Navbar = ({ session }) => {
             <span className="brand-title">Eventos Fabi&Anto</span>
           </a>
 
-          {user && (
-            <div className="d-flex align-items-center gap-3">
-              {user.roles.includes("USUARIO") && (
-                <Link
-                  to="/home/usuarios"
-                  className={`navLink ${isActive("/usuarios") ? "active" : ""}`}
-                >
-                  Usuario
-                </Link>
-              )}
-
-              {user.roles.includes("PROPIETARIO_ESPACIOS") && (
-                <Link
-                  to="/home/espacios"
-                  className={`navLink ${isActive("/espacios") ? "active" : ""}`}
-                >
-                  Espacios
-                </Link>
-              )}
-
-              {user.roles.includes("GESTOR_EVENTOS") && (
-                <Link
-                  to="/home/eventos"
-                  className={`navLink ${isActive("/eventos") ? "active" : ""}`}
-                >
-                  Eventos
-                </Link>
-              )}
-            </div>
-          )}
+          {user && <NavbarLinks/>}
 
           <button
             type="button"

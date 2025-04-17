@@ -1,6 +1,7 @@
 import React from "react";
-import "./Login.css";
 import "../../styles/custom.css";
+import "./Login.css";
+
 
 const LoginForm = () => {
   const handleSubmit = (e) => {
@@ -19,7 +20,7 @@ const LoginForm = () => {
   return (
     <article className="container d-flex flex-column justify-content-center align-items-center mt-5">
       <section className="col-lg-4 custom-container">
-        <h2 className="text-center mb-4">Iniciar sesión</h2>
+        <h2 className="text-center mb-4 fw-bold">Iniciar sesión</h2>
         <form className="needs-validation" noValidate onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="form-label">
@@ -44,7 +45,7 @@ const LoginForm = () => {
             </label>
             <input
               type="password"
-              className="form-control"
+              className="form-control form-lm"
               id="password"
               name="password"
               placeholder="Contraseña asociada"
@@ -69,7 +70,7 @@ const LoginForm = () => {
           <div className="text-center">
             <button
               type="button"
-              className="btn w-100 rounded-pill btn-github"
+              className="btn w-100 rounded-pill btn-github fw-bold"
               onClick={handleGithubLogin}
             >
               <i className="bi bi-github me-2"></i> Iniciar sesión con GitHub

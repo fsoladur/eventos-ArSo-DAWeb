@@ -59,7 +59,7 @@
 
 .custom-btn {
   background-color: var(--orange);
-  color: #ffffff;
+  color: white;
   border-radius: 50px;
   padding: 10px 10px;
   font-weight: 700;
@@ -68,6 +68,6 @@
 }
 
 .custom-btn:hover {
-  background-color: var(--red); /* $festava-red */
-  color: white; /* $white */
+  background-color: var(--red); 
+  color: white; 
 }
