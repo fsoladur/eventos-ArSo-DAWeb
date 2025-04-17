@@ -45,7 +45,7 @@ const LoginForm = () => {
             </label>
             <input
               type="password"
-              className="form-control form-lm"
+              className="form-control"
               id="password"
               name="password"
               placeholder="Contraseña asociada"
@@ -58,7 +58,7 @@ const LoginForm = () => {
 
           <button
             type="submit"
-            className="btn custom-btn w-100 rounded-pill mb-0"
+            className="btn btn-custom w-100 rounded-pill mb-0"
           >
             Iniciar sesión
           </button>
@@ -70,7 +70,7 @@ const LoginForm = () => {
           <div className="text-center">
             <button
               type="button"
-              className="btn w-100 rounded-pill btn-github fw-bold"
+              className="btn w-100 rounded-pill btn-github "
               onClick={handleGithubLogin}
             >
               <i className="bi bi-github me-2"></i> Iniciar sesión con GitHub

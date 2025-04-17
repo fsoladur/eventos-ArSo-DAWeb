@@ -83,7 +83,7 @@ const Footer = () => {
               />
               <button
                 type="submit"
-                className="btn btn-secondary text-white fw-bold btn-sm"
+                className="btn btn-primary text-white fw-bold btn-sm"
               >
                 Suscribirse
               </button>

@@ -1,9 +1,11 @@
 :root {
   /* theme colors */
-  --yellow: #f8cb2e;
-  --orange: #f77e47;
-  --red: #c01f27;
-  --gray: #717275;
-  --black-bg-footer-header: #212529;
+  --primary: #f77e47;
+  --secondary: #f8cb2e;
+  --terciary: #212529;
+
+  --hover-primary: #c01f27;
+  --hover-secondary: #717275;
+  
   --border: #7fffd4;
 }

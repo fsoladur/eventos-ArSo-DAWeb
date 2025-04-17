@@ -27,7 +27,7 @@ const Navbar = ({ session }) => {
 
           <button
             type="button"
-            className="custom-btn"
+            className="btn btn-custom"
             onClick={(e) => {
               e.preventDefault();
               logout();

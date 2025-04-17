@@ -12,14 +12,14 @@ import LoginPage from "./pages/LoginPage";
 
 import "./styles/custom.css";
 import {AuthProvider} from "./context/AuthContext";
-import ConditionalRedirect from "./routes/ConditionalRedirect";
+import HomeRedirect from "./routes/HomeRedirect";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ConditionalRedirect />} />
+          <Route path="/" element={<HomeRedirect />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/home" element={<Lobby />}>
             <Route element={<PrivateRoute allowedRoles={["USUARIO"]} />}>

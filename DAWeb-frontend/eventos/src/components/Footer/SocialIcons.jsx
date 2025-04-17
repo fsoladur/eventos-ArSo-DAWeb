@@ -1,4 +1,5 @@
 import React from "react";
+import "./Footer.css"; 
 
 const icons = ["twitter", "apple", "instagram", "youtube", "pinterest"];
 
