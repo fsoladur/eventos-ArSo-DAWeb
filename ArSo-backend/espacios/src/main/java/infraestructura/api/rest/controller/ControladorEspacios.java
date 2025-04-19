@@ -1,5 +1,15 @@
 package infraestructura.api.rest.controller;
 
+import infraestructura.api.rest.DTO.CrearEspacioFisicoDTO;
+import infraestructura.api.rest.DTO.EspacioFisicoDTO;
+import infraestructura.api.rest.DTO.ListaPuntosInteresDTO;
+import infraestructura.api.rest.DTO.ModificarEspacioFisicoDTO;
+import infraestructura.api.rest.mapper.EspacioFisicoMapper;
+import infraestructura.api.rest.utils.Listado;
+import infraestructura.api.rest.utils.Listado.ResumenExtendido;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
+import infraestructura.repositorio.excepciones.RepositorioException;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -8,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -24,20 +33,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import infraestructura.api.rest.mapper.EspacioFisicoMapper;
-import infraestructura.api.rest.utils.Listado;
-import infraestructura.api.rest.utils.Listado.ResumenExtendido;
-import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
-import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
-import infraestructura.repositorio.excepciones.RepositorioException;
 import servicios.ServicioEspacios;
-import infraestructura.api.rest.DTO.CrearEspacioFisicoDTO;
-import infraestructura.api.rest.DTO.EspacioFisicoDTO;
-import infraestructura.api.rest.DTO.ListaPuntosInteresDTO;
-import infraestructura.api.rest.DTO.ModificarEspacioFisicoDTO;
 import servicios.factoria.*;
-;
 
 @Path("espacios")
 public class ControladorEspacios {
@@ -100,17 +97,20 @@ public class ControladorEspacios {
       @PathParam("id") UUID id, @FormParam("estado") String estado)
       throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
 
+    boolean success = false;
     if ("activo".equalsIgnoreCase(estado)) {
-      servicio.activarEspacioFisico(id);
+      success = servicio.activarEspacioFisico(id);
     } else if ("cerrado".equalsIgnoreCase(estado)) {
-      servicio.darBajaEspacioFisico(id);
+      success = servicio.darBajaEspacioFisico(id);
     } else {
       return Response.status(Response.Status.BAD_REQUEST)
           .entity("Estado inválido. Use 'activo' o 'cerrado'.")
           .build();
     }
 
-    return Response.status(Response.Status.NO_CONTENT).build();
+    return !success
+        ? Response.status(Response.Status.CONFLICT).build()
+        : Response.status(Response.Status.NO_CONTENT).build();
   }
 
   @GET
