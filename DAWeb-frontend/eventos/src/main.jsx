@@ -9,6 +9,7 @@ import UsuarioPage from "./pages/UsuarioPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
 
 import "./styles/custom.css";
 import {AuthProvider} from "./context/AuthContext";
@@ -22,12 +23,11 @@ createRoot(document.getElementById("root")).render(
           <Route path="/" element={<HomeRedirect />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/home" element={<Lobby />}>
+            <Route index element={<HomePage/>} />
             <Route element={<PrivateRoute allowedRoles={["USUARIO"]} />}>
               <Route path="/home/usuarios" element={<UsuarioPage />} />
             </Route>
-            <Route
-              element={<PrivateRoute allowedRoles={["PROPIETARIO_ESPACIOS"]} />}
-            >
+            <Route element={<PrivateRoute allowedRoles={["PROPIETARIO_ESPACIOS"]} />}>
               <Route path="/home/espacios" element={<EspaciosPage />} />
             </Route>
             <Route element={<PrivateRoute allowedRoles={["GESTOR_EVENTOS"]} />}>

@@ -50,6 +50,7 @@ const LoginForm = () => {
       const data = await response.json();
       console.log("Login data:", data);
       setUser(data);
+      window.location.href = "/home"; 
     } catch (error) {
       console.error("Error en login:", error);
       setError(error.message);
