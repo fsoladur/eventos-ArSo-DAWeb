@@ -1,11 +1,12 @@
 package servicios;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
-import java.util.Map;
+
+import javax.ws.rs.container.ContainerRequestContext;
 
 public interface ServicioAuth {
 
-  String generarToken(Map<String, Object> claims);
-
-  Claims validateToken(String token);
+  String extractToken(ContainerRequestContext requestContext);
+  Claims decodeToken(String token) throws JsonProcessingException;
 }
