@@ -1,21 +1,18 @@
 package arso.api.rest.auth.controller;
 
+import arso.api.rest.auth.dto.AutorizationResponseDto;
+import arso.dominio.Usuario;
+import arso.servicios.ServicioAuth;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import arso.api.rest.auth.dto.AutorizationResponseDto;
-import arso.servicios.ServicioAuth;
-import arso.dominio.Usuario;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,22 +31,21 @@ public class ControladorAuth {
       @RequestParam String username, @RequestParam String password, HttpServletResponse response) {
 
     Map<String, Object> claims = verificarCredenciales(username, password);
-    if (claims != null) {
-      String token = servicioAuth.generarToken(claims);
 
-      // Dto de respuesta
-      Usuario usuario = servicioAuth.getUsuario(username);
-      AutorizationResponseDto responseDto =
-          new AutorizationResponseDto(
-              usuario.getId(), usuario.getUsername(), usuario.getRoles(), token);
-
-      // Generar cookie con el token
-      response.addCookie(servicioAuth.generarCookie(token));
-
-      return ResponseEntity.ok(responseDto);
-    } else {
+    if (claims.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    String token = servicioAuth.generarToken(claims);
+
+    Usuario usuario = servicioAuth.getUsuario(username);
+    AutorizationResponseDto responseDto =
+        new AutorizationResponseDto(
+            usuario.getId(), usuario.getUsername(), usuario.getRoles(), token);
+
+    response.addCookie(servicioAuth.generarCookie(token));
+
+    return ResponseEntity.ok(responseDto);
   }
 
   @PostMapping("/logout")
@@ -69,10 +65,13 @@ public class ControladorAuth {
 
     // Comprobar si el usuario y la contraseña son correctos
     Usuario usuario = servicioAuth.comprobarCredenciales(username, password);
-
-    if (usuario == null) return null;
-
+    
     HashMap<String, Object> claims = new HashMap<>();
+
+    if (usuario == null) {
+      return claims;
+    }
+
     claims.put("id", usuario.getId().toString());
     claims.put("sub", usuario.getUsername());
     claims.put("roles", String.join(",", usuario.getRoles()));
