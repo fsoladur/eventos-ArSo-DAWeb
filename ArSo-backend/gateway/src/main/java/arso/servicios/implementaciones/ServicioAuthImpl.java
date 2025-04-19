@@ -1,8 +1,8 @@
 package arso.servicios.implementaciones;
 
 import arso.api.rest.auth.config.SecretConfig;
-import arso.servicios.ServicioAuth;
 import arso.dominio.Usuario;
+import arso.servicios.ServicioAuth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -51,14 +51,8 @@ public class ServicioAuthImpl implements ServicioAuth {
 
   @Override
   public Usuario comprobarCredenciales(String username, String password) {
-    Usuario usuario = usuarios.get(username);
-    if (usuario != null && usuario.getPassword().equals(password)) {
-      return usuario;
-    }
-    usuarios.put(
-        username,
-        new Usuario(username, password, "USUARIO", "GESTOR_EVENTOS", "PROPIETARIO_ESPACIOS"));
-    return usuarios.get(username);
+      Usuario usuario = usuarios.get(username);
+      return (usuario != null && usuario.getPassword().equals(password)) ? usuario : null;
   }
 
   public Cookie generarCookie(String token) {
@@ -72,15 +66,11 @@ public class ServicioAuthImpl implements ServicioAuth {
   private void crearUsuarios() {
     usuarios = new HashMap<String, Usuario>();
     // usuario con rol GESTOR_EVENTOS
-    Usuario u1 = new Usuario("gestor", "gestor", "GESTOR_EVENTOS");
+    Usuario u1 = new Usuario("gestor", "gestor", "GESTOR_EVENTOS","PROPIETARIO_ESPACIOS");
     usuarios.put(u1.getUsername(), u1);
 
     // usuario con rol USUARIO
     Usuario u2 = new Usuario("usuario", "usuario", "USUARIO");
     usuarios.put(u2.getUsername(), u2);
-
-    // usuario con rol PROPIETARIO_ESPACIOS
-    Usuario u3 = new Usuario("propietario", "propietario", "PROPIETARIO_ESPACIOS");
-    usuarios.put(u3.getUsername(), u3);
   }
 }
