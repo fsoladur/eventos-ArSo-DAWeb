@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import SpaceSearchBar from '../components/Espacios/SpaceSeachBar/SpaceSeachBar';
-import SpaceList from '../components/Espacios/List/SpaceList';
-import PaginationBar from '../components/Espacios/Pagination/PaginationBar';
+import SpaceSearchBar from '../components/SearchBars/SeachBar';
+import SpaceList from '../components/Lists/SpaceList';
+import PaginationBar from '../components/Pagination/PaginationBar';
 import { useAuth } from '../context/AuthContext';
+import SpaceCard from "../components/Cards/SpaceCard";
 
 const EspaciosPage = () => {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ const EspaciosPage = () => {
   const [espacioExpandido, setEspacioExpandido] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [debouncedFiltro, setDebouncedFiltro] = useState('');
-  const espaciosPorPagina = 8;
+  const espaciosPorPagina = 6;
 
   useEffect(() => {
     // Esperar 300ms después de que el usuario deja de escribir
@@ -82,9 +83,10 @@ const EspaciosPage = () => {
       <SpaceSearchBar onSearch={setInputValue} />
 
       <SpaceList
-        espacios={espaciosPagina}
-        espacioExpandido={espacioExpandido}
+        items={espaciosPagina}
+        itemExpandido={espacioExpandido}
         onExpand={setEspacioExpandido}
+        CardComponent={SpaceCard}
       />
 
       {espaciosFiltrados.length > 0 ? (
@@ -92,6 +94,7 @@ const EspaciosPage = () => {
           totalPaginas={totalPaginas}
           paginaActual={paginaActual}
           onPageChange={setPaginaActual}
+          initialMaxEllipsis={3}
         />
       ) : (
         <p className="text-center mt-4">No se encontraron espacios que coincidan con la búsqueda.</p>
