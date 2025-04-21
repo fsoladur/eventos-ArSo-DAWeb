@@ -12,7 +12,7 @@ const Navbar = ({ session }) => {
       <nav className="navbar">
         <div className="container d-flex justify-content-between align-items-center">
           <a
-            href="http://localhost:3000"
+            href="/home"
             className="brand d-flex align-items-center text-decoration-none"
           >
             <img

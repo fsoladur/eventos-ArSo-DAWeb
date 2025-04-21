@@ -3,49 +3,64 @@ import { Container } from 'react-bootstrap';
 import SpaceSearchBar from '../components/SearchBars/SeachBar';
 import SpaceList from '../components/Lists/SpaceList';
 import PaginationBar from '../components/Pagination/PaginationBar';
-import SpaceCard from "../components/Cards/SpaceCard";
-import { useEspacios } from '../hooks/useEspacios';
+import { useUpdateEspacio } from '../hooks/useUpdateEspacio.js';
+import { useEspacios } from '../hooks/useEspacios.js';
 import { useDebounce } from '../hooks/useDebounce';
-import { usePagination } from '../hooks/usePagination';
 import { useSpaceFilter } from '../hooks/useSpaceFilter';
+import { usePagination } from '../hooks/usePagination';
+import SpaceCard from '../components/Cards/SpaceCard';
 
 const EspaciosPage = () => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue]     = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
-  const [espacioExpandido, setEspacioExpandido] = useState(null);
-  
-  // Hooks personalizados
-  const { espacios, loading, error } = useEspacios();
-  const debouncedFiltro = useDebounce(inputValue, 300);
-  const espaciosFiltrados = useSpaceFilter(espacios, debouncedFiltro);
-  const { paginatedItems: espaciosPagina, totalPages: totalPaginas } = 
-    usePagination(espaciosFiltrados, paginaActual, 6);
+  const [espacioExpandido, setExpandido]= useState(null);
 
-  // Mostrar estado de carga o error
-  if (loading) return <Container className="my-4"><p>Cargando espacios...</p></Container>;
-  if (error) return <Container className="my-4"><p>Error: {error}</p></Container>;
+  // Lectura
+  const { espacios, loading, error } = useEspacios();
+  // Escritura
+  const { update, isSaving, error: saveError } = useUpdateEspacio();
+
+  const debouncedFiltro   = useDebounce(inputValue, 300);
+  const filtrados         = useSpaceFilter(espacios, debouncedFiltro);
+  const { paginatedItems, totalPages } = usePagination(filtrados, paginaActual, 6);
+
+  const handleExpand = id =>
+    setExpandido(prev => (prev === id ? null : id));
+
+  const handleSave = async formData => {
+    const ok = await update(formData);
+    if (!ok) {
+      // aquí podrías mostrar un toast o alert con saveError
+      console.error('No guardado:', saveError);
+    }
+  };
+
+  if (loading) return <Container>Cargando…</Container>;
+  if (error)   return <Container>Error: {error}</Container>;
 
   return (
     <Container className="my-4">
-      <h1 className="fw-bold h3 text-start text-primary mb-4">Mis Espacios</h1>
+      <h1 className="text-primary h3 fw-bold">Mis Espacios</h1>
       <SpaceSearchBar onSearch={setInputValue} />
 
       <SpaceList
-        items={espaciosPagina}
+        items={paginatedItems}
         itemExpandido={espacioExpandido}
-        onExpand={setEspacioExpandido}
+        onExpand={handleExpand}
+        onSave={handleSave}
+        isSaving={isSaving}
         CardComponent={SpaceCard}
       />
 
-      {espaciosFiltrados.length > 0 ? (
+      {filtrados.length > 0 ? (
         <PaginationBar
-          totalPaginas={totalPaginas}
+          totalPaginas={totalPages}
           paginaActual={paginaActual}
           onPageChange={setPaginaActual}
           initialMaxEllipsis={3}
         />
       ) : (
-        <p className="text-center mt-4">No se encontraron espacios que coincidan con la búsqueda.</p>
+        <p>No se encontraron espacios.</p>
       )}
     </Container>
   );

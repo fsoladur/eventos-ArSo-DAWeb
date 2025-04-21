@@ -1,182 +1,120 @@
+import { useState } from 'react';
 import { Accordion, Card, Button, Form } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 
-const SpaceCard = ({ item, onExpand, isExpanded }) => {
-  const [itemOriginal, setItemOriginal] = useState(null);
-  const [error, setError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Inicializar React Hook Form
-  const { 
-    register, 
-    handleSubmit, 
-    watch, 
-    formState: { isDirty, dirtyFields },
-    reset 
-  } = useForm({
-    defaultValues: {
-      nombre: item.resumen.nombre,
-      capacidad: item.resumen.capacidad,
-      descripcion: item.resumen.descripcion || '',
-      direccion: item.resumen.direccion
-    }
-  });
+const SpaceCard = ({
+  item,
+  onExpand,
+  onSave,
+  isSaving
+}) => {
+  // Estado inicial con los valores del espacio
+  let initialValues = {
+    nombre: item.resumen.nombre,
+    capacidad: item.resumen.capacidad,
+    descripcion: item.resumen.descripcion || ''
+  };
 
-  // Observar valores actuales del formulario
-  const formValues = watch();
-  
-  // Guardar estado original al expandir por primera vez
-  useEffect(() => {
-    if (isExpanded && !itemOriginal) {
-      setItemOriginal({...item});
-    }
-  }, [isExpanded, item, itemOriginal]);
-  
-  // Resetear formulario cuando cambia el item (por ejemplo, cuando se selecciona otro espacio)
-  useEffect(() => {
-    reset({
-      nombre: item.resumen.nombre,
-      capacidad: item.resumen.capacidad,
-      descripcion: item.resumen.descripcion || '',
-      direccion: item.resumen.direccion
+  // Estados para almacenar valores del formulario y tracking de cambios
+  const [formValues, setFormValues] = useState(initialValues);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isActive, setActive] = useState(item.resumen.estado === 'ACTIVO');
+
+
+  // Manejador de cambios en inputs
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Actualizar estado del formulario
+    setFormValues(prev => {
+      const newValues = { ...prev, [name]: value };
+      
+      // Verificar si algún valor es diferente del inicial
+      const hasChanges = 
+        newValues.nombre !== initialValues.nombre ||
+        newValues.capacidad !== initialValues.capacidad ||
+        newValues.descripcion !== initialValues.descripcion;
+      
+      setIsDirty(hasChanges);
+      
+      return newValues;
     });
-  }, [item, reset]);
-
-  // Determinar si hay cambios comparando con el estado original
-  const hayCambios = () => {
-    if (!itemOriginal || !isDirty) return false;
-    
-    // Solo verificar campos que han sido modificados
-    if (dirtyFields.nombre && formValues.nombre !== itemOriginal.resumen.nombre) return true;
-    if (dirtyFields.capacidad && parseInt(formValues.capacidad) !== parseInt(itemOriginal.resumen.capacidad)) return true;
-    if (dirtyFields.descripcion && formValues.descripcion !== (itemOriginal.resumen.descripcion || '')) return true;
-    
-    return false;
   };
 
-  // Manejar el guardado (se llama automáticamente por handleSubmit)
-  const onSubmit = async (data) => {
-    if (!hayCambios()) return;
-
-    const ERROR_ALERT = "Error al guardar los cambios. Por favor, inténtelo de nuevo.";
+  // Manejador para envío del formulario
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
-    setIsSubmitting(true);
-    setError(null);
+    // Para capacidad, asegurarse de que sea número
+    const processedValues = {
+      ...formValues,
+      capacidad: Number(formValues.capacidad)
+    };
     
-    try {
-      const response = await fetch(`http://localhost:8090/espacios/${item.resumen.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          nombre: data.nombre,
-          capacidad: parseInt(data.capacidad),
-          descripcion: data.descripcion
-        })
-      });
+    onSave({ id: item.resumen.id, ...processedValues });
 
-      if (response.ok && response.status === 204) {
-          // Crear un "updatedItem" basado en los datos enviados
-          const updatedItem = {
-            ...itemOriginal,
-            resumen: {
-              ...itemOriginal.resumen,
-              nombre: data.nombre,
-              capacidad: parseInt(data.capacidad),
-              descripcion: data.descripcion
-            }
-          };
-          
-          setItemOriginal(updatedItem);
-
-          reset({
-            nombre: data.nombre,
-            capacidad: data.capacidad,
-            descripcion: data.descripcion || '',
-            direccion: item.resumen.direccion
-          });
-      }else{
-        setError(ERROR_ALERT);
-      }
-    } catch(e)
-    {
-      setError(ERROR_ALERT);
-      console.log(e);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsDirty(false); 
+    initialValues = { ...processedValues,  }; // Actualizar valores iniciales
   };
-  
+
   return (
     <Accordion.Item eventKey={item.resumen.id.toString()}>
       <Card>
         <Accordion.Header onClick={onExpand}>
-          <div className="d-flex flex-column flex-md-row gap-2">
+          <div className="d-flex flex-column flex-md-row justify-content-between gap-2">
             <div className="fw-bold me-md-2">{item.resumen.nombre}</div>
             <div className="d-flex flex-column flex-md-row">
               <div className="me-md-3">
                 <span>{item.resumen.capacidad} plazas</span>
               </div>
+          
               <div className="text-wrap text-break">
                 <span>{item.resumen.direccion}</span>
               </div>
             </div>
           </div>
         </Accordion.Header>
+
         <Accordion.Body>
-          {error && (
-            <div className="alert alert-danger py-2 mb-3">{error}</div>
-          )}
-          
-          <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-2">
               <Form.Label>Nombre</Form.Label>
               <Form.Control 
-                type="text"
-                {...register("nombre")}
+                name="nombre"
+                value={formValues.nombre}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group className="mb-2">
               <Form.Label>Capacidad</Form.Label>
               <Form.Control 
-                type="number"
-                {...register("capacidad")}
+                type="number" 
+                name="capacidad"
+                value={formValues.capacidad}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group className="mb-2">
               <Form.Label>Descripción</Form.Label>
               <Form.Control 
-                as="textarea"
-                rows={2}
-                {...register("descripcion")}
+                as="textarea" 
+                rows={2} 
+                name="descripcion"
+                value={formValues.descripcion}
+                onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Dirección</Form.Label>
-              <Form.Control 
-                type="text"
-                {...register("direccion")}
-                disabled
-              />
-            </Form.Group>
+
             <div className="d-flex justify-content-end gap-2">
-              <Button 
+              <Button
                 type="submit"
-                variant="outline-primary" 
-                size="sm" 
-                disabled={!hayCambios() || isSubmitting}
-              >
-                {isSubmitting ? 'Guardando...' : hayCambios() ? 'Guardar' : 'Sin cambios'}
-              </Button>
-              <Button 
-                variant="outline-danger" 
+                variant="outline-primary"
                 size="sm"
-                disabled={isSubmitting}
+                disabled={!isDirty || isSaving}
               >
-                Cerrar temporalmente
+                { isSaving ? 'Guardando…' : isDirty ? 'Guardar' : 'Sin cambios' }
+              </Button>
+              <Button variant="outline-danger" size="sm" disabled={isSaving}>
+                {isActive ? 'Cerrar temporalmente' : 'Activar'}
               </Button>
             </div>
           </Form>
