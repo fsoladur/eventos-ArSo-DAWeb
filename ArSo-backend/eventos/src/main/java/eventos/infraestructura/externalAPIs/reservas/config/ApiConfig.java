@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "api")
 public class ApiConfig {
   private String reservas;
+  private String secretoReservas;
 
   public String getReservas() {
     return reservas;
@@ -14,5 +15,13 @@ public class ApiConfig {
 
   public void setReservas(String reservas) {
     this.reservas = reservas;
+  }
+
+  public String getSecretoReservas() {
+    return secretoReservas;
+  }
+
+  public void setSecretoReservas(String secretoReservas) {
+    this.secretoReservas = secretoReservas;
   }
 }

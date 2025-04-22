@@ -15,9 +15,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -43,8 +45,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
     Arrays.stream(roles).forEach(rol -> authorities.add(new SimpleGrantedAuthority(rol)));
 
-    UsernamePasswordAuthenticationToken auth =
-        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+    Authentication auth =
+        roles[0].equals("MICROSERVICIO")
+            ? new PreAuthenticatedAuthenticationToken(claims.getSubject(), null, authorities)
+            : new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+
     SecurityContextHolder.getContext().setAuthentication(auth);
 
     chain.doFilter(request, response);

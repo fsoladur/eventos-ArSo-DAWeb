@@ -165,7 +165,6 @@ public class ControladorEspacios {
         servicio.findEspaciosFisicosDePropietario(propietario).stream()
             .map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
             .collect(Collectors.toList());
-    ;
 
     LinkedList<ResumenExtendido> extendido = new LinkedList<>();
     for (EspacioFisicoDTO espacioFisicoDTO : listaEspacioFisicosPropietario) {

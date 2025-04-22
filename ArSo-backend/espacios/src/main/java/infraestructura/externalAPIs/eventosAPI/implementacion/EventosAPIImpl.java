@@ -1,17 +1,20 @@
 package infraestructura.externalAPIs.eventosAPI.implementacion;
 
 import infraestructura.externalAPIs.eventosAPI.EventosAPI;
+import io.jsonwebtoken.Jwts;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-
 public class EventosAPIImpl implements EventosAPI {
   private final RetrofitEventosAPI eventosAPI;
+  private final String bearerToken;
 
   public EventosAPIImpl() {
     Retrofit retrofit =
@@ -20,18 +23,22 @@ public class EventosAPIImpl implements EventosAPI {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     eventosAPI = retrofit.create(RetrofitEventosAPI.class);
+    this.bearerToken = generateBearerToken(System.getenv("SECRET_KEY")); // Sustituir por un System.getenv()
   }
 
+  @Override
   public List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
       int capacidad, String fechaInicio, String fechaFin) throws IOException {
     Call<List<UUID>> call =
-        eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(capacidad, fechaInicio, fechaFin);
+        eventosAPI.getEspaciosSinEventosYCapacidadSuficiente(
+            capacidad, fechaInicio, fechaFin, bearerToken);
     Response<List<UUID>> response = call.execute();
     return response.isSuccessful() ? response.body() : List.of();
   }
 
+  @Override
   public boolean isOcupacionActiva(UUID id) throws IOException {
-    Call<Boolean> call = eventosAPI.isOcupacionActiva(id);
+    Call<Boolean> call = eventosAPI.isOcupacionActiva(id, bearerToken);
     Response<Boolean> response = call.execute();
     return !response.isSuccessful() || Boolean.TRUE.equals(response.body());
   }
@@ -39,8 +46,24 @@ public class EventosAPIImpl implements EventosAPI {
   @Override
   public boolean validarNuevaCapacidadEspacio(UUID idEspacio, int nuevaCapacidad)
       throws IOException {
-    Call<Boolean> call = eventosAPI.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad);
+    Call<Boolean> call =
+        eventosAPI.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad, bearerToken);
     Response<Boolean> response = call.execute();
     return response.isSuccessful() && Boolean.TRUE.equals(response.body());
+  }
+
+  private String generateBearerToken(String secretoEventos) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("username", "MICROSERVICIO");
+    claims.put("roles", String.join(",", "MICROSERVICIO"));
+
+    // Lo dejamos sin expiración
+    String token =
+        Jwts.builder()
+            .setClaims(claims)
+            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, secretoEventos)
+            .compact();
+
+    return "Bearer " + token;
   }
 }

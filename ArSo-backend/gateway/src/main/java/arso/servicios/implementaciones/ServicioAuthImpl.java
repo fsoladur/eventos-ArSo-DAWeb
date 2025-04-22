@@ -21,7 +21,6 @@ public class ServicioAuthImpl implements ServicioAuth {
   private Map<String, Usuario> usuarios;
 
   public ServicioAuthImpl(SecretConfig secretConfig) {
-    // Crear usuarios estáticos
     crearUsuarios();
     secreto = secretConfig.getKey();
   }
@@ -40,8 +39,7 @@ public class ServicioAuthImpl implements ServicioAuth {
 
   @Override
   public Claims validateToken(String token) {
-    Claims claims = Jwts.parser().setSigningKey(secreto).parseClaimsJws(token).getBody();
-    return claims;
+      return Jwts.parser().setSigningKey(secreto).parseClaimsJws(token).getBody();
   }
 
   @Override
