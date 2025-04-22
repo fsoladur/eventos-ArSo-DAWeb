@@ -59,14 +59,15 @@ public class ControladorReservas implements ReservasApi {
   }
 
   @GetMapping("/eventos/{idEvento}/reservas")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS, PROPIETARIO_ESPACIOS')")
   public PagedModel<EntityModel<ReservaDto>> getReservas(
       @PathVariable UUID idEvento, Pageable pageable) throws Exception {
     return this.pagedResourcesAssembler.toModel(
         this.servicioReservas.getAll(idEvento, pageable).map(ReservaMapper::toDTO),
         reservaDtoAssembler);
   }
-  
-  @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
+
+  @PreAuthorize("hasAuthority('MICROSERVICIO')")
   @GetMapping("/eventos/{idEvento}/plazas")
   public ResponseEntity<Boolean> validarNuevasPlazas(
       @PathVariable UUID idEvento, @RequestParam int plazas) throws Exception {

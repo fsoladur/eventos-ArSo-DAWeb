@@ -116,7 +116,7 @@ public class ControladorEventos implements EventosApi {
   }
 
   @GetMapping("/eventos/espaciosLibres")
-  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
+  @PreAuthorize("hasAuthority('MICROSERVICIO')")
   public ResponseEntity<List<UUID>> getEspaciosSinEventosYCapacidadSuficiente(
       @RequestParam int capacidad, @RequestParam String fechaInicio, @RequestParam String fechaFin)
       throws EntidadNoEncontrada {
@@ -126,12 +126,14 @@ public class ControladorEventos implements EventosApi {
   }
 
   @GetMapping("/eventos/{id}/ocupacion")
+  @PreAuthorize("hasAuthority('MICROSERVICIO')")
   public ResponseEntity<Boolean> isOcupacionActiva(@PathVariable UUID id)
       throws EntidadNoEncontrada {
     return ResponseEntity.ok(this.servicioEventos.isOcupacionActiva(id));
   }
 
   @GetMapping("/eventos/ocupaciones/espacios/{idEspacio}/capacidad")
+  @PreAuthorize("hasAuthority('MICROSERVICIO')")
   public ResponseEntity<Boolean> validarNuevaCapacidadEspacio(
       @PathVariable UUID idEspacio, @RequestParam int nuevaCapacidad) throws EntidadNoEncontrada {
     return ResponseEntity.ok(this.servicioEventos.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad));
