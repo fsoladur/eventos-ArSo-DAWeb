@@ -2,8 +2,10 @@ package reservas.infraestructura.api.rest.controller;
 
 import java.net.URI;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +58,16 @@ public class ControladorReservas implements ReservasApi {
   @PreAuthorize("hasAuthority('USUARIO')")
   public EntityModel<ReservaDto> getReserva(@PathVariable UUID idReserva) throws Exception {
     return reservaDtoAssembler.toModel(ReservaMapper.toDTO(this.servicioReservas.get(idReserva)));
+  }
+
+  @GetMapping("/reservas/usuarios/{idUsuario}")
+  @PreAuthorize("hasAuthority('USUARIO')")
+  public CollectionModel<EntityModel<ReservaDto>> getReservas(@PathVariable UUID idUsuario)
+      throws Exception {
+    return reservaDtoAssembler.toCollectionModel(
+        this.servicioReservas.getAll(idUsuario).stream()
+            .map(ReservaMapper::toDTO)
+            .collect(Collectors.toList()));
   }
 
   @GetMapping("/eventos/{idEvento}/reservas")
