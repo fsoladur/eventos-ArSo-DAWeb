@@ -113,8 +113,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
     }
 
-    if(capacidad < 0) {
-        throw new IllegalArgumentException("La capacidad no puede ser negativa.");
+    if (capacidad < 0) {
+      throw new IllegalArgumentException("La capacidad no puede ser negativa.");
     }
 
     EspacioFisico espacioFisico = repositorioEspacioFisico.getById(idEspacio);
@@ -198,7 +198,8 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
             capacidadRequerida, fechaInicio.toString(), fechaFin.toString());
 
     if (espaciosLibres == null || espaciosLibres.isEmpty()) {
-      throw new EntidadNoEncontrada("No hay espacios libres disponibles en el rango de fechas y con capacidad suficiente.");
+      throw new EntidadNoEncontrada(
+          "No hay espacios libres disponibles en el rango de fechas y con capacidad suficiente.");
     }
 
     return repositorioEspacioFisico.getEspaciosFisicosByIds(espaciosLibres);
@@ -222,5 +223,10 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
     }
 
     return repositorioEspacioFisico.getById(idEspacio);
+  }
+
+  @Override
+  public List<EspacioFisico> recuperarEspaciosFisicos() throws RepositorioException {
+    return repositorioEspacioFisico.getAll();
   }
 }
