@@ -59,6 +59,8 @@ public interface ServicioEventos {
   /** - ruta de acceso: "/eventos/{idEvento}" - método: GET - respuesta: 200 OK, body: evento */
   Evento recuperarEvento(final UUID idEvento) throws EntidadNoEncontrada;
 
+  List<Evento> getEventos();
+
   /**
    * - ruta de acceso: "/eventos/espaciosOcupados?fechaInicio={fechaInicio}&fechaFin={fechaFin}" -
    * método: GET - respuesta: 200 OK

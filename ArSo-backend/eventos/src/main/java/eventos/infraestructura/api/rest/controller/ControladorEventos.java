@@ -1,32 +1,32 @@
 package eventos.infraestructura.api.rest.controller;
 
+import eventos.dominio.enumerados.Categoria;
 import eventos.infraestructura.api.rest.assembler.EventoDtoAssembler;
 import eventos.infraestructura.api.rest.assembler.PagedReservaDtoAssembler;
 import eventos.infraestructura.api.rest.dto.in.CategoriaDTO;
 import eventos.infraestructura.api.rest.dto.in.CrearEventoDto;
-import eventos.infraestructura.api.rest.dto.out.EventoDTO;
 import eventos.infraestructura.api.rest.dto.in.ModificarEventoDTO;
+import eventos.infraestructura.api.rest.dto.out.EventoDTO;
 import eventos.infraestructura.api.rest.mapper.EventoMapper;
 import eventos.infraestructura.api.rest.spec.EventosApi;
-import eventos.dominio.enumerados.Categoria;
 import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
-
+import eventos.servicios.ServicioEventos;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import eventos.servicios.ServicioEventos;
 
 @RestController
 @RequestMapping("/api")
@@ -99,7 +99,7 @@ public class ControladorEventos implements EventosApi {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/eventos")
+  @GetMapping("/eventos/fechas")
   @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
   public PagedModel<EntityModel<EventoDTO>> getEventosDelMes(
       @RequestParam String mes, @RequestParam String anio, Pageable pageable) throws Exception {
@@ -107,6 +107,15 @@ public class ControladorEventos implements EventosApi {
     return this.pagedResourcesAssembler.toModel(
         this.servicioEventos.getEventosDelMes(parseYearMonth(mes, anio), pageable),
         eventoDtoAssembler);
+  }
+
+  @GetMapping("/eventos")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
+  public CollectionModel<EntityModel<EventoDTO>> getEventos() {
+    return this.eventoDtoAssembler.toCollectionModel(
+        this.servicioEventos.getEventos().stream()
+            .map(EventoMapper::toDTO)
+            .collect(Collectors.toList()));
   }
 
   @GetMapping("/eventos/{id}")
@@ -136,7 +145,8 @@ public class ControladorEventos implements EventosApi {
   @PreAuthorize("hasAuthority('MICROSERVICIO')")
   public ResponseEntity<Boolean> validarNuevaCapacidadEspacio(
       @PathVariable UUID idEspacio, @RequestParam int nuevaCapacidad) throws EntidadNoEncontrada {
-    return ResponseEntity.ok(this.servicioEventos.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad));
+    return ResponseEntity.ok(
+        this.servicioEventos.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad));
   }
 
   private LocalDateTime parseFecha(String fecha) {

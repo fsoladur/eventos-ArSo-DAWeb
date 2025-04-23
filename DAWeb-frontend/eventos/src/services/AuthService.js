@@ -7,7 +7,8 @@ export const login = async dto => {
     body: new URLSearchParams({
       username: dto.username,
       password: dto.password
-    })
+    }),
+    credentials: 'include'
   });
 
   if (!response.ok) {

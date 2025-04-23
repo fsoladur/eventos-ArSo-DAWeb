@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -275,6 +277,12 @@ public class ServicioEventosImpl implements ServicioEventos {
     return repositorioEventos
         .findById(idEvento)
         .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+  }
+
+  @Override
+  public List<Evento> getEventos() {
+    return StreamSupport.stream(this.repositorioEventos.findAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 
   @Override
