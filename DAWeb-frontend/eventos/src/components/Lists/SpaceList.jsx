@@ -4,9 +4,9 @@ const SpaceList = ({ items, itemExpandido, onExpand, onSave, isSaving, CardCompo
   <Accordion activeKey={itemExpandido?.toString()}>
     {items.map((item) => (
       <CardComponent
-        key={item.resumen.id}
+        key={item.id}
         item={item}
-        onExpand={() => onExpand(item.resumen.id)}
+        onExpand={() => onExpand(item.id)}
         onSave={onSave}
         isSaving={isSaving}
       />

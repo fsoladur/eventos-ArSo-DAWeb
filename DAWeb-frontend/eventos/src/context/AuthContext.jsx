@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }) => {
       // Siempre limpiar el estado local
       localStorage.removeItem('user');
       setUser(null);
-      window.location.href = '/login';
     }
   };
   

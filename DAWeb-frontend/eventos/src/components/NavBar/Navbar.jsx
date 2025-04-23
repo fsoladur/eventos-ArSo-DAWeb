@@ -31,7 +31,7 @@ const Navbar = ({ session }) => {
             onClick={e => {
               e.preventDefault();
               logout();
-              window.location.href = 'http://localhost:3000';
+              window.location.href = session ? "/login" : 'http://localhost:3000';
             }}
           >
             {session ? 'Cerrar Sesión' : 'Volver a inicio'}

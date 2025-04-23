@@ -23,7 +23,7 @@ const DischargeSpaceForm = ({ onHandleSubmit }) => {
       propietario: user.username,
       descripcion: form.descripcion.value,
       capacidad: form.capacidad.value,
-      direccion: form.direccion.value,
+      direccionPostal: form.direccion.value,
       latitud: form.latitud.value,
       longitud: form.longitud.value
     };
@@ -127,7 +127,7 @@ const DischargeSpaceForm = ({ onHandleSubmit }) => {
 
           <Row>
             <Col>
-              <Button type="submit" className="w-100">
+              <Button type="submit" className="w-100 text-white">
                 Guardar
               </Button>
             </Col>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export function useEspacios() {
   const { user } = useAuth();
@@ -24,8 +24,9 @@ export function useEspacios() {
         }
         
         const data = await response.json();
-        console.log(data)
-        setEspacios(data.espacio);
+        const espaciosResumen = data.espacio.map((espacio) => espacio.resumen);
+        setEspacios(espaciosResumen);
+        console.log("Espacios actuales:", espaciosResumen);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -38,5 +39,12 @@ export function useEspacios() {
     fetchEspacios();
   }, [user]);
 
-  return { espacios, loading, error };
+  function addEspacio(espacio) {
+    console.log(espacio)
+    console.log("insertando espacio")
+    setEspacios((prevEspacios) => [...prevEspacios, espacio]);
+    console.log("Espacios actuales:", [...espacios, espacio]);
+  }
+
+  return { espacios, loading, error, addEspacio };
 }

@@ -10,7 +10,7 @@ const DischargeButton = ({ buttonLabel, children }) => {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="primary text-white w-25" onClick={handleShow}>
         {buttonLabel}
       </Button>
 
@@ -21,8 +21,8 @@ const DischargeButton = ({ buttonLabel, children }) => {
         show={showModal}
         onHide={handleClose}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>{buttonLabel}</Modal.Title>
+        <Modal.Header className="bg-dark" closeButton>
+          <Modal.Title className='text-primary fw-bold'>{buttonLabel}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {typeof children === 'function' ? children(handleClose) : children}

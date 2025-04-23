@@ -3,12 +3,12 @@ import { Container } from 'react-bootstrap';
 import SpaceSearchBar from '../components/SearchBars/SeachBar';
 import SpaceList from '../components/Lists/SpaceList';
 import PaginationBar from '../components/Pagination/PaginationBar';
-import { useUpdateEspacio } from '../hooks/useUpdateEspacio.js';
-import { useEspacios } from '../hooks/useEspacios.js';
+import { useEspacios } from '../hooks/Espacios/useEspacios.js';
 import { useDebounce } from '../hooks/useDebounce';
-import { useSpaceFilter } from '../hooks/useSpaceFilter';
+import { useSpaceFilter } from '../hooks/Espacios/useSpaceFilter.js';
 import { usePagination } from '../hooks/usePagination';
 import SpaceCard from '../components/Cards/SpaceCard';
+import { useUpdateEspacio } from '../hooks/Espacios/useUpdateEspacio.js';
 
 const EspaciosPage = () => {
   const [inputValue, setInputValue]     = useState('');
@@ -16,7 +16,7 @@ const EspaciosPage = () => {
   const [espacioExpandido, setExpandido]= useState(null);
 
   // Lectura
-  const { espacios, loading, error } = useEspacios();
+  const { espacios, loading, error, addEspacio } = useEspacios();
   // Escritura
   const { update, isSaving, error: saveError } = useUpdateEspacio();
 
@@ -40,8 +40,9 @@ const EspaciosPage = () => {
 
   return (
     <Container className="my-4">
-      <h1 className="text-primary h3 fw-bold">Mis Espacios</h1>
-      <SpaceSearchBar onSearch={setInputValue} />
+      <h1 className="text-primary h4 fw-bold">Gestiona los espacios fisicos</h1>
+
+      <SpaceSearchBar onSearch={setInputValue} addEspacio={addEspacio} />
 
       <SpaceList
         items={paginatedItems}

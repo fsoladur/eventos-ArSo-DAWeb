@@ -9,15 +9,15 @@ const SpaceCard = ({
 }) => {
   // Estado inicial con los valores del espacio
   let initialValues = {
-    nombre: item.resumen.nombre,
-    capacidad: item.resumen.capacidad,
-    descripcion: item.resumen.descripcion || ''
+    nombre: item.nombre,
+    capacidad: item.capacidad,
+    descripcion: item.descripcion || ''
   };
 
   // Estados para almacenar valores del formulario y tracking de cambios
   const [formValues, setFormValues] = useState(initialValues);
   const [isDirty, setIsDirty] = useState(false);
-  const [isActive, setActive] = useState(item.resumen.estado === 'ACTIVO');
+  const [isActive, setActive] = useState(item.estado === 'ACTIVO');
 
 
   // Manejador de cambios en inputs
@@ -50,25 +50,25 @@ const SpaceCard = ({
       capacidad: Number(formValues.capacidad)
     };
     
-    onSave({ id: item.resumen.id, ...processedValues });
+    onSave({ id: item.id, ...processedValues });
 
     setIsDirty(false); 
     initialValues = { ...processedValues,  }; // Actualizar valores iniciales
   };
 
   return (
-    <Accordion.Item eventKey={item.resumen.id.toString()}>
+    <Accordion.Item eventKey={item.id.toString()}>
       <Card>
         <Accordion.Header onClick={onExpand}>
           <div className="d-flex flex-column flex-md-row justify-content-between gap-2">
-            <div className="fw-bold me-md-2">{item.resumen.nombre}</div>
+            <div className="fw-bold me-md-2">{item.nombre}</div>
             <div className="d-flex flex-column flex-md-row">
               <div className="me-md-3">
-                <span>{item.resumen.capacidad} plazas</span>
+                <span>{item.capacidad} plazas</span>
               </div>
           
               <div className="text-wrap text-break">
-                <span>{item.resumen.direccion}</span>
+                <span>{item.direccion}</span>
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@ const SpaceCard = ({
               >
                 { isSaving ? 'Guardando…' : isDirty ? 'Guardar' : 'Sin cambios' }
               </Button>
-              <Button variant="outline-danger" size="sm" disabled={isSaving}>
+              <Button variant={isActive ? "outline-danger" : "outline-success"} size="sm" disabled={isSaving}>
                 {isActive ? 'Cerrar temporalmente' : 'Activar'}
               </Button>
             </div>
