@@ -78,4 +78,6 @@ public interface ServicioEspacios {
    */
   EspacioFisico recuperarEspacioFisico(final UUID idEspacio)
       throws RepositorioException, EntidadNoEncontrada;
+
+  List<EspacioFisico> recuperarEspaciosFisicos() throws RepositorioException;
 }

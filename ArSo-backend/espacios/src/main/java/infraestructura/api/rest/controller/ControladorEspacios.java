@@ -157,6 +157,7 @@ public class ControladorEspacios {
   }
 
   @GET
+  @Path("/propietarios") // /api/espacios/propietarios?propietario=propietario
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed({"PROPIETARIO_ESPACIOS", "USUARIO"})
   public Response findEspaciosFisicosDePropietario(@QueryParam("propietario") String propietario)
@@ -194,5 +195,32 @@ public class ControladorEspacios {
         EspacioFisicoMapper.transformToEspacioFisicoDTO(servicio.recuperarEspacioFisico(id));
 
     return Response.ok(espacioFisico).build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("PROPIETARIO_ESPACIOS")
+  public Response recuperarEspaciosFisicos() throws RepositorioException {
+    List<EspacioFisicoDTO> listaEspacioFisicos =
+        servicio.recuperarEspaciosFisicos().stream()
+            .map(EspacioFisicoMapper::transformToEspacioFisicoDTO)
+            .collect(Collectors.toList());
+
+    LinkedList<ResumenExtendido> extendido = new LinkedList<>();
+
+    listaEspacioFisicos.forEach(
+        espacioFisicoDTO -> {
+          ResumenExtendido resumenExtendido = new ResumenExtendido();
+          resumenExtendido.setResumen(espacioFisicoDTO);
+
+          UUID id = espacioFisicoDTO.getId();
+          URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
+          resumenExtendido.setUrl(nuevaURL.toString());
+
+          extendido.add(resumenExtendido);
+        });
+    Listado listado = new Listado();
+    listado.setEspacios(extendido);
+    return Response.ok(listado).build();
   }
 }
