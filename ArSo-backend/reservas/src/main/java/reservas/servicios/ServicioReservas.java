@@ -1,5 +1,6 @@
 package reservas.servicios;
 
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,8 @@ public interface ServicioReservas {
    * List<ReservaDTO>
    */
   Page<Reserva> getAll(UUID idEvento, Pageable pageable) throws Exception;
+
+  List<Reserva> getAll(UUID idUsuario) throws Exception;
 
   boolean validarNuevasPlazasEvento(UUID idEvento, int plazas);
 }

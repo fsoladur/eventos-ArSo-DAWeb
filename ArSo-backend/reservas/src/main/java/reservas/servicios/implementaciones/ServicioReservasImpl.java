@@ -1,5 +1,6 @@
 package reservas.servicios.implementaciones;
 
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,6 +75,18 @@ public class ServicioReservasImpl implements ServicioReservas {
       throw new EntidadNoEncontrada("Evento no encontrado");
     }
     return repositorioReservas.findAllByEventoId(idEvento, pageable);
+  }
+
+  @Override
+  public List<Reserva> getAll(UUID idUsuario) throws Exception {
+    if (idUsuario == null) {
+      throw new IllegalArgumentException("El id del usuario no puede ser nulo");
+    }
+    if (!repositorioReservas.existsByIdUsuario(idUsuario)) {
+      throw new EntidadNoEncontrada("No se han encontrado reservas para el usuario");
+    }
+
+    return repositorioReservas.findAllByIdUsuario(idUsuario);
   }
 
   @Override

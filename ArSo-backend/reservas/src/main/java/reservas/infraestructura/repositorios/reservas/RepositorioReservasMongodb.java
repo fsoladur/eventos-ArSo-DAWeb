@@ -1,5 +1,6 @@
 package reservas.infraestructura.repositorios.reservas;
 
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,9 @@ public interface RepositorioReservasMongodb
   @Query("{ 'evento.$id': ?0 }")
   Page<Reserva> findAllByEventoId(UUID eventoId, Pageable pageable);
 
-  /*
-  @Query("{ 'evento.$id': :#{#eventoId} }")
-  Page<Reserva> findByEventoId(@Param("eventoId") UUID eventoId, Pageable pageable);
-  */
+  @Query(value = "{ 'idUsuario': ?0 }", exists = true)
+  boolean existsByIdUsuario(UUID idUsuario);
 
+  @Query(value = "{ 'idUsuario': ?0 }")
+  List<Reserva> findAllByIdUsuario(UUID idUsuario);
 }
