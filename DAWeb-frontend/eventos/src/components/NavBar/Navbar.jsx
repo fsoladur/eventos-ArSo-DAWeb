@@ -1,8 +1,8 @@
-import React from "react";
-import { useAuth } from "../../context/AuthContext";
-import "./Navbar.css";
-import PropTypes from "prop-types";
-import NavbarLinks from "./NavLink";
+import React from 'react';
+import { useAuth } from '../../context/AuthContext';
+import './Navbar.css';
+import PropTypes from 'prop-types';
+import NavbarLinks from './NavLink';
 
 const Navbar = ({ session }) => {
   const { user, logout } = useAuth();
@@ -23,18 +23,18 @@ const Navbar = ({ session }) => {
             <span className="brand-title">Eventos Fabi&Anto</span>
           </a>
 
-          {user && <NavbarLinks/>}
+          {user && <NavbarLinks />}
 
           <button
             type="button"
             className="btn btn-custom"
-            onClick={(e) => {
+            onClick={e => {
               e.preventDefault();
               logout();
-              window.location.href = "http://localhost:3000"; // redirige donde necesites
+              window.location.href = 'http://localhost:3000';
             }}
           >
-            {session ? "Cerrar Sesión" : "Volver a inicio"}
+            {session ? 'Cerrar Sesión' : 'Volver a inicio'}
           </button>
         </div>
       </nav>
@@ -43,7 +43,7 @@ const Navbar = ({ session }) => {
 };
 
 Navbar.propTypes = {
-  session: PropTypes.bool.isRequired,
+  session: PropTypes.bool.isRequired
 };
 
 export default Navbar;

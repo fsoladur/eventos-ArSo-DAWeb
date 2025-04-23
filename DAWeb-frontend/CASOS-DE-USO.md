@@ -30,7 +30,7 @@ Casos de uso genéricos:
 
 - La aplicación deberá **permitir hacer un Login/Logout a los usuarios**
 
-### Actor Usuario (rol usuario)
+### Actor gestor (rol gestor)
 
 Casos de uso:
 
@@ -42,7 +42,7 @@ Casos de uso:
 
 - gestor podrá **cerrar temporalmente un espacio físico si no tiene eventos activos**.
 
-### Actor gestor (rol gestor)
+### Actor usuario (rol usuario)
 
 Casos de uso:
 
