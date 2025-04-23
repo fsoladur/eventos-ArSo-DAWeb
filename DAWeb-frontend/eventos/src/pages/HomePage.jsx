@@ -1,58 +1,42 @@
 import React from 'react';
-import DischargeButton from '../components/DischargeButton/DischargeButton';
-import { Form } from 'react-bootstrap';
+import DischargeSpaceForm from '../components/DischargeSpaceForm/DischargeSpaceForm';
+import { toast, ToastContainer } from 'react-toastify';
 
 const HomePage = () => {
-  return (
-    <>
-      <div className="NotFoundPage">
-        <h1>
-          Ummmmmmmmmmmmmmmmmmmmmmmmmmmmm, parece que no puedes acceder a esta
-          ruta, porcuodio porcuala
-        </h1>
-        <p>Tung Tung Tung sahur</p>
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF0Bi9fCwrQBhZBgrnMl5F60rnNaXC6CbEvg&s"
-          alt="Tung Tung Tung sahur"
-        />
-      </div>
+  const handleSubmit = async dto => {
+    console.log('DTO:', dto);
+    try {
+      const response = await fetch('https://api.example.com/crear-espacio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dto)
+      });
 
-      <div>
-        <DischargeButton buttonLabel="Dar de alta espacio">
-          <Form>
-            <Form.Group className="mb-2">
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control type="text" placeholder="Nombre" />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control as="textarea" rows={3} placeholder="Descripción" />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Capacidad</Form.Label>
-              <Form.Control type="number" placeholder="Capacidad" />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Direccion</Form.Label>
-              <Form.Control type="text" placeholder="Direccion" />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Latitud</Form.Label>
-              <Form.Control type="text" placeholder="Latitud" />
-            </Form.Group>
-            <Form.Group className="mb-2">
-              <Form.Label>Longitud</Form.Label>
-              <Form.Control type="text" placeholder="Longitud" />
-            </Form.Group>
-            <div className="d-flex justify-content-end gap-2">
-              <button type="submit" className="btn btn-primary btn-sm">
-                Guardar
-              </button>
-            </div>
-          </Form>
-        </DischargeButton>
-      </div>
-    </>
+      if (!response.ok) {
+        throw new Error('Error en la petición');
+      }
+
+      toast.success('Espacio creado correctamente.');
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al crear el espacio.');
+    }
+  };
+
+  return (
+    <div className="NotFoundPage">
+      <h1>
+        Ummmmmmmmmmmmmmmmmmmmmmmmmmmmm, parece que no puedes acceder a esta
+        ruta, porcuodio porcuala
+      </h1>
+      <p>Tung Tung Tung sahur</p>
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF0Bi9fCwrQBhZBgrnMl5F60rnNaXC6CbEvg&s"
+        alt="Tung Tung Tung sahur"
+      />
+      <DischargeSpaceForm onHandleSubmit={handleSubmit} />
+      <ToastContainer />
+    </div>
   );
 };
 
