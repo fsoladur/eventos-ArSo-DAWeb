@@ -1,8 +1,8 @@
 package eventos.infraestructura.api.rest.dto.out;
 
-import java.util.UUID;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Schema(name = "EventoDto", description = "Evento de la aplicación")
 public class EventoDTO {
@@ -37,8 +37,11 @@ public class EventoDTO {
   @Schema(description = "Categoría del evento", example = "Concierto", required = true)
   private String categoria;
 
-  @Schema(description = "Indica si el evento está ocupado", example = "false", required = true)
-  private boolean conOcupacion;
+  @Schema(
+      description = "Ocupación del evento",
+      implementation = OcupacionDTO.class,
+      required = true)
+  private OcupacionDTO ocupacion;
 
   public EventoDTO() {}
 
@@ -50,7 +53,9 @@ public class EventoDTO {
       int numPlazas,
       boolean cancelado,
       String categoria,
-      boolean ocupado) {
+      LocalDateTime fechaInicio,
+      LocalDateTime fechaFin,
+      UUID idEspacioFisico) {
     this.id = id;
     this.nombre = nombre;
     this.descripcion = descripcion;
@@ -58,7 +63,10 @@ public class EventoDTO {
     this.numPlazas = numPlazas;
     this.cancelado = cancelado;
     this.categoria = categoria;
-    this.conOcupacion = ocupado;
+    this.ocupacion =
+        fechaInicio == null && fechaFin == null && idEspacioFisico == null
+            ? null
+            : new OcupacionDTO(fechaInicio, fechaFin, idEspacioFisico);
   }
 
   public UUID getId() {
@@ -117,11 +125,11 @@ public class EventoDTO {
     this.categoria = categoria;
   }
 
-  public boolean isConOcupacion() {
-    return conOcupacion;
+  public OcupacionDTO getOcupacion() {
+    return ocupacion;
   }
 
-  public void setConOcupacion(boolean conOcupacion) {
-    this.conOcupacion = conOcupacion;
+  public void setOcupacion(OcupacionDTO ocupacion) {
+    this.ocupacion = ocupacion;
   }
 }
