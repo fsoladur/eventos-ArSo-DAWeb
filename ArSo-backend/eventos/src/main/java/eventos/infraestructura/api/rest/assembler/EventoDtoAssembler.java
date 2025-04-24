@@ -36,8 +36,8 @@ public class EventoDtoAssembler
         StreamSupport.stream(entities.spliterator(), false)
             .map(this::toModel)
             .collect(Collectors.toList());
+      return CollectionModel.of(
+          models, linkTo(methodOn(ControladorEventos.class).getEventos()).withSelfRel());
 
-    return CollectionModel.of(
-        models, linkTo(methodOn(ControladorEventos.class).getEventos()).withSelfRel());
   }
 }

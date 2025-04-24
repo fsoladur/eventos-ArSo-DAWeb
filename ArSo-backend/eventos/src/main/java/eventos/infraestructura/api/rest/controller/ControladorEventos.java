@@ -111,7 +111,7 @@ public class ControladorEventos implements EventosApi {
 
   @GetMapping("/eventos")
   @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'USUARIO')")
-  public CollectionModel<EntityModel<EventoDTO>> getEventos() {
+  public CollectionModel<EntityModel<EventoDTO>> getEventos(){
     return this.eventoDtoAssembler.toCollectionModel(
         this.servicioEventos.getEventos().stream()
             .map(EventoMapper::toDTO)
