@@ -5,8 +5,9 @@ import { useEspacios } from '../../hooks/Espacios/useEspacios';
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
-
+import { useEventForm } from '../../hooks/Eventos/useEventForm';
+import SpaceSelector from '../Eventos/SpaceSelector';
+import { useNavigate } from 'react-router-dom';  
 
 const EventCard = ({
   item,
@@ -14,101 +15,23 @@ const EventCard = ({
   onSave,
   isSaving
 }) => {
-  // Estado inicial con los valores del espacio
-  let initialValues = {
-    plazas: item.numPlazas,
-    descripcion: item.descripcion,
-    fechaInicio: item?.ocupacion?.fechaInicio || null,
-    fechaFin: item?.ocupacion?.fechaFin || null,
-    idEspacioFisico: item?.ocupacion?.idEspacioFisico || ""
-  };
-  
 
-  // Estados para almacenar valores del formulario y tracking de cambios
-  const [formValues, setFormValues] = useState(initialValues);
-  const [isDirty, setIsDirty] = useState(false);
-  const [isCancelado, setCancelado] = useState(item.cancelado);
-  const { espacios, espaciosLibres } = useEspacios(); 
-  const [espaciosDisponibles, setEspaciosDisponibles] = useState([]);
-  const [espaciosLibresCargados, setEspaciosLibresCargados] = useState(false);
+  const { 
+    formValues, 
+    isDirty, 
+    isCancelado, 
+    handleInputChange, 
+    handleDateChange, 
+    handleSubmit 
+  } = useEventForm(item, onSave);
 
-  const cargarEspaciosLibres = async () => {
-    if (espaciosLibresCargados) return; 
-      try {
-        const espacios = await espaciosLibres(
-          formatDate(formValues.fechaInicio), 
-          formatDate(formValues.fechaFin), 
-          Number(formValues.plazas)
-        );
-        setEspaciosDisponibles(Array.isArray(espacios) ? espacios : []);
-      } catch (error) {
-        setEspaciosDisponibles([]);
-      }
-      setEspaciosLibresCargados(true);
+  const navigate = useNavigate();
+
+  const handleMasInfo = () => {
+    navigate(`${item.id}`);
   }
-
-  useEffect(() => {
-    setEspaciosLibresCargados(false);
-  }, [formValues.fechaInicio, formValues.fechaFin, formValues.plazas]);
-
-  // Manejador de cambios en inputs
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormValues((prev) => {
-    const newValues = { ...prev, [name]: value };
-
-    // Verificar si hay cambios
-    const hasChanges = checkForChanges(newValues);
-    setIsDirty(hasChanges);
-
-    return newValues;
-  });
-  };
-
-  const handleDateChange = (name, date) => {
-    setFormValues((prev) => {
-      const newValues = { ...prev, [name]: date};
   
-      // Verificar si hay cambios
-      const hasChanges = checkForChanges(newValues);
-      setIsDirty(hasChanges);
-  
-      return newValues;
-    });
-  };
-
-  const checkForChanges = (newValues) => {
-    return (
-      newValues.descripcion !== initialValues.descripcion ||
-      Number(newValues.plazas) !== Number(initialValues.plazas) ||
-      new Date(newValues.fechaInicio) !== new Date(initialValues.fechaInicio) ||
-      new Date(newValues.fechaFin) !== new Date(initialValues.fechaFin) ||
-      newValues.idEspacioFisico !== initialValues.idEspacioFisico
-    );
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toISOString().replace(/\.\d{3}Z$/, '');
-  };
-
-  // Manejador para envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Para capacidad, asegurarse de que sea número
-    const processedValues = {
-      ...formValues,
-      plazas: Number(formValues.plazas),
-      fechaInicio: formatDate(formValues.fechaInicio),
-      fechaFin: formatDate(formValues.fechaFin)
-    };
-    
-    onSave({ id: item.id, ...processedValues });
-
-    setIsDirty(false); 
-    initialValues = { ...processedValues}; // Actualizar valores iniciales
-  };
+  const { espacios } = useEspacios(); 
 
   let itemEspacio = item?.ocupacion 
     ? espacios.find(esp => esp.id === item.ocupacion.idEspacioFisico) : null;
@@ -174,29 +97,15 @@ const EventCard = ({
               />
             </Form.Group>
 
-            <Form.Group className="mb-2">
-              <Form.Label>Espacio fisico</Form.Label>
-              <Form.Select
-                name="idEspacioFisico"
-                value={formValues.idEspacioFisico || ""}
-                onChange={handleInputChange}
-                disabled={isCancelado}
-                onFocus={() => {
-                  cargarEspaciosLibres();
-                }}
-              >
-                {itemEspacio && <option value={itemEspacio.id}>
-                  {itemEspacio.nombre} - {itemEspacio.direccion}
-                </option>}
-                {itemEspacio && espaciosDisponibles
-                  .filter((esp) => esp.id !== item.ocupacion.idEspacioFisico)
-                  .map((espacio) => (
-                    <option key={espacio.id} value={espacio.id}>
-                      {espacio.nombre} - {espacio.direccion}
-                    </option>
-                  ))}
-              </Form.Select>
-            </Form.Group>
+            <SpaceSelector
+              value={formValues.idEspacioFisico}
+              onChange={handleInputChange}
+              disabled={isCancelado}
+              currentSpace={itemEspacio}
+              fechaInicio={formValues.fechaInicio}
+              fechaFin={formValues.fechaFin}
+              plazas={formValues.plazas}
+            />
 
             <div className="d-flex justify-content-end gap-2">
               <Button
@@ -207,7 +116,7 @@ const EventCard = ({
               >
                 { isSaving ? 'Guardando…' : isDirty ? 'Guardar' : 'Sin cambios' }
               </Button>
-              <Button variant="outline-success" size="sm">
+              <Button variant="outline-success" size="sm" onClick={handleMasInfo}>
                 Más información
               </Button>
             </div>

@@ -14,4 +14,15 @@ export function getBadgeColor(categoria)
     }
   };
 
+  export function formatDate(date) {
+    if (!date) return null;
+    try {
+      return new Date(date).toISOString().replace(/\.\d{3}Z$/, '');
+    } catch (error) {
+      console.error("Error al formatear fecha:", error);
+      return null;
+    }
+  }
+
+
  

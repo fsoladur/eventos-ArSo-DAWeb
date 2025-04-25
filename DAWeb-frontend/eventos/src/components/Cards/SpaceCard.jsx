@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Accordion, Card, Button, Form } from 'react-bootstrap';
+import { useEspaciosForm } from '../../hooks/Espacios/useEspaciosForm';
 
 const SpaceCard = ({
   item,
@@ -7,54 +8,14 @@ const SpaceCard = ({
   onSave,
   isSaving
 }) => {
-  // Estado inicial con los valores del espacio
-  let initialValues = {
-    nombre: item.nombre,
-    capacidad: item.capacidad,
-    descripcion: item.descripcion || ''
-  };
 
-  // Estados para almacenar valores del formulario y tracking de cambios
-  const [formValues, setFormValues] = useState(initialValues);
-  const [isDirty, setIsDirty] = useState(false);
-  const [isActive, setActive] = useState(item.estado === 'ACTIVO');
-
-
-  // Manejador de cambios en inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Actualizar estado del formulario
-    setFormValues(prev => {
-      const newValues = { ...prev, [name]: value };
-      
-      // Verificar si algún valor es diferente del inicial
-      const hasChanges = 
-        newValues.nombre !== initialValues.nombre ||
-        Number(newValues.capacidad) !== Number(initialValues.capacidad) ||
-        newValues.descripcion !== initialValues.descripcion;
-      
-      setIsDirty(hasChanges);
-      
-      return newValues;
-    });
-  };
-
-  // Manejador para envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Para capacidad, asegurarse de que sea número
-    const processedValues = {
-      ...formValues,
-      capacidad: Number(formValues.capacidad)
-    };
-    
-    onSave({ id: item.id, ...processedValues });
-
-    setIsDirty(false); 
-    initialValues = { ...processedValues,  }; // Actualizar valores iniciales
-  };
+  const {
+    formValues,
+    isDirty,
+    isActive,
+    handleChange,
+    handleSubmit
+  } = useEspaciosForm(item, onSave);
 
   return (
     <Accordion.Item eventKey={item.id.toString()}>
@@ -62,8 +23,6 @@ const SpaceCard = ({
         <Accordion.Header onClick={onExpand}>
           <div className="d-flex flex-column flex-md-row justify-content-between gap-2">
             <p className="fw-bold me-md-2">{item.nombre} - <span className="text-muted">{item.direccion}</span></p> 
-
-
           </div>
         </Accordion.Header>
 

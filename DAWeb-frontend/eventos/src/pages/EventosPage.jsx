@@ -31,7 +31,6 @@ const EventosPage = () => {
     console.log('Guardando:', formData);
     const ok = await update(formData);
     if (!ok) {
-      // aquí podrías mostrar un toast o alert con saveError
       console.error('No guardado:', saveError);
     }
   };

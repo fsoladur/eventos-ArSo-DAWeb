@@ -44,8 +44,8 @@ export function useEventForm(item, onSave) {
     return (
       newValues.descripcion !== initialValues.descripcion ||
       Number(newValues.plazas) !== Number(initialValues.plazas) ||
-      !compareDates(newValues.fechaInicio, initialValues.fechaInicio) ||
-      !compareDates(newValues.fechaFin, initialValues.fechaFin) ||
+      new Date(newValues.fechaInicio) !== new Date(initialValues.fechaInicio) ||
+      new Date(newValues.fechaFin) !== new Date(initialValues.fechaFin) ||
       newValues.idEspacioFisico !== initialValues.idEspacioFisico
     );
   };
