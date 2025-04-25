@@ -15,7 +15,11 @@ const Navbar = ({ session }) => {
       const data = await logout();
       if (data) {
         authLogout();
-        navigate(session ? '/login' : 'http://localhost:3000');
+        if (session) {
+          navigate('/login', { replace: true });
+        } else {
+          window.location.href = 'http://localhost:3000/';
+        }
       }
     } catch (error) {
       console.error('Error during logout:', error);
