@@ -35,7 +35,6 @@ public class ModificarEventoDTO {
   public ModificarEventoDTO(
       String descripcion,
       String organizador,
-      String categoria,
       String fechaInicio,
       String fechaFin,
       int plazas,

@@ -1,8 +1,8 @@
 import { Form } from 'react-bootstrap';
-import DischargeSpaceForm from '../DischargeSpaceForm/DischargeSpaceForm';
+import DischargeSpaceForm from '../DischargeButton/Variants/DischargeSpaceForm';
 import { toast, ToastContainer } from 'react-toastify';
 
-const handleSubmit = async (dto, addEspacio) => {
+/*const handleSubmit = async (dto, addEspacio) => {
   try {
     const fetchAddEspacios = await fetch('http://localhost:8090/espacios', {
       method: 'POST',
@@ -32,18 +32,18 @@ const handleSubmit = async (dto, addEspacio) => {
   } catch (error) {
     toast.error(error.message);
   }
-};
+};*/
 
-const SpaceSearchBar = ({ onSearch, addEspacio }) => (
+const SpaceSearchBar = ({ onSearch, addEvento }) => (
   <div className="d-flex  mb-3">
   <Form className="w-100 me-3" >
     <Form.Control
       type="text"
-      placeholder="Buscar espacio por nombre o ubicación..."
+      placeholder="Buscar evento por: Nombre, organizador o género"
       onChange={(e) => onSearch(e.target.value)}
     />
   </Form>
-  <DischargeSpaceForm onHandleSubmit={(dto) => handleSubmit(dto, addEspacio)} />
+  {/*<DischargeSpaceForm onHandleSubmit={(dto) => handleSubmit(dto, addEvento)} />*/}
   <ToastContainer />  
   </div>
 );

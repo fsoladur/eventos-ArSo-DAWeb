@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
-import SpaceSearchBar from '../components/SearchBars/SeachBar';
-import SpaceList from '../components/Lists/SpaceList';
+import SpaceSearchBar from '../components/SearchBars/SpaceSeachBar.jsx';
+import AccordionList from '../components/Lists/AccordionList.jsx';
 import PaginationBar from '../components/Pagination/PaginationBar';
 import { useEspacios } from '../hooks/Espacios/useEspacios.js';
 import { useDebounce } from '../hooks/useDebounce';
 import { useSpaceFilter } from '../hooks/Espacios/useSpaceFilter.js';
 import { usePagination } from '../hooks/usePagination';
-import SpaceCard from '../components/Cards/SpaceCard';
+import SpaceCard from '../components/Cards/SpaceCard.jsx';
 import { useUpdateEspacio } from '../hooks/Espacios/useUpdateEspacio.js';
 
 const EspaciosPage = () => {
@@ -44,7 +44,7 @@ const EspaciosPage = () => {
 
       <SpaceSearchBar onSearch={setInputValue} addEspacio={addEspacio} />
 
-      <SpaceList
+      <AccordionList
         items={paginatedItems}
         itemExpandido={espacioExpandido}
         onExpand={handleExpand}

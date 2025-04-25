@@ -15,7 +15,8 @@ export function useEventos() {
           `http://localhost:8090/eventos`,
           {
             method: "GET",
-            credentials: 'include' 
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
           }
         );
         
@@ -23,9 +24,8 @@ export function useEventos() {
           throw new Error('No se pudieron cargar los espacios');
         }
         
-        const data = await response.json();
-        console.log(data)
-        setEventos(data.espacio);
+        const eventos = await response.json();
+        setEventos(eventos._embedded.eventoDTOList);
         setError(null);
       } catch (err) {
         setError(err.message);

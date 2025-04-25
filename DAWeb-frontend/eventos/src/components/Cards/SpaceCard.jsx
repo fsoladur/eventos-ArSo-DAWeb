@@ -31,7 +31,7 @@ const SpaceCard = ({
       // Verificar si algún valor es diferente del inicial
       const hasChanges = 
         newValues.nombre !== initialValues.nombre ||
-        newValues.capacidad !== initialValues.capacidad ||
+        Number(newValues.capacidad) !== Number(initialValues.capacidad) ||
         newValues.descripcion !== initialValues.descripcion;
       
       setIsDirty(hasChanges);
@@ -61,21 +61,14 @@ const SpaceCard = ({
       <Card>
         <Accordion.Header onClick={onExpand}>
           <div className="d-flex flex-column flex-md-row justify-content-between gap-2">
-            <div className="fw-bold me-md-2">{item.nombre}</div>
-            <div className="d-flex flex-column flex-md-row">
-              <div className="me-md-3">
-                <span>{item.capacidad} plazas</span>
-              </div>
-          
-              <div className="text-wrap text-break">
-                <span>{item.direccion}</span>
-              </div>
-            </div>
+            <p className="fw-bold me-md-2">{item.nombre} - <span className="text-muted">{item.direccion}</span></p> 
+
+
           </div>
         </Accordion.Header>
 
         <Accordion.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form className='fw-semibold' onSubmit={handleSubmit}>
             <Form.Group className="mb-2">
               <Form.Label>Nombre</Form.Label>
               <Form.Control 

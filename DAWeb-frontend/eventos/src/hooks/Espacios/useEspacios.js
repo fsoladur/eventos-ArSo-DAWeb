@@ -26,7 +26,6 @@ export function useEspacios() {
         const data = await response.json();
         const espaciosResumen = data.espacio.map((espacio) => espacio.resumen);
         setEspacios(espaciosResumen);
-        console.log("Espacios actuales:", espaciosResumen);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -40,11 +39,25 @@ export function useEspacios() {
   }, [user]);
 
   function addEspacio(espacio) {
-    console.log(espacio)
-    console.log("insertando espacio")
     setEspacios((prevEspacios) => [...prevEspacios, espacio]);
-    console.log("Espacios actuales:", [...espacios, espacio]);
+  }
+    
+  async function espaciosLibres(fechaInicio, fechaFin, capacidad) {
+    const response = await fetch(
+      `http://localhost:8090/espacios/libres?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&capacidadRequerida=${capacidad}`,
+      {
+        method: "GET",
+        credentials: 'include' 
+      }
+    );
+    
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    return data.espacio.map((espacio) => espacio.resumen);
+    
   }
 
-  return { espacios, loading, error, addEspacio };
+  return { espacios, loading, error, addEspacio, espaciosLibres };
 }

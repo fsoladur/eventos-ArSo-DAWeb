@@ -1,6 +1,6 @@
 import { Accordion } from 'react-bootstrap';
 
-const SpaceList = ({ items, itemExpandido, onExpand, onSave, isSaving, CardComponent }) => (
+const AccordionList = ({ items, itemExpandido, onExpand, onSave, isSaving, CardComponent }) => (
   <Accordion activeKey={itemExpandido?.toString()}>
     {items.map((item) => (
       <CardComponent
@@ -14,4 +14,4 @@ const SpaceList = ({ items, itemExpandido, onExpand, onSave, isSaving, CardCompo
   </Accordion>
 );
 
-export default SpaceList;
+export default AccordionList;
