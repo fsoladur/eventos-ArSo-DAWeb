@@ -1,5 +1,5 @@
 import { Form } from 'react-bootstrap';
-import DischargeSpaceForm from '../DischargeButton/Variants/DischargeSpaceForm';
+import DischargeEventForm from '../DischargeButton/Variants/DischargeEventForm';
 import { toast, ToastContainer } from 'react-toastify';
 
 /*const handleSubmit = async (dto, addEspacio) => {
@@ -43,7 +43,7 @@ const SpaceSearchBar = ({ onSearch, addEvento }) => (
       onChange={(e) => onSearch(e.target.value)}
     />
   </Form>
-  {/*<DischargeSpaceForm onHandleSubmit={(dto) => handleSubmit(dto, addEvento)} />*/}
+  <DischargeEventForm onHandleSubmit={(dto) => handleSubmit(dto, addEvento)} />
   <ToastContainer />  
   </div>
 );

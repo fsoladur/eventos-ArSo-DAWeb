@@ -41,16 +41,30 @@ export function useEventForm(item, onSave) {
 
   // Función para verificar si hay cambios en el formulario
   const checkForChanges = newValues => {
+    const compareDates = (date1, date2) => {
+      if (!date1 && !date2) return true;
+      if (!date1 || !date2) return false;
+
+      const d1 = date1 instanceof Date ? date1 : new Date(date1);
+      const d2 = date2 instanceof Date ? date2 : new Date(date2);
+
+      const isValidDate1 = !isNaN(d1.getTime());
+      const isValidDate2 = !isNaN(d2.getTime());
+
+      if (!isValidDate1 || !isValidDate2) return false;
+
+      return d1.getTime() === d2.getTime();
+    };
+
     return (
       newValues.descripcion !== initialValues.descripcion ||
       Number(newValues.plazas) !== Number(initialValues.plazas) ||
-      newValues.fechaInicio?.getTime() !==
-        initialValues.fechaInicio?.getTime() ||
-      newValues.fechaFin?.getTime() !== initialValues.fechaFin?.getTime() ||
+      !compareDates(newValues.fechaInicio, initialValues.fechaInicio) ||
+      !compareDates(newValues.fechaFin, initialValues.fechaFin) ||
       newValues.idEspacioFisico !== initialValues.idEspacioFisico
     );
   };
-
+  
   // Manejador para envío del formulario
   const handleSubmit = e => {
     e.preventDefault();

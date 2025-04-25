@@ -223,33 +223,89 @@ VALUES ('ffc665a3-02ff-48a2-a459-bcf2f125a2ab', 128, 'Calle del Arte 645, Campo 
 
 -- EVENTOS
 
+-- ========== 26 EVENTOS CONFIRMADOS ==========
 INSERT INTO evento (id, cancelado, categoria, descripcion, nombre, fecha_inicio, fecha_fin, organizador, plazas, espacio_fisico_id) VALUES
-('cf26d66e-6bce-4d11-8aa0-7f2cf35e73e7', 0, 'ACADEMICO', 'Charla sobre tendencias en Inteligencia Artificial.', 'Seminario de IA Aplicada', '2025-05-06 09:00:00', '2025-05-06 13:00:00', 'gestor', 95, '74800b33-c205-4c4b-b67c-4ad02febdfa7'),
+('d114f6d1-83ba-449b-8794-01b5a07c2a51', 0, 'ACADEMICO',       'Seminario sobre la transformación digital en la educación superior.',                  'Seminario Transformación Digital',    '2025-06-03 09:00:00', '2025-06-03 12:00:00', 'gestor',                95,  '74800b33-c205-4c4b-b67c-4ad02febdfa7'),
+('2caa6ccb-5d80-44a7-8227-4b72700f7c91', 0, 'ENTRETENIMIENTO', 'Concierto acústico con bandas universitarias emergentes.',                             'Concierto Primaveral',                '2025-06-10 14:00:00', '2025-06-10 18:00:00', 'fundacion_cultural',     80,  '74800b33-c205-4c4b-b67c-4ad02febdfa7'),
 
-('44245df3-1e2d-4931-bb3b-d62a112dd771', 1, 'CULTURAL', 'Evento musical con artistas locales.', 'Festival de Música Urbana', '2025-05-08 18:00:00', '2025-05-08 22:00:00', 'juan.perez', 102, 'c3127765-0306-40a6-888a-3ffb8126be0c'),
+('7c273e2a-78cc-4986-8d04-34e4a77261ef', 0, 'OTROS',           'Hackathon de innovación abierta para resolver retos sociales.',                       'Hackathon Innovación 2025',           '2025-06-04 09:00:00', '2025-06-04 20:00:00', 'universidad',            100, 'c3127765-0306-40a6-888a-3ffb8126be0c'),
+('ba3c74c8-5b3d-4e1a-9dc8-d0f4ea1f54c3', 0, 'ACADEMICO',       'Taller práctico de prototipado rápido con impresión 3D.',                             'Taller de Prototipado 3D',            '2025-06-18 10:00:00', '2025-06-18 13:00:00', 'lab-innov',              60,  'c3127765-0306-40a6-888a-3ffb8126be0c'),
 
-('f356db3b-11ef-44bb-a408-5d59404b69a7', 0, 'ENTRETENIMIENTO', 'Torneo de videojuegos interuniversitario.', 'Copa Gamer Universitaria', '2025-05-10 14:00:00', '2025-05-10 20:00:00', 'gestor', 80, '047eadbf-2952-4959-bec0-0ccbd021e03b'),
+('8e1a056d-0519-4762-bc28-0699e0238571', 0, 'CULTURAL',        'Sesión intensiva de escritura creativa y micro-relatos.',                             'Taller Micro-relatos',                '2025-06-05 10:00:00', '2025-06-05 12:00:00', 'fundacion_cultural',     25,  '8cc13d7b-947e-4123-9d0d-e7b83cf73cd6'),
+('4323dcea-6b28-46b7-a563-29de89abde26', 0, 'OTROS',           'Proyección y coloquio de cortometrajes universitarios.',                               'Cine Universitario Nocturno',         '2025-06-22 19:00:00', '2025-06-22 22:00:00', 'gestor',                 30,  '8cc13d7b-947e-4123-9d0d-e7b83cf73cd6'),
 
-('b8b2c158-2329-49c1-b872-8e7e64b2db47', 0, 'DEPORTES', 'Competencia de ajedrez por equipos.', 'Torneo Nacional de Ajedrez', '2025-05-11 09:00:00', '2025-05-11 16:00:00', 'camila.rios', 50, 'ce58498f-3382-423f-96be-442cf6fa6960'),
+('4f829e16-0e23-46fb-8ff1-42dc0e3bd7fa', 0, 'DEPORTES',        'Competencia de ajedrez rápido (blitz) entre facultades.',                              'Torneo Blitz Universitario',          '2025-06-06 09:00:00', '2025-06-06 15:00:00', 'club-deportivo',         64,  '047eadbf-2952-4959-bec0-0ccbd021e03b'),
+('5b9d5eae-1a21-4b07-b758-7da0627153f6', 0, 'ENTRETENIMIENTO', 'Monólogo de stand-up comedy con artistas locales.',                                     'Noche de Stand-Up',                   '2025-06-24 20:00:00', '2025-06-24 22:00:00', 'fundacion_cultural',     70,  '047eadbf-2952-4959-bec0-0ccbd021e03b'),
 
-('228bcf1d-2147-4429-9c95-76a78f42107f', 0, 'OTROS', 'Sesión práctica sobre liderazgo en entornos digitales.', 'Workshop de Liderazgo 4.0', '2025-05-07 10:00:00', '2025-05-07 12:30:00', 'gestor', 30, '8cc13d7b-947e-4123-9d0d-e7b83cf73cd6'),
+('a7b6c9b8-7527-4c90-9c30-6e63c65eac3e', 0, 'ACADEMICO',       'Mesa redonda sobre ética de la inteligencia artificial.',                             'Foro Ética IA',                       '2025-06-07 11:00:00', '2025-06-07 14:00:00', 'gestor',                 90,  'ce58498f-3382-423f-96be-442cf6fa6960'),
+('56e0efac-1c6e-4b4d-96a8-74afadc3e0cc', 0, 'CULTURAL',        'Concierto de música de cámara con cuarteto invitado.',                                 'Concierto de Cámara',                 '2025-06-29 18:00:00', '2025-06-29 20:00:00', 'fundacion_cultural',     85,  'ce58498f-3382-423f-96be-442cf6fa6960'),
 
-('d7b2e1b9-bb4a-4ff0-8fa2-ff0d3b73124c', 0, 'ENTRETENIMIENTO', 'Proyección de cortos de cine independiente.', 'Noche de Cortometrajes', '2025-05-09 19:00:00', '2025-05-09 22:30:00', 'lucia.santos', 50, '047eadbf-2952-4959-bec0-0ccbd021e03b'),
+('e8eaf4b1-27c0-4aea-b3e6-6e3bc5d9d04f', 0, 'ENTRETENIMIENTO', 'Sesión de yoga al atardecer sobre la terraza.',                                        'Yoga Sunset',                         '2025-06-08 19:00:00', '2025-06-08 20:30:00', 'gestor',                 20,  '99a08973-66a2-412d-beb9-37b588814bb4'),
+('3df0ab09-8d10-4f3c-af89-083a8a265bd5', 0, 'OTROS',           'Taller práctico de fotografía móvil.',                                                 'Fotografía con Smartphone',           '2025-06-17 10:00:00', '2025-06-17 12:00:00', 'universidad',            18,  '99a08973-66a2-412d-beb9-37b588814bb4'),
 
-('f7e429e9-51a7-4814-b92b-29b154dc35d1', 1, 'CULTURAL', 'Exposición itinerante de arte contemporáneo.', 'Galería Abierta: Arte y Ciudad', '2025-05-06 17:00:00', '2025-05-06 21:00:00', 'maria.nieto', 90, 'ce58498f-3382-423f-96be-442cf6fa6960'),
+('c46b4f96-b76d-4522-8ac5-bb8a0d45d076', 0, 'ACADEMICO',       'Curso intensivo de metodologías ágiles.',                                               'Bootcamp Scrum',                      '2025-06-09 09:00:00', '2025-06-09 17:00:00', 'gestor',                 45,  'aed13836-32ed-4624-b148-fe03cfb6a4d1'),
+('ad3ac6e7-ccd2-415e-a734-1e7c17f49a2e', 0, 'ACADEMICO',       'Seminario de actualización pedagógica para docentes.',                                 'Actualización Docente 2025',          '2025-06-27 10:00:00', '2025-06-27 14:00:00', 'universidad',            50,  'aed13836-32ed-4624-b148-fe03cfb6a4d1'),
 
-('36f82c4d-8911-4f9e-bb9f-e22830a4e610', 0, 'ACADEMICO', 'Jornada de actualización pedagógica para docentes.', 'Encuentro de Educadores Digitales', '2025-05-12 10:00:00', '2025-05-12 13:00:00', 'gestor', 25, '99a08973-66a2-412d-beb9-37b588814bb4'),
+('cdd20c26-cfb1-4f87-8c89-eaee153b1e60', 0, 'DEPORTES',        'Torneo de vóley mixto interfacultades.',                                                'Vóley Interfacultades',               '2025-06-11 08:00:00', '2025-06-11 15:00:00', 'club-deportivo',         48,  'dd854268-a0b2-48dd-bcc0-797eb5892f6c'),
+('f4626893-d962-46c9-9e4e-91302aab1d37', 0, 'ENTRETENIMIENTO', 'Festival de bandas de rock estudiantil.',                                               'Rock Universitario',                  '2025-06-26 17:00:00', '2025-06-26 22:00:00', 'fundacion_cultural',     50,  'dd854268-a0b2-48dd-bcc0-797eb5892f6c'),
 
-('6126bfe7-cf64-4a3f-b3ec-302a7887d787', 0, 'OTROS', 'Reunión de planificación institucional.', 'Mesa de Estrategia 2025', '2025-05-13 09:00:00', '2025-05-13 11:30:00', 'admin', 20, '99a08973-66a2-412d-beb9-37b588814bb4'),
+('0d5aa27c-9d46-4e32-a611-f480a1b7c993', 0, 'OTROS',           'Encuentro sobre bienestar y salud mental.',                                            'Jornada Bienestar',                   '2025-06-12 10:00:00', '2025-06-12 13:00:00', 'gestor',                 60,  '6fe1a042-37f6-4eee-a6af-476ce285e4a5'),
+('fa04b485-02a5-4ddb-a93c-0bb1e0b9ea04', 0, 'CULTURAL',        'Muestra fotográfica de naturaleza.',                                                    'Expo Naturaleza',                     '2025-06-28 09:00:00', '2025-06-28 18:00:00', 'fundacion_cultural',     70,  '6fe1a042-37f6-4eee-a6af-476ce285e4a5'),
 
-('e9179d9a-790c-4e71-bb50-32c9280d50ec', 1, 'DEPORTES', 'Clase especial de yoga al aire libre.', 'Yoga al Amanecer', '2025-05-07 07:00:00', '2025-05-07 08:00:00', 'laura.rojas', 50, '6fe1a042-37f6-4eee-a6af-476ce285e4a5'),
+('3a20c2fd-6e9b-4f0d-aef5-478e1e025246', 0, 'ACADEMICO',       'Conferencia: Big Data y su impacto en la industria.',                                  'Conferencia Big Data',               '2025-06-13 09:00:00', '2025-06-13 13:00:00', 'empresa-tec',            100, '0aebb32e-9804-4374-b8e0-c32b216c1a28'),
+('8a61a382-4992-4b2a-8981-d6d2a1f19725', 0, 'ENTRETENIMIENTO', 'Competencia interuniversitaria de trivia geek.',                                         'Geek Trivia Cup',                     '2025-06-23 15:00:00', '2025-06-23 18:00:00', 'universidad',            90,  '0aebb32e-9804-4374-b8e0-c32b216c1a28'),
 
-('a2aa233e-23d5-4642-aef5-730e53925eb5', 0, 'CULTURAL', 'Presentación de libro y firma de ejemplares.', 'Letras en Vivo: Clara Montes', '2025-05-08 17:30:00', '2025-05-08 19:00:00', 'gestor', 70, '6fe1a042-37f6-4eee-a6af-476ce285e4a5'),
+('188eaa3b-8d98-4eaf-9dc2-8a0bae4c3076', 0, 'CULTURAL',        'Feria gastronómica con degustaciones regionales.',                                      'Feria Gastronómica',                 '2025-06-14 11:00:00', '2025-06-14 16:00:00', 'gestor',                120, 'b1cbf50c-aedf-4d15-9615-969ec43b9e59'),
+('b62e83db-3610-4e0c-a07e-e2e6e7116e5e', 0, 'ACADEMICO',       'Taller de impresión 3D aplicada a la ingeniería.',                                     'Workshop Impresión 3D',              '2025-06-25 09:00:00', '2025-06-25 13:00:00', 'empresa-tec',           110, 'b1cbf50c-aedf-4d15-9615-969ec43b9e59'),
 
-('682d2084-e17b-4f86-936f-c2b56b3928c7', 0, 'ENTRETENIMIENTO', 'Stand-up comedy con comediantes emergentes.', 'Noche de Humor Independiente', '2025-05-09 20:00:00', '2025-05-09 22:00:00', 'santiago.morales', 86, 'b0809326-f93a-4b23-a17e-10cd92581e47'),
+('1ba5e7e2-4ff2-40d2-b7e3-9982a8e9374c', 0, 'OTROS',           'Mesa de debate sobre futuros del trabajo remoto.',                                      'Foro Trabajo Remoto',                '2025-06-15 10:00:00', '2025-06-15 12:00:00', 'universidad',            75,  'b0809326-f93a-4b23-a17e-10cd92581e47'),
+('83823d6e-b6fd-4d09-b8e4-11b0cf50dab4', 0, 'ENTRETENIMIENTO', 'Torneo de videojuegos retro.',                                                          'Retro Gaming Cup',                    '2025-06-27 16:00:00', '2025-06-27 22:00:00', 'gestor',                 80,  'b0809326-f93a-4b23-a17e-10cd92581e47'),
 
-('23fa362b-d246-46b4-98c7-f77705c7c3b9', 1, 'OTROS', 'Actividad solidaria organizada por ONG locales.', 'Feria de Voluntariado', '2025-05-11 10:00:00', '2025-05-11 14:00:00', 'fundacion.luz', 60, 'dd854268-a0b2-48dd-bcc0-797eb5892f6c'),
+('5c7bd6df-2660-48f4-957b-7e44f246ad9f', 0, 'ACADEMICO',       'Seminario sobre periodismo de datos.',                                                  'Data Journalism 2025',               '2025-06-16 09:00:00', '2025-06-16 13:00:00', 'empresa-tec',            90,  '911c5bcf-ddb4-43d8-b387-eab181e91821'),
+('23ff86f5-fba6-4b4a-9589-afdbb4ba9a36', 0, 'CULTURAL',        'Conferencia sobre tendencias del arte digital.',                                        'Arte Digital Hoy',                   '2025-06-30 11:00:00', '2025-06-30 14:00:00', 'fundacion_cultural',    110,  '911c5bcf-ddb4-43d8-b387-eab181e91821');
 
-('4dfc5d09-3e1d-4c7b-b009-53730218e2e3', 0, 'ACADEMICO', 'Taller intensivo sobre seguridad informática.', 'Ciberseguridad desde Cero', '2025-05-14 09:00:00', '2025-05-14 13:00:00', 'gestor', 45, 'dd854268-a0b2-48dd-bcc0-797eb5892f6c'),
+-- ========== 4 EVENTOS CANCELADOS (campos de fecha y espacio a NULL) ==========
+INSERT INTO evento (id, cancelado, categoria, descripcion, nombre, fecha_inicio, fecha_fin, organizador, plazas, espacio_fisico_id) VALUES
+('9bc5f363-8801-4e7e-99f4-cf5e4c4c1b63', 1, 'ACADEMICO',       'Simposio nacional de investigación educativa.',   'Simposio Investigación 2025',  NULL, NULL, 'universidad',          90,  NULL),
+('d6e1b7cb-23ed-4fd2-8fb7-b8e5d1b7a4f9', 1, 'CULTURAL',        'Feria del libro infantil con autores invitados.', 'Feria del Libro Infantil',     NULL, NULL, 'fundacion_cultural',   85,  NULL),
+('0894d6a0-ed88-4716-82e0-c370b392cc11', 1, 'DEPORTES',        'Torneo de atletismo universitario cancelado.',    'Torneo Atletismo Cancelado',   NULL, NULL, 'club-deportivo',      104,  NULL),
+('4e2a71c4-af97-44b6-9803-48c0026bfe76', 1, 'ENTRETENIMIENTO', 'Festival de bandas emergentes cancelado.',        'Festival Rock Cancelado',      NULL, NULL, 'gestor',               80,  NULL);
 
-('96546ff3-2141-43ed-a00f-0a74846970de', 0, 'ENTRETENIMIENTO', 'Proyección y análisis de clásicos del cine.', 'CineClub Universitario', '2025-05-10 18:00:00', '2025-05-10 21:00:00', 'franco.alonso', 100, '74800b33-c205-4c4b-b67c-4ad02febdfa7');
+
+-- Para mongo
+
+db.eventos.insertMany([
+  /* 26 eventos confirmados (cancelado = false) */
+  { _id: "d114f6d1-83ba-449b-8794-01b5a07c2a51", plazasDisponibles: 95,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "2caa6ccb-5d80-44a7-8227-4b72700f7c91", plazasDisponibles: 80,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "7c273e2a-78cc-4986-8d04-34e4a77261ef", plazasDisponibles: 100, cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "ba3c74c8-5b3d-4e1a-9dc8-d0f4ea1f54c3", plazasDisponibles: 60,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "8e1a056d-0519-4762-bc28-0699e0238571", plazasDisponibles: 25,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "4323dcea-6b28-46b7-a563-29de89abde26", plazasDisponibles: 30,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "4f829e16-0e23-46fb-8ff1-42dc0e3bd7fa", plazasDisponibles: 64,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "5b9d5eae-1a21-4b07-b758-7da0627153f6", plazasDisponibles: 70,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "a7b6c9b8-7527-4c90-9c30-6e63c65eac3e", plazasDisponibles: 90,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "56e0efac-1c6e-4b4d-96a8-74afadc3e0cc", plazasDisponibles: 85,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "e8eaf4b1-27c0-4aea-b3e6-6e3bc5d9d04f", plazasDisponibles: 20,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "3df0ab09-8d10-4f3c-af89-083a8a265bd5", plazasDisponibles: 18,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "c46b4f96-b76d-4522-8ac5-bb8a0d45d076", plazasDisponibles: 45,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "ad3ac6e7-ccd2-415e-a734-1e7c17f49a2e", plazasDisponibles: 50,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "cdd20c26-cfb1-4f87-8c89-eaee153b1e60", plazasDisponibles: 48,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "f4626893-d962-46c9-9e4e-91302aab1d37", plazasDisponibles: 50,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "0d5aa27c-9d46-4e32-a611-f480a1b7c993", plazasDisponibles: 60,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "fa04b485-02a5-4ddb-a93c-0bb1e0b9ea04", plazasDisponibles: 70,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "3a20c2fd-6e9b-4f0d-aef5-478e1e025246", plazasDisponibles: 100, cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "8a61a382-4992-4b2a-8981-d6d2a1f19725", plazasDisponibles: 90,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "188eaa3b-8d98-4eaf-9dc2-8a0bae4c3076", plazasDisponibles: 120, cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "b62e83db-3610-4e0c-a07e-e2e6e7116e5e", plazasDisponibles: 110, cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "1ba5e7e2-4ff2-40d2-b7e3-9982a8e9374c", plazasDisponibles: 75,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "83823d6e-b6fd-4d09-b8e4-11b0cf50dab4", plazasDisponibles: 80,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "5c7bd6df-2660-48f4-957b-7e44f246ad9f", plazasDisponibles: 90,  cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "23ff86f5-fba6-4b4a-9589-afdbb4ba9a36", plazasDisponibles: 110, cancelado: false, reservas: [], _class: "reservas.dominio.Evento" },
+
+  /* 4 eventos cancelados (cancelado = true) */
+  { _id: "9bc5f363-8801-4e7e-99f4-cf5e4c4c1b63", plazasDisponibles: 90,  cancelado: true, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "d6e1b7cb-23ed-4fd2-8fb7-b8e5d1b7a4f9", plazasDisponibles: 85,  cancelado: true, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "0894d6a0-ed88-4716-82e0-c370b392cc11", plazasDisponibles: 104, cancelado: true, reservas: [], _class: "reservas.dominio.Evento" },
+  { _id: "4e2a71c4-af97-44b6-9803-48c0026bfe76", plazasDisponibles: 80,  cancelado: true, reservas: [], _class: "reservas.dominio.Evento" }
+]);

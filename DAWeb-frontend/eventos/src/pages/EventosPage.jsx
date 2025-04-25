@@ -36,7 +36,6 @@ const EventosPage = () => {
   };
 
   if (loading) return <Container>Cargando…</Container>;
-  if (error)   return <Container>Error: {error}</Container>;
 
   return (
     <Container className="my-4">
