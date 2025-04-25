@@ -102,6 +102,6 @@ public class ServicioReservasImpl implements ServicioReservas {
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
-    return evento.getPlazasReservadas() >= plazas;
+    return evento.getPlazasReservadas() <= plazas;
   }
 }
