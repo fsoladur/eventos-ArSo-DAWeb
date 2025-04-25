@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 const Lobby = () => {
   return (
     <div className="Lobby d-flex flex-column min-vh-100">
-      <Navbar session={true}/>
+      <Navbar session={true} />
       <main className="flex-grow-1">
         <Outlet />
       </main>
@@ -14,5 +14,5 @@ const Lobby = () => {
     </div>
   );
 };
-  
-  export default Lobby;
+
+export default Lobby;
