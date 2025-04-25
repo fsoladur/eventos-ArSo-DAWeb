@@ -30,7 +30,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getRequestURI();
-    return path.startsWith("/auth/login");
+    return path.startsWith("/auth/login") || path.startsWith("/auth/logout");
   }
 
   // curl -X GET -H "Authorization: Bearer %token_jwt%"
