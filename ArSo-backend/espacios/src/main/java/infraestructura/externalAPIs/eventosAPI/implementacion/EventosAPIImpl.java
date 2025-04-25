@@ -1,6 +1,7 @@
 package infraestructura.externalAPIs.eventosAPI.implementacion;
 
 import infraestructura.externalAPIs.eventosAPI.EventosAPI;
+import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,18 +38,25 @@ public class EventosAPIImpl implements EventosAPI {
   }
 
   @Override
-  public boolean isOcupacionActiva(UUID id) throws IOException {
+  public boolean isOcupacionActiva(UUID id) throws IOException, EntidadNoEncontrada {
     Call<Boolean> call = eventosAPI.isOcupacionActiva(id, bearerToken);
     Response<Boolean> response = call.execute();
+    if (response.code() == 404) {
+      throw new EntidadNoEncontrada("No se ha encontrado el espacio con id: " + id + " en eventos");
+    }
     return !response.isSuccessful() || Boolean.TRUE.equals(response.body());
   }
 
   @Override
   public boolean validarNuevaCapacidadEspacio(UUID idEspacio, int nuevaCapacidad)
-      throws IOException {
+      throws IOException, EntidadNoEncontrada{
     Call<Boolean> call =
         eventosAPI.validarNuevaCapacidadEspacio(idEspacio, nuevaCapacidad, bearerToken);
     Response<Boolean> response = call.execute();
+    if (response.code() == 404) {
+      throw new EntidadNoEncontrada(
+          "No se ha encontrado el espacio con id: " + idEspacio + " en eventos");
+    }
     return response.isSuccessful() && Boolean.TRUE.equals(response.body());
   }
 

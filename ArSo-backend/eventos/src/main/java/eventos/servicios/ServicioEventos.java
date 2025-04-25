@@ -65,9 +65,8 @@ public interface ServicioEventos {
    * - ruta de acceso: "/eventos/espaciosOcupados?fechaInicio={fechaInicio}&fechaFin={fechaFin}" -
    * método: GET - respuesta: 200 OK
    */
-  public List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
-      int capacidad, final LocalDateTime fechaInicio, final LocalDateTime fechaFin)
-      throws EntidadNoEncontrada;
+  List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
+      int capacidad, final LocalDateTime fechaInicio, final LocalDateTime fechaFin);
 
   /**
    * - ruta de acceso: "/eventos/{idEvento}/ocupacion" - método: GET - respuesta: 200 OK, body: "si"

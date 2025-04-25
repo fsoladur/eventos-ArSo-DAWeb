@@ -3,6 +3,7 @@ package eventos.infraestructura.externalAPIs.reservas.implementacion;
 import eventos.infraestructura.externalAPIs.reservas.ReservasAPI;
 import eventos.infraestructura.externalAPIs.reservas.RetrofitReservasAPI;
 import eventos.infraestructura.externalAPIs.reservas.config.ApiConfig;
+import eventos.infraestructura.repositorios.excepciones.EntidadNoEncontrada;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,9 +33,12 @@ public class ReservasApiImpl implements ReservasAPI {
   }
 
   @Override
-  public boolean validarNuevasPlazasEvento(UUID idEvento, int plazas) throws IOException {
+  public boolean validarNuevasPlazasEvento(UUID idEvento, int plazas) throws IOException, EntidadNoEncontrada {
     Call<Boolean> call = reservasAPI.validarNuevasPlazasEvento(idEvento, plazas, bearerToken);
     Response<Boolean> response = call.execute();
+    if(response.code() == 404){
+      throw new EntidadNoEncontrada("No se ha encontrado el evento con id: " + idEvento + " en reservas");
+    }
     return response.isSuccessful() && Boolean.TRUE.equals(response.body());
   }
 

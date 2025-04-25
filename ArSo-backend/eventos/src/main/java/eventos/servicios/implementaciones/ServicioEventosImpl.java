@@ -217,7 +217,7 @@ public class ServicioEventosImpl implements ServicioEventos {
     }
   }
 
-  private void validarNuevasPlazas(int plazas, Evento evento) {
+  private void validarNuevasPlazas(int plazas, Evento evento) throws EntidadNoEncontrada {
     if (plazas < evento.getPlazas()) {
       try {
         if (!reservasAPI.validarNuevasPlazasEvento(evento.getId(), plazas)) {
@@ -287,8 +287,7 @@ public class ServicioEventosImpl implements ServicioEventos {
 
   @Override
   public List<UUID> getEspaciosSinEventosYCapacidadSuficiente(
-      final int capacidad, final LocalDateTime fechaInicio, final LocalDateTime fechaFin)
-      throws EntidadNoEncontrada {
+      final int capacidad, final LocalDateTime fechaInicio, final LocalDateTime fechaFin) {
 
     if (fechaInicio == null || fechaFin == null) {
       throw new IllegalArgumentException("Las fechas de inicio y fin no pueden ser nulas.");
@@ -308,6 +307,10 @@ public class ServicioEventosImpl implements ServicioEventos {
     if (idEspacioFisico == null) {
       throw new IllegalArgumentException("El id del espacio físico no puede ser nulo o vacío.");
     }
+    if (!repositorioEspacios.existsById(idEspacioFisico)) {
+      throw new EntidadNoEncontrada("El espacio físico especificado no existe.");
+    }
+
     return repositorioEventos.isOcupacionActiva(idEspacioFisico);
   }
 
