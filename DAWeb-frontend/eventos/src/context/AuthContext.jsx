@@ -1,19 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AuthContext } from './useAuth';
 import PropTypes from 'prop-types';
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
+    return storedUser;
   });
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', user);
-    } else {
-      localStorage.removeItem('user');
-    }
-  }, [user]);
 
   const authLogout = () => {
     localStorage.removeItem('user');
@@ -22,7 +15,7 @@ const AuthProvider = ({ children }) => {
 
   const authLogin = ({ newUser }) => {
     setUser(newUser);
-    localStorage.setItem('user', newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const contextValue = useMemo(() => ({ user, authLogout, authLogin }), [user]);
