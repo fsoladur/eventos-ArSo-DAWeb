@@ -1,44 +1,39 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { AuthContext } from './useAuth';
+import PropTypes from 'prop-types';
 
-const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-  // Intentar recuperar usuario desde localStorage al iniciar
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    localStorage.getItem('user');
   });
-  
-  // Actualizar localStorage cuando cambia el usuario
+
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', user);
     } else {
       localStorage.removeItem('user');
     }
   }, [user]);
 
-  const logout = async () => {
-    try {
-      // Llamar a la API de logout
-      await fetch("http://localhost:8090/auth/logout", {
-        method: "POST",
-        credentials: "include"
-      });
-    } catch (error) {
-      console.error("Error durante logout:", error);
-    } finally {
-      // Siempre limpiar el estado local
-      localStorage.removeItem('user');
-      setUser(null);
-    }
+  const authLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
   };
-  
+
+  const authLogin = ({ newUser }) => {
+    setUser(newUser);
+    localStorage.setItem('user', newUser);
+  };
+
+  const contextValue = useMemo(() => ({ user, authLogout, authLogin }), [user]);
+
   return (
-    <AuthContext.Provider value={{ user, setUser, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
-  
-export const useAuth = () => useContext(AuthContext);
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};
+
+export default AuthProvider;

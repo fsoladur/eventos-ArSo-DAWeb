@@ -8,7 +8,7 @@ export function useEventForm(item, onSave) {
     descripcion: item.descripcion,
     fechaInicio: item?.ocupacion?.fechaInicio || null,
     fechaFin: item?.ocupacion?.fechaFin || null,
-    idEspacioFisico: item?.ocupacion?.idEspacioFisico || ""
+    idEspacioFisico: item?.ocupacion?.idEspacioFisico || ''
   };
 
   // Estados para almacenar valores del formulario y tracking de cambios
@@ -17,10 +17,10 @@ export function useEventForm(item, onSave) {
   const [isCancelado] = useState(item.cancelado);
 
   // Manejador de cambios en inputs
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
 
-    setFormValues((prev) => {
+    setFormValues(prev => {
       const newValues = { ...prev, [name]: value };
       // Verificar si hay cambios
       const hasChanges = checkForChanges(newValues);
@@ -31,7 +31,7 @@ export function useEventForm(item, onSave) {
 
   // Manejador para cambios en los DateTimePicker
   const handleDateChange = (name, date) => {
-    setFormValues((prev) => {
+    setFormValues(prev => {
       const newValues = { ...prev, [name]: date };
       const hasChanges = checkForChanges(newValues);
       setIsDirty(hasChanges);
@@ -40,20 +40,21 @@ export function useEventForm(item, onSave) {
   };
 
   // Función para verificar si hay cambios en el formulario
-  const checkForChanges = (newValues) => {
+  const checkForChanges = newValues => {
     return (
       newValues.descripcion !== initialValues.descripcion ||
       Number(newValues.plazas) !== Number(initialValues.plazas) ||
-      new Date(newValues.fechaInicio) !== new Date(initialValues.fechaInicio) ||
-      new Date(newValues.fechaFin) !== new Date(initialValues.fechaFin) ||
+      newValues.fechaInicio?.getTime() !==
+        initialValues.fechaInicio?.getTime() ||
+      newValues.fechaFin?.getTime() !== initialValues.fechaFin?.getTime() ||
       newValues.idEspacioFisico !== initialValues.idEspacioFisico
     );
   };
 
   // Manejador para envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    
+
     // Para capacidad, asegurarse de que sea número
     const processedValues = {
       ...formValues,
@@ -61,9 +62,9 @@ export function useEventForm(item, onSave) {
       fechaInicio: formatDate(formValues.fechaInicio),
       fechaFin: formatDate(formValues.fechaFin)
     };
-    
+
     onSave({ id: item.id, ...processedValues });
-    setIsDirty(false); 
+    setIsDirty(false);
     Object.assign(initialValues, processedValues); // Actualizar valores iniciales
   };
 

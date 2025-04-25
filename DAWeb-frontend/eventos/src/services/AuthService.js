@@ -15,5 +15,19 @@ export const login = async dto => {
     throw new Error('Usuario o contraseña incorrectos');
   }
   const data = await response.json();
+
   return data;
+};
+
+export const logout = async () => {
+  const response = await fetch('http://localhost:8090/auth/logout', {
+    method: 'POST',
+    credentials: 'include'
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al cerrar sesión');
+  }
+
+  return response.body;
 };

@@ -13,7 +13,7 @@ import HomePage from './pages/HomePage';
 import EventDetailPage from './pages/EventoDetailPage';
 
 import './styles/custom.css';
-import { AuthProvider } from './context/AuthContext';
+import AuthProvider from './context/AuthContext';
 import HomeRedirect from './routes/HomeRedirect';
 
 createRoot(document.getElementById('root')).render(
@@ -35,7 +35,7 @@ createRoot(document.getElementById('root')).render(
             </Route>
             <Route element={<PrivateRoute allowedRoles={['GESTOR_EVENTOS']} />}>
               <Route path="/home/eventos" element={<EventosPage />} />
-              <Route path="/home/eventos/:id" element={<EventDetailPage />} /> 
+              <Route path="/home/eventos/:id" element={<EventDetailPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Route>
@@ -44,4 +44,3 @@ createRoot(document.getElementById('root')).render(
     </AuthProvider>
   </StrictMode>
 );
- 

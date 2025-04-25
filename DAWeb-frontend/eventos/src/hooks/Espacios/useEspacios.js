@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 export function useEspacios() {
   const { user } = useAuth();
@@ -14,17 +14,17 @@ export function useEspacios() {
         const response = await fetch(
           `http://localhost:8090/espacios?propietario=${user.username}`,
           {
-            method: "GET",
-            credentials: 'include' 
+            method: 'GET',
+            credentials: 'include'
           }
         );
-        
+
         if (!response.ok) {
           throw new Error('No se pudieron cargar los espacios');
         }
-        
+
         const data = await response.json();
-        const espaciosResumen = data.espacio.map((espacio) => espacio.resumen);
+        const espaciosResumen = data.espacio.map(espacio => espacio.resumen);
         setEspacios(espaciosResumen);
         setError(null);
       } catch (err) {
@@ -39,24 +39,23 @@ export function useEspacios() {
   }, [user]);
 
   function addEspacio(espacio) {
-    setEspacios((prevEspacios) => [...prevEspacios, espacio]);
+    setEspacios(prevEspacios => [...prevEspacios, espacio]);
   }
-    
+
   async function espaciosLibres(fechaInicio, fechaFin, capacidad) {
     const response = await fetch(
       `http://localhost:8090/espacios/libres?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&capacidadRequerida=${capacidad}`,
       {
-        method: "GET",
-        credentials: 'include' 
+        method: 'GET',
+        credentials: 'include'
       }
     );
-    
+
     if (!response.ok) {
       return [];
     }
     const data = await response.json();
-    return data.espacio.map((espacio) => espacio.resumen);
-    
+    return data.espacio.map(espacio => espacio.resumen);
   }
 
   return { espacios, loading, error, addEspacio, espaciosLibres };

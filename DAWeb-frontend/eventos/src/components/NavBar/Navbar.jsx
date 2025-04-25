@@ -1,11 +1,26 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import './Navbar.css';
 import PropTypes from 'prop-types';
 import NavbarLinks from './NavLink';
+import { logout } from '../../services/authService.js';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ session }) => {
-  const { user, logout } = useAuth();
+  const { user, authLogout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const data = await logout();
+      if (data) {
+        authLogout();
+        navigate(session ? '/login' : 'http://localhost:3000');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
     <header className="custom-header">
@@ -30,8 +45,7 @@ const Navbar = ({ session }) => {
             className="btn btn-custom"
             onClick={e => {
               e.preventDefault();
-              logout();
-              window.location.href = session ? "/login" : 'http://localhost:3000';
+              handleLogout();
             }}
           >
             {session ? 'Cerrar Sesión' : 'Volver a inicio'}

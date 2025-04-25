@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import DischargeButton from '../DischargeButton';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 
 const DischargeSpaceForm = ({ onHandleSubmit }) => {
   const { user } = useAuth();

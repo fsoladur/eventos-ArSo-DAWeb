@@ -2,20 +2,21 @@ import React from 'react';
 import Footer from '../components/Footer/Footer';
 import Navbar from '../components/NavBar/Navbar';
 import Login from '../components/Login/Login';
-import { useAuth } from '../context/AuthContext';
-import { login } from '../services/AuthService';
+import { useAuth } from '../context/useAuth';
+import { login } from '../services/authService';
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify'; // Importa ToastContainer
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-  const { setUser } = useAuth();
+  const { authLogin } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async dto => {
     try {
       const user = await login(dto);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-      window.location.href = '/home';
+      authLogin({ newUser: user });
+      navigate('/home');
     } catch (error) {
       toast.error(error.message, {
         position: 'top-right',
