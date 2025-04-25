@@ -4,8 +4,14 @@ import PropTypes from 'prop-types';
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser;
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error('Error retrieving user from localStorage:', error);
+      localStorage.removeItem('user');
+      return null;
+    }
   });
 
   const authLogout = () => {

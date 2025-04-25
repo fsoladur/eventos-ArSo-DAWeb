@@ -22,6 +22,8 @@ const Navbar = ({ session }) => {
     }
   };
 
+  const isAuthenticated = user !== null && typeof user === 'object';
+
   return (
     <header className="custom-header">
       <nav className="navbar">
@@ -38,7 +40,7 @@ const Navbar = ({ session }) => {
             <span className="brand-title">Eventos Fabi&Anto</span>
           </a>
 
-          {user && <NavbarLinks />}
+          {isAuthenticated && <NavbarLinks />}
 
           <button
             type="button"
