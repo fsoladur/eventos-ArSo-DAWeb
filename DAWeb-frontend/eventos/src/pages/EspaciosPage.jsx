@@ -27,19 +27,24 @@ const EspaciosPage = () => {
   const handleExpand = id =>
     setExpandido(prev => (prev === id ? null : id));
 
-  const handleSave = async formData => {
-    const ok = await update(formData);
-    if (!ok) {
-      // aquí podrías mostrar un toast o alert con saveError
-      console.error('No guardado:', saveError);
-    }
+  const handleSave = formData => {
+    return update(formData).then(res => {
+      if (!res) {
+        console.error('No guardado:', saveError);
+      }
+      return res;
+    });
+    
   };
 
   const handleToggleActivo = (id, activo) => {
-    const ok = toggleActivo(id, activo);
-    if (!ok) {
-      console.error('No se pudo cambiar el estado:', saveError);
-    }
+    // quiero devoler un booleano
+    return toggleActivo(id, activo).then(res => {
+      if (!res) {
+        console.error('No guardado:', saveError);
+      }
+      return res;
+    });
   }
 
   if (loading) return <Container>Cargando…</Container>;
