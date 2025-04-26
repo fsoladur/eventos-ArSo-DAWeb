@@ -1,0 +1,58 @@
+.discharge-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.button-text-short {
+  display: none;
+}
+
+.button-text-long {
+  display: inline-block;
+}
+
+@media (max-width: 575.98px) {
+  .discharge-button {
+    width: 50%;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .button-text-short {
+    display: inline-block;
+  }
+
+  .button-text-long {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 992px) {
+  .discharge-button {
+    width: 40%;
+    font-size: 0.8rem;
+  }
+
+  .button-text-short {
+    display: inline-block;
+  }
+
+  .button-text-long {
+    display: none;
+  }
+}
+
+@media (min-width: 992px) {
+  .discharge-button {
+    width: 25%;
+  }
+
+  .button-text-short {
+    display: none;
+  }
+  .button-text-long {
+    display: inline-block;
+  }
+}
