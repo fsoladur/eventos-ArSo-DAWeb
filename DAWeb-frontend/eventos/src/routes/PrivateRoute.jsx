@@ -1,29 +1,20 @@
-import React from 'react';
+// routes/PrivateRoute.jsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import ConditionalRedirect from './ConditionalRedirect';
 
-const PrivateRoute = ({ allowedRoles }) => {
+export default function PrivateRoute({ allowedRoles }) {
   const { user } = useAuth();
-  console.log('Auth state:', JSON.stringify(user, null, 2));
 
-  // Si el usuario no existe o no está autenticado, redirigir al login
   if (!user) {
-    console.log('Usuario no autenticado, redirigiendo a login');
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Verificar si el usuario tiene los roles permitidos
-  const hasAccess = allowedRoles.some(
-    role => user.roles && user.roles.includes(role)
-  );
+  const hasAccess = allowedRoles.some(role => user.roles.includes(role));
 
   if (!hasAccess) {
-    console.log('Usuario no tiene permisos para esta ruta');
-    return <Navigate to="/home" />;
+    return <ConditionalRedirect />;
   }
 
-  // Si el usuario está autenticado y tiene permisos, mostrar el contenido
   return <Outlet />;
-};
-
-export default PrivateRoute;
+}

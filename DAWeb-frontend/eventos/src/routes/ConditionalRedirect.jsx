@@ -5,11 +5,16 @@ import { Navigate } from 'react-router-dom';
 
 const ConditionalRedirect = () => {
   const { user } = useAuth();
-  return user ? (
-    <Navigate to="/home" replace />
-  ) : (
-    <Navigate to="/login" replace />
-  );
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.roles.includes('USUARIO')) {
+    return <Navigate to="/home/usuario" replace />;
+  }
+
+  return <Navigate to="/home/gestor" replace />;
 };
 
 export default ConditionalRedirect;

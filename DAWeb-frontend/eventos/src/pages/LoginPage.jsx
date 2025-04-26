@@ -16,7 +16,10 @@ const LoginPage = () => {
     try {
       const user = await login(dto);
       authLogin({ newUser: user });
-      navigate('/home');
+      return navigate(
+        user.roles.includes('USUARIO') ? '/home/usuario' : '/home/gestor',
+        { replace: true }
+      );
     } catch (error) {
       toast.error(error.message, {
         position: 'top-right',

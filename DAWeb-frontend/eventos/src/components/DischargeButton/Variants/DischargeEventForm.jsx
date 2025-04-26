@@ -30,15 +30,15 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
         setPlazas('');
     };
 
-    const handleValidation = (event, closeModalCallback) => {
-        const form = event.currentTarget;
-        event.preventDefault();
+  const handleValidation = (event, closeModalCallback) => {
+    const form = event.currentTarget;
+    event.preventDefault();
 
-        if (form.checkValidity() === false) {
-            event.stopPropagation();
-            setValidated(true);
-            return;
-        }
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      setValidated(true);
+      return;
+    }
 
         const formatDate = (date) => {
             if (!date) return null;
@@ -126,73 +126,87 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
                         </Form.Group>
                     </Row>
 
-                    <Row className="mb-3">
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <Col md={6}>
-                                <Form.Group className="mb-2 d-flex flex-column">
-                                    <Form.Label>Fecha inicio</Form.Label>
-                                    <DateTimePicker
-                                        value={fechaInicio}
-                                        minDateTime={new Date()}
-                                        onChange={(date) => setFechaInicio(date)}
-                                    />
-                                </Form.Group>
-                            </Col>
+          <Row className="mb-3">
+            <Form.Group as={Col} md="6" controlId="validationOrganizador">
+              <Form.Label>Organizador</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Organizador"
+                name="organizador"
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                El organizador es obligatorio.
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group as={Col} md="6" controlId="validationCapacidad">
+              <Form.Label>Capacidad</Form.Label>
+              <Form.Control
+                type="number"
+                min="1"
+                placeholder="Capacidad"
+                name="capacidad"
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Ingresa un número válido mayor que 0.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Row>
 
-                            <Col md={6}>
-                                <Form.Group className="mb-2 d-flex flex-column">
-                                    <Form.Label>Fecha fin</Form.Label>
-                                    <DateTimePicker
-                                        value={fechaFin}
-                                        minDateTime={fechaInicio}
-                                        onChange={(date) => setFechaFin(date)}
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </LocalizationProvider>
-                    </Row>
-                    <Row className="mb-3">
-                        <Form.Group>
-                            <Form.Label>Categoria</Form.Label>
-                            <Form.Select name="categoria" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value="CULTURAL">CULTURAL</option>
-                                <option value="DEPORTES">DEPORTES</option>
-                                <option value="ENTRETENIMIENTO">ENTRETENIMIENTO</option>
-                                <option value="OTROS">OTROS</option>
-                            </Form.Select>
-                    </Form.Group>
-                    </Row>
-                    <Row className="mb-3">
-                        <SpaceSelector
-                            value={espacioId}
-                            onChange={handleSpaceChange}
-                            fechaInicio={fechaInicio}
-                            fechaFin={fechaFin}
-                            plazas={plazas}
-                            disabled={!fechaInicio || !fechaFin || !plazas}
-                        />
-                    </Row>
-                    
+          <Row className="mb-3">
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Col md={6}>
+                <Form.Group className="mb-2 d-flex flex-column">
+                  <Form.Label>Fecha inicio</Form.Label>
+                  <DateTimePicker
+                    value={fechaInicio}
+                    minDateTime={new Date()}
+                    onChange={date => setFechaInicio(date)}
+                  />
+                </Form.Group>
+              </Col>
 
-                    <Row>
-                        <Col>
-                            <Button type="submit" 
-                            className="w-100 text-white"
-                            disabled={!espacioId}>
-                                Guardar
-                            </Button>
-                        </Col>
-                    </Row>
-                    
-                </Form>
-            )}
-        </DischargeButton>
-    );
+              <Col md={6}>
+                <Form.Group className="mb-2 d-flex flex-column">
+                  <Form.Label>Fecha fin</Form.Label>
+                  <DateTimePicker
+                    value={fechaFin}
+                    minDateTime={fechaInicio}
+                    onChange={date => setFechaFin(date)}
+                  />
+                </Form.Group>
+              </Col>
+            </LocalizationProvider>
+          </Row>
+          <Row className="mb-3">
+            <Form.Group>
+              <Form.Label>Categoria</Form.Label>
+              <Form.Select name="categoria" required>
+                <option value="">Selecciona una categoría</option>
+                <option value="CULTURAL">CULTURAL</option>
+                <option value="DEPORTES">DEPORTES</option>
+                <option value="ENTRETENIMIENTO">ENTRETENIMIENTO</option>
+                <option value="OTROS">OTROS</option>
+              </Form.Select>
+            </Form.Group>
+          </Row>
+
+          <Row>
+            <Col>
+              <Button type="submit" className="w-100 text-white">
+                Guardar
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      )}
+    </DischargeButton>
+  );
 };
 
 DischargeEventForm.propTypes = {
-    onHandleSubmit: PropTypes.func.isRequired
+  onHandleSubmit: PropTypes.func.isRequired
 };
 
 export default DischargeEventForm;
