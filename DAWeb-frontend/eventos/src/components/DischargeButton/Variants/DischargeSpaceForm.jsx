@@ -33,7 +33,10 @@ const DischargeSpaceForm = ({ onHandleSubmit }) => {
   };
 
   return (
-    <DischargeButton buttonLabel="Dar de alta espacio">
+    <DischargeButton
+      buttonLabel="Dar de alta espacio"
+      shortButtonLabel="Alta espacio"
+    >
       {closeModalCallback => (
         <Form
           noValidate

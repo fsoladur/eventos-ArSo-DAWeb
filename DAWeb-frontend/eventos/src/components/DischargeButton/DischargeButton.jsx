@@ -3,21 +3,28 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import './DischargeButton.css';
 
-const DischargeButton = ({ buttonLabel, children }) => {
+const DischargeButton = ({
+  shortButtonLabel,
+  buttonLabel,
+  children,
+  className
+}) => {
   const [showModal, setShowModal] = useState(false);
 
-  const handleShow = () => setShowModal(true);
+  const handleShow = () => {
+    setShowModal(true);
+  };
   const handleClose = () => setShowModal(false);
 
   return (
     <>
       <Button
         variant="primary"
-        className="text-white discharge-button fw-bold"
+        className={`text-white discharge-button fw-bold ${className || ''}`}
         onClick={handleShow}
       >
         <span className="button-text-long">{buttonLabel}</span>
-        <span className="button-text-short">Dar de alta</span>
+        <span className="button-text-short">{shortButtonLabel}</span>
       </Button>
 
       <Modal
@@ -42,7 +49,9 @@ const DischargeButton = ({ buttonLabel, children }) => {
 
 DischargeButton.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
-  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  className: PropTypes.string,
+  shortButtonLabel: PropTypes.string
 };
 
 export default DischargeButton;
