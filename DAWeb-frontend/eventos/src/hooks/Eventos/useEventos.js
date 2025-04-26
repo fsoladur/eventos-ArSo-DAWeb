@@ -33,5 +33,10 @@ export function useEventos() {
     fetchEventos();
   }, []);
 
-  return { eventos, loading, error };
+
+  function addEvento(evento) {
+    setEventos(prevEventos => [...prevEventos, evento]);
+  }
+
+  return { eventos, loading, error, addEvento };
 }

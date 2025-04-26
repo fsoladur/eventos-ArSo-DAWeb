@@ -2,39 +2,42 @@ import { Form } from 'react-bootstrap';
 import DischargeEventForm from '../DischargeButton/Variants/DischargeEventForm';
 import { toast, ToastContainer } from 'react-toastify';
 
-/*const handleSubmit = async (dto, addEspacio) => {
+const handleSubmit = async (dto, addEvento) => {
   try {
-    const fetchAddEspacios = await fetch('http://localhost:8090/espacios', {
+    console.log('DTO:', dto);
+    const fetchAddEventos = await fetch('http://localhost:8090/eventos', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dto)
     });
 
-    if (!fetchAddEspacios.ok) {
+    if (!fetchAddEventos.ok) {
       throw new Error('Error al crear el espacio');
     }
-    const id = await fetchAddEspacios.json();
+
+    const locationHeader = fetchAddEventos.headers.get('Location'); 
+    const id = locationHeader.split('/').pop(); 
     
-    const fetchObtenerEspacio = await fetch(`http://localhost:8090/espacios/${id}`, {
+    const fetchObtenerEvento = await fetch(`http://localhost:8090/eventos/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' }
     });
     
-    if (!fetchObtenerEspacio.ok) {
-      throw new Error('Error al obtener el espacio creado');
+    if (!fetchObtenerEvento.ok) {
+      throw new Error('Error al obtener el evento creado');
     }
-    const espacio = await fetchObtenerEspacio.json();
-    addEspacio(espacio); 
-    toast.success('Espacio creado correctamente.');
+    const evento = await fetchObtenerEvento.json();
+    addEvento(evento);
+    toast.success('Evento creado correctamente.');
 
   } catch (error) {
     toast.error(error.message);
   }
-};*/
+};
 
-const SpaceSearchBar = ({ onSearch, addEvento }) => (
+const EventSearchBar = ({ onSearch, addEvento }) => (
   <div className="d-flex  mb-3">
   <Form className="w-100 me-3" >
     <Form.Control
@@ -48,4 +51,4 @@ const SpaceSearchBar = ({ onSearch, addEvento }) => (
   </div>
 );
 
-export default SpaceSearchBar;
+export default EventSearchBar;

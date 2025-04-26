@@ -6,13 +6,15 @@ const SpaceCard = ({
   item,
   onExpand,
   onSave,
-  isSaving
+  isSaving,
+  toggleActivo
 }) => {
 
   const {
     formValues,
     isDirty,
     isActive,
+    setActive,
     handleChange,
     handleSubmit
   } = useEspaciosForm(item, onSave);
@@ -65,7 +67,10 @@ const SpaceCard = ({
               >
                 { isSaving ? 'Guardando…' : isDirty ? 'Guardar' : 'Sin cambios' }
               </Button>
-              <Button variant={isActive ? "outline-danger" : "outline-success"} size="sm" disabled={isSaving}>
+              <Button variant={isActive ? "outline-danger" : "outline-success"} size="sm" disabled={isSaving} onClick={() => {
+                toggleActivo(item.id, isActive);
+                setActive(!isActive);
+              }}>
                 {isActive ? 'Cerrar temporalmente' : 'Activar'}
               </Button>
             </div>

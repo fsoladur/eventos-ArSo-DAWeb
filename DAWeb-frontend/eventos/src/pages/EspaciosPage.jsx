@@ -18,7 +18,7 @@ const EspaciosPage = () => {
   // Lectura
   const { espacios, loading, error, addEspacio } = useEspacios();
   // Escritura
-  const { update, isSaving, error: saveError } = useUpdateEspacio();
+  const { update, isSaving, error: saveError, toggleActivo } = useUpdateEspacio();
 
   const debouncedFiltro   = useDebounce(inputValue, 300);
   const filtrados         = useSpaceFilter(espacios, debouncedFiltro);
@@ -35,6 +35,13 @@ const EspaciosPage = () => {
     }
   };
 
+  const handleToggleActivo = (id, activo) => {
+    const ok = toggleActivo(id, activo);
+    if (!ok) {
+      console.error('No se pudo cambiar el estado:', saveError);
+    }
+  }
+
   if (loading) return <Container>Cargando…</Container>;
 
   return (
@@ -50,6 +57,7 @@ const EspaciosPage = () => {
         onSave={handleSave}
         isSaving={isSaving}
         CardComponent={SpaceCard}
+        toggleActivo={handleToggleActivo}
       />
 
       {filtrados.length > 0 ? (

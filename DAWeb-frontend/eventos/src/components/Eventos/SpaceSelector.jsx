@@ -6,8 +6,8 @@ import { formatDate } from '../../utils/utils';
 export default function SpaceSelector({ 
   value,
   onChange,
-  disabled,
-  currentSpace,
+  disabled = false,
+  currentSpace = null,
   fechaInicio,
   fechaFin,
   plazas
@@ -60,6 +60,9 @@ export default function SpaceSelector({
           <option value={currentSpace.id}>
             {currentSpace.nombre} - {currentSpace.direccion}
           </option>
+        )}
+        {!currentSpace && (
+          <option value="">Selecciona un espacio</option>
         )}
         {espaciosDisponibles
           .filter(esp => !currentSpace || esp.id !== currentSpace.id)

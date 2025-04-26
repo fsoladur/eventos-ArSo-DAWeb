@@ -2,16 +2,33 @@ import { useState } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import DischargeButton from '../DischargeButton';
-import { useAuth } from '../../../context/useAuth';
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import SpaceSelector from '../../Eventos/SpaceSelector';
 
 const DischargeEventForm = ({ onHandleSubmit }) => {
-    const { user } = useAuth();
     const [validated, setValidated] = useState(false);
     const [fechaInicio, setFechaInicio] = useState(null);
     const [fechaFin, setFechaFin] = useState(null);
+    const [espacioId, setEspacioId] = useState("");
+    const [plazas, setPlazas] = useState('');
+    
+    const handleSpaceChange = (e) => {
+        setEspacioId(e.target.value);
+    };
+
+    const handlePlazasChange = (e) => {
+        setPlazas(e.target.value);
+    };
+
+    const resetForm = () => {
+        setValidated(false);
+        setFechaInicio(null);
+        setFechaFin(null);
+        setEspacioId("");
+        setPlazas('');
+    };
 
     const handleValidation = (event, closeModalCallback) => {
         const form = event.currentTarget;
@@ -23,14 +40,20 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
             return;
         }
 
+        const formatDate = (date) => {
+            if (!date) return null;
+            return new Date(date).toISOString().replace(/\.\d{3}Z$/, '');
+        };
+
         const dto = {
             nombre: form.nombre.value,
-            propietario: user.username,
             descripcion: form.descripcion.value,
             organizador: form.organizador.value,
-            capacidad: form.capacidad.value,
-            fechaInicio: fechaInicio,
-            fechaFin: fechaFin,
+            categoria: form.categoria.value,
+            fechaInicio: formatDate(fechaInicio),
+            fechaFin: formatDate(fechaFin),
+            idEspacioFisico: espacioId,
+            plazas: form.plazas.value
         };
 
         onHandleSubmit(dto);
@@ -38,7 +61,7 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
     };
 
     return (
-        <DischargeButton buttonLabel="Dar de alta evento">
+        <DischargeButton buttonLabel="Dar de alta evento" onClose={resetForm}>
             {closeModalCallback => (
                 <Form
                     noValidate
@@ -86,14 +109,16 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
                                 El organizador es obligatorio.
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Form.Group as={Col} md="6" controlId="validationCapacidad">
-                            <Form.Label>Capacidad</Form.Label>
+                        <Form.Group as={Col} md="6" controlId="validationPlazas">
+                            <Form.Label>Nº Plazas</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="1"
-                                placeholder="Capacidad"
-                                name="capacidad"
+                                placeholder="plazas"
+                                name="plazas"
                                 required
+                                value={plazas}
+                                onChange={handlePlazasChange}
                             />
                             <Form.Control.Feedback type="invalid">
                                 Ingresa un número válido mayor que 0.
@@ -138,12 +163,23 @@ const DischargeEventForm = ({ onHandleSubmit }) => {
                             </Form.Select>
                     </Form.Group>
                     </Row>
-
-
+                    <Row className="mb-3">
+                        <SpaceSelector
+                            value={espacioId}
+                            onChange={handleSpaceChange}
+                            fechaInicio={fechaInicio}
+                            fechaFin={fechaFin}
+                            plazas={plazas}
+                            disabled={!fechaInicio || !fechaFin || !plazas}
+                        />
+                    </Row>
+                    
 
                     <Row>
                         <Col>
-                            <Button type="submit" className="w-100 text-white">
+                            <Button type="submit" 
+                            className="w-100 text-white"
+                            disabled={!espacioId}>
                                 Guardar
                             </Button>
                         </Col>

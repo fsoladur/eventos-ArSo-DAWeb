@@ -52,6 +52,7 @@ export function useEspaciosForm(item, onSave) {
         formValues,
         isDirty,
         isActive,
+        setActive,
         handleChange,
         handleSubmit
     };

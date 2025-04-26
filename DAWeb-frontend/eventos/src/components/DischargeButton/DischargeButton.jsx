@@ -1,12 +1,26 @@
 import { Modal, Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const DischargeButton = ({ buttonLabel, children }) => {
+const DischargeButton = ({ buttonLabel, children, onClose}) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  const handleClose = () => {
+    setShowModal(false);
+
+    if (typeof onClose === 'function') {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (showModal && typeof onClose === 'function') {
+        onClose();
+      }
+    };
+  }, []); 
 
   return (
     <>

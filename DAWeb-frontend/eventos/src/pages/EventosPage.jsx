@@ -16,7 +16,7 @@ const EventosPage = () => {
   const [eventoExpandido, setExpandido]= useState(null);
 
   // Lectura
-  const { eventos, loading, error, addEspacio } = useEventos();
+  const { eventos, loading, error, addEvento } = useEventos();
   // Escritura
   const { update, isSaving, error: saveError } = useUpdateEvento();
 
@@ -41,7 +41,7 @@ const EventosPage = () => {
     <Container className="my-4">
       <h1 className="text-primary h4 fw-bold">Gestiona los eventos</h1>
 
-      <EventSearchBar onSearch={setInputValue} addEspacio={addEspacio} />
+      <EventSearchBar onSearch={setInputValue} addEvento={addEvento} />
 
       <AccordionList
         items={paginatedItems}

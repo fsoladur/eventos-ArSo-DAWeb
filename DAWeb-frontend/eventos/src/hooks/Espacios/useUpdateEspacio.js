@@ -25,5 +25,27 @@ export function useUpdateEspacio() {
     }
   };
 
-  return { update, isSaving, error };
+  const toggleActivo = async (id, activo) => {
+    setIsSaving(true);
+    setError(null);
+    const estado = activo ? 'cerrado' : 'activo';
+    console.log('Estado:', estado);
+    try {
+      const res = await fetch(`http://localhost:8090/espacios/${id}/estado`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        credentials: 'include',
+        body: `estado=${estado}`
+      });
+      if (!res.ok) throw new Error('No se pudo actualizar el estado del espacio');
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return { update, isSaving, error, toggleActivo };
 }
