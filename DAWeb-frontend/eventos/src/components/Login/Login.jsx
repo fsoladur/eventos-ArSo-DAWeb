@@ -29,7 +29,7 @@ const LoginForm = ({ onHandleSubmit }) => {
   };
 
   const handleGithubLogin = () => {
-    window.open('http://localhost:8090/auth/github', '_blank');
+    window.open('http://localhost:8090/oauth2/authorization/github', '_self');
   };
 
   return (

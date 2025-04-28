@@ -1,6 +1,8 @@
 package arso.api.rest.auth.config;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,8 +56,14 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
 
       response.addCookie(servicioAuth.generarCookie(token));
 
-      response.setContentType("application/json");
-      objectMapper.writeValue(response.getWriter(), responseDto);
+      // lo pasamos como query -param (base64url-encoded)
+      String json      = new ObjectMapper().writeValueAsString(responseDto);
+      String base64url = Base64.getUrlEncoder().withoutPadding()
+                             .encodeToString(json.getBytes(StandardCharsets.UTF_8));
+
+    // ---------- 4) redirección ----------
+      String target = "http://localhost:5173?data=" + base64url;
+      response.sendRedirect(target); 
     }
   }
 
@@ -64,10 +72,14 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
     String username = user.getAttributes().get("login").toString();
     Usuario usuario = servicioAuth.comprobarCredenciales(username, "github");
 
+    if (usuario == null) {
+      return null;
+    }
+
     HashMap<String, Object> claims = new HashMap<String, Object>();
     claims.put("id", usuario.getId().toString());
     claims.put("sub", usuario.getUsername());
-    claims.put("roles", usuario.getRoles());
+    claims.put("roles", String.join(",", usuario.getRoles()));
 
     return claims;
   }

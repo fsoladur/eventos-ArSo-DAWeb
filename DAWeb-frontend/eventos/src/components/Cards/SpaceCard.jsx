@@ -68,7 +68,9 @@ const SpaceCard = ({
                 { isSaving ? 'Guardando…' : isDirty ? 'Guardar' : 'Sin cambios' }
               </Button>
               <Button variant={isActive ? "outline-danger" : "outline-success"} size="sm" disabled={isSaving} onClick={async () => {
-                await toggleActivo(item.id, !isActive) ? setActive(!isActive) : null;
+                if(await toggleActivo(item.id, !isActive)) {
+                  setActive(!isActive);
+                }
               }}>
                 {isActive ? 'Cerrar temporalmente' : 'Activar'}
               </Button>

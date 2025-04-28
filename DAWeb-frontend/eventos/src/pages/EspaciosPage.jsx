@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import SpaceSearchBar from '../components/SearchBars/SpaceSeachBar.jsx';
 import AccordionList from '../components/Lists/AccordionList.jsx';
@@ -27,25 +27,15 @@ const EspaciosPage = () => {
   const handleExpand = id =>
     setExpandido(prev => (prev === id ? null : id));
 
-  const handleSave = formData => {
-    return update(formData).then(res => {
-      if (!res) {
-        console.error('No guardado:', saveError);
-      }
-      return res;
-    });
-    
+  const handleSave = formData => async () => {
+    let success = await update(formData)
+    return success;
   };
 
   const handleToggleActivo = (id, activo) => {
-    // quiero devoler un booleano
-    return toggleActivo(id, activo).then(res => {
-      if (!res) {
-        console.error('No guardado:', saveError);
-      }
-      return res;
-    });
-  }
+    return toggleActivo(id, activo);
+      
+  };
 
   if (loading) return <Container>Cargando…</Container>;
 

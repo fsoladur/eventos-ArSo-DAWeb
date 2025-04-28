@@ -45,12 +45,10 @@ const UsuarioPage = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const response = await fetch('http://localhost:8090/eventos', {
+        const response = await fetch(`http://localhost:8090/eventos`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
         });
 
         if (!response.ok) {

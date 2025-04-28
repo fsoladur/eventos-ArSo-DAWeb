@@ -40,6 +40,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     Claims claims = decodeToken(jwtToken);
     String[] roles = claims.get("roles").toString().split(",");
+    System.out.println("Roles extraídos del token: " + Arrays.toString(roles));
+
+
+    if (roles.length == 0) {
+      response.sendError(HttpServletResponse.SC_FORBIDDEN, "No se han encontrado roles en el token");
+      return;
+    }
 
     // Establece el contexto de seguridad
     ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
