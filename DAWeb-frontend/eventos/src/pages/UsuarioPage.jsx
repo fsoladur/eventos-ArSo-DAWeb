@@ -2,25 +2,48 @@ import React, { useState, useMemo, useEffect } from 'react';
 import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
 
 const UsuarioPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
   const [eventosData, setEventosData] = useState({
     _embedded: { eventoDTOList: [] }
   });
-  const [loading, setLoading] = useState(false);
-  const { navigate } = useNavigate();
+  const [filtroActual, setFiltroActual] = useState('');
 
-  // Efecto para cargar eventos una sola vez al montar el componente
+  const handleSubmit = async requestBody => {
+    console.log('Request Body:', requestBody); // Verificar el contenido del requestBody
+    try {
+      const response = await fetch('http://localhost:8090/reservas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      toast.success('Reserva creada con éxito', {
+        position: 'top-right',
+        autoClose: 3000
+      });
+    } catch (error) {
+      console.error('Error al reservar:', error);
+      toast.error(`Error: ${error.message}`, {
+        position: 'top-right',
+        autoClose: 3000
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchEventos = async () => {
-      if (loading) return;
-
-      setLoading(true);
       try {
         const response = await fetch('http://localhost:8090/eventos', {
           method: 'GET',
@@ -31,9 +54,6 @@ const UsuarioPage = () => {
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/login', { replace: true });
-          }
           throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
 
@@ -45,32 +65,47 @@ const UsuarioPage = () => {
           position: 'top-right',
           autoClose: 3000
         });
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchEventos();
   }, []);
 
+  // Extraer eventos del estado una sola vez
   const eventos = useMemo(() => {
     return eventosData._embedded?.eventoDTOList || [];
   }, [eventosData]);
 
-  // Eventos filtrados con useMemo para recalcular solo cuando cambian los datos o el término de búsqueda
+  // Filtrar eventos basados en el filtro actual
   const eventosFiltrados = useMemo(() => {
-    if (searchTerm.trim() === '') {
+    if (!filtroActual.trim()) {
       return eventos;
     }
 
     return eventos.filter(evento =>
-      evento.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
+      evento.nombre?.toLowerCase().includes(filtroActual.toLowerCase())
     );
-  }, [eventos, searchTerm]);
+  }, [eventos, filtroActual]);
+
+  // Manejar la búsqueda
+  const handleFilter = event => {
+    event.preventDefault();
+    const term = event.target.elements.searchTerm.value || '';
+    setFiltroActual(term);
+
+    if (term.trim()) {
+      toast.info(`Mostrando resultados para: "${term}"`, {
+        position: 'top-right',
+        autoClose: 2000
+      });
+    } else {
+      setFiltroActual('');
+    }
+  };
 
   return (
     <>
-      <Container className="mt-5">
+      <Container className="my-5">
         <h2 className="text-center fw-bold mb-4" style={{ color: '#2c3e50' }}>
           Encuentra y haz reservas de eventos a tu medida
         </h2>
@@ -83,14 +118,10 @@ const UsuarioPage = () => {
           variant="pills"
         >
           <Tab eventKey="eventos" title="Eventos">
-            <Form className="mb-2">
-              <Form.Control
-                type="text"
-                placeholder="Buscar eventos por nombre..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-            </Form>
+            <UserEventSearchBar
+              onFilter={handleFilter}
+              placeholder={'Buscar eventos por nombre'}
+            />
 
             <Row className="g-4">
               {eventosFiltrados.length > 0 ? (
@@ -101,12 +132,22 @@ const UsuarioPage = () => {
                       cardText={evento.descripcion}
                       eventDate={evento.ocupacion?.fechaInicio}
                       eventLocation="Hay que modificar el dto para que devuelva la ubicacion"
+                      eventId={evento.id}
+                      onHandleSubmit={handleSubmit}
                     />
                   </Col>
                 ))
               ) : (
-                <div className="text-center mt-4">
-                  <p>No se encontraron eventos.</p>
+                <div className="text-center mt-4 p-5 bg-light rounded">
+                  <p>
+                    No se encontraron eventos
+                    {filtroActual ? ' con el filtro actual' : ''}.
+                  </p>
+                  {filtroActual && (
+                    <p className="text-muted">
+                      Intenta con otro término de búsqueda.
+                    </p>
+                  )}
                 </div>
               )}
             </Row>

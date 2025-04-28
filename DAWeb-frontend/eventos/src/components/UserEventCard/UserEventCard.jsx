@@ -1,17 +1,32 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
 import DischargeButton from '../DischargeButton/DischargeButton';
+import { useAuth } from '../../context/useAuth';
 import './userEventCard.css';
+import PropTypes from 'prop-types';
+import { Card, Button, Form } from 'react-bootstrap';
 
 function UserEventCard({
   cardTitle,
   cardText,
   eventDate,
   eventLocation,
-  onClick
+  eventId,
+  onHandleSubmit
 }) {
-  // Dividir la fecha y la hora usando "T" como separador
   const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
+  const { user } = useAuth();
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const plazasReservadas = e.target.plazasReservadas.value;
+    const requestBody = {
+      idUsuario: user.id,
+      idEvento: eventId,
+      plazasReservadas: parseInt(plazasReservadas)
+    };
+
+    onHandleSubmit(requestBody);
+  };
 
   return (
     <Card className="event-card">
@@ -43,12 +58,35 @@ function UserEventCard({
         <DischargeButton
           buttonLabel="Reservar"
           shortButtonLabel="Reservar"
-          onClick={onClick}
           className="w-100 fw-bold text-white"
-        />
+        >
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formBasicEmail">
+              <Form.Control
+                type="number"
+                placeholder="Plazas reservadas"
+                name="plazasReservadas"
+                required
+                min={1}
+              />
+            </Form.Group>
+            <Button type="submit" className="mt-2 w-100">
+              Reservar
+            </Button>
+          </Form>
+        </DischargeButton>
       </Card.Footer>
     </Card>
   );
 }
+
+UserEventCard.propTypes = {
+  cardTitle: PropTypes.string.isRequired,
+  cardText: PropTypes.string.isRequired,
+  eventDate: PropTypes.string.isRequired,
+  eventLocation: PropTypes.string.isRequired,
+  eventId: PropTypes.number.isRequired,
+  onHandleSubmit: PropTypes.func.isRequired
+};
 
 export default UserEventCard;
