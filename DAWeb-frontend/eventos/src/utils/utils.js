@@ -24,5 +24,31 @@ export function getBadgeColor(categoria)
     }
   }
 
+  const avatars = [
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRubQH1F3DZWpm3WYs5SKpQBSH_ocCYenGjkA&s',
+    'https://i.pinimg.com/236x/d7/7e/31/d77e31b4f7c02493d585c8fb34f6d956.jpg'
+
+  ]
+
+  const places = [
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRubQH1F3DZWpm3WYs5SKpQBSH_ocCYenGjkA&s',
+    'https://i.pinimg.com/236x/d7/7e/31/d77e31b4f7c02493d585c8fb34f6d956.jpg'
+
+  ]
+
+  export function generateAvatarURL(){
+    return generate(avatars);
+  }
+
+  export function generatePlacesURL() {
+    return generate(places);
+  }
+
+  function generate(images)
+  {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  }
+
 
  
