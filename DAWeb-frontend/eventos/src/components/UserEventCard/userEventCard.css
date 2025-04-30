@@ -25,12 +25,22 @@
 .event-card-title {
   font-weight: bold;
   color: var(--terciary);
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el contenido que excede el tamaño */
+  text-overflow: ellipsis; /* Muestra los puntos suspensivos */
+  max-width: 100%; /* Asegura que el título no exceda su contenedor */
 }
 
 .event-card-description {
   color: #505050;
   font-size: 0.9rem;
   font-weight: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limita a 3 líneas */
+  line-clamp: 3; /* Propiedad estándar para compatibilidad */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Muestra puntos suspensivos */
 }
 
 .event-card-date-container {
@@ -44,30 +54,6 @@
   margin-right: 0.5rem;
 }
 
-.event-card-date {
-  color: var(--primary);
-  padding: 0;
-  font-weight: bold;
-}
-
-.event-card-time-container {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-}
-
-.event-card-time-label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.event-card-time {
-  color: var(--primary);
-  padding: 0;
-  font-weight: bold;
-}
-
-/* Nuevas clases para la ubicación */
 .event-card-location-container {
   display: flex;
   align-items: center;
@@ -79,10 +65,25 @@
   margin-right: 0.5rem;
 }
 
-.event-card-location {
+.event-card-spaceName {
   color: var(--primary);
   padding: 0;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%; /* Limita el ancho para dejar espacio a la etiqueta */
+}
+
+.event-card-date,
+.event-card-time {
+  color: var(--primary);
+  padding: 0;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%; /* Limita el ancho para dejar espacio a la etiqueta */
 }
 
 .event-card-footer {

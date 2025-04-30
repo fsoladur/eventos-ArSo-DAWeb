@@ -10,6 +10,7 @@ function UserEventCard({
   cardText,
   eventDate,
   eventLocation,
+  eventSpaceName,
   eventId,
   onHandleSubmit
 }) {
@@ -52,6 +53,11 @@ function UserEventCard({
         <div className="event-card-location-container">
           <span className="event-card-location-label">Ubicación: </span>
           <span className="event-card-location">{eventLocation}</span>
+        </div>
+
+        <div className="event-card-spaceName-container">
+          <span className="event-card-spaceName-label">Espacio: </span>
+          <span className="event-card-spaceName">{eventSpaceName}</span>
         </div>
       </Card.Body>
       <Card.Footer className="event-card-footer">

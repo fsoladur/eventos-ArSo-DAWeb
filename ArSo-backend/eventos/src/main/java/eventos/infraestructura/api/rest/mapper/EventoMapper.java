@@ -7,8 +7,16 @@ public class EventoMapper {
 
   public static EventoDTO toDTO(Evento evento) {
 
-    return evento.getOcupacion() != null
+    return evento.isCancelado() && evento.getOcupacion() == null
         ? new EventoDTO(
+            evento.getId(),
+            evento.getNombre(),
+            evento.getDescripcion(),
+            evento.getOrganizador(),
+            evento.getPlazas(),
+            evento.isCancelado(),
+            evento.getCategoria().toString())
+        : new EventoDTO(
             evento.getId(),
             evento.getNombre(),
             evento.getDescripcion(),
@@ -18,17 +26,8 @@ public class EventoMapper {
             evento.getCategoria().toString(),
             evento.getFechaInicio(),
             evento.getFechaFin(),
-            evento.getEspacioFisico().getId())
-        : new EventoDTO(
-            evento.getId(),
-            evento.getNombre(),
-            evento.getDescripcion(),
-            evento.getOrganizador(),
-            evento.getPlazas(),
-            evento.isCancelado(),
-            evento.getCategoria().toString(),
-            null,
-            null,
-            null);
+            evento.getEspacioFisico().getId(),
+            evento.getEspacioFisico().getNombre(),
+            evento.getEspacioFisico().getDireccion());
   }
 }

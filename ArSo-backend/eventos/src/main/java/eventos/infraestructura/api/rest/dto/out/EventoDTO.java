@@ -45,6 +45,7 @@ public class EventoDTO {
 
   public EventoDTO() {}
 
+  // Constructor para eventos no cancelados
   public EventoDTO(
       UUID id,
       String nombre,
@@ -55,7 +56,9 @@ public class EventoDTO {
       String categoria,
       LocalDateTime fechaInicio,
       LocalDateTime fechaFin,
-      UUID idEspacioFisico) {
+      UUID idEspacioFisico,
+      String nombreEspacioFisico,
+      String direccionEspacioFisico) {
     this.id = id;
     this.nombre = nombre;
     this.descripcion = descripcion;
@@ -64,9 +67,27 @@ public class EventoDTO {
     this.cancelado = cancelado;
     this.categoria = categoria;
     this.ocupacion =
-        fechaInicio == null && fechaFin == null && idEspacioFisico == null
-            ? null
-            : new OcupacionDTO(fechaInicio, fechaFin, idEspacioFisico);
+        new OcupacionDTO(
+            fechaInicio, fechaFin, idEspacioFisico, nombreEspacioFisico, direccionEspacioFisico);
+  }
+
+  // Constructor para eventos cancelados
+  public EventoDTO(
+      UUID id,
+      String nombre,
+      String descripcion,
+      String organizador,
+      int numPlazas,
+      boolean cancelado,
+      String categoria) {
+    this.id = id;
+    this.nombre = nombre;
+    this.descripcion = descripcion;
+    this.organizador = organizador;
+    this.numPlazas = numPlazas;
+    this.cancelado = cancelado;
+    this.categoria = categoria;
+    this.ocupacion = null;
   }
 
   public UUID getId() {

@@ -58,5 +58,19 @@ export function useEspacios() {
     return data.espacio.map(espacio => espacio.resumen);
   }
 
+  async function getEspacioPorId(id) {
+    const response = await fetch(`http://localhost:8090/espacios/${id}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('No se pudo cargar el espacio');
+    }
+
+    const data = await response.json();
+    return data.espacio.resumen;
+  }
+
   return { espacios, loading, error, addEspacio, espaciosLibres };
 }

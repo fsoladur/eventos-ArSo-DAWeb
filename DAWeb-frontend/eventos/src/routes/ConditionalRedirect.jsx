@@ -10,20 +10,20 @@ const ConditionalRedirect = () => {
   // Mover la lógica de autenticación a un useEffect
   useEffect(() => {
     const data = searchParams.get('data');
-    
+
     if (data) {
-        const userData = atob(data);
-        const parsedData = JSON.parse(userData);
-        authLogin({newUser: parsedData});
-        navigate(user ? '/home/usuario' : '/login', { replace: true });
+      const userData = atob(data);
+      const parsedData = JSON.parse(userData);
+      authLogin({ newUser: parsedData });
+      navigate(user ? '/home/usuario' : '/login', { replace: true });
     }
-  }, []); 
+  }, []);
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.roles && user.roles.includes('USUARIO')) {
+  if (user.roles?.includes('USUARIO')) {
     return <Navigate to="/home/usuario" replace />;
   }
 

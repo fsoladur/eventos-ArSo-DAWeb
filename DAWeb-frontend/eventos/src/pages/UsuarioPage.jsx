@@ -2,79 +2,47 @@ import React, { useState, useMemo, useEffect } from 'react';
 import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
+import { useEventos } from '../hooks/Eventos/useEventos';
+import PaginationBar from '../components/Pagination/PaginationBar';
+import { usePagination } from '../hooks/usePagination';
+import darAltaReserva from '../services/reservasServices';
 
 const UsuarioPage = () => {
-  const [eventosData, setEventosData] = useState({
-    _embedded: { eventoDTOList: [] }
-  });
   const [filtroActual, setFiltroActual] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const { eventos, loading, error } = useEventos();
 
   const handleSubmit = async requestBody => {
-    console.log('Request Body:', requestBody); // Verificar el contenido del requestBody
     try {
-      const response = await fetch('http://localhost:8090/reservas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
+      await darAltaReserva({ requestBody: requestBody });
       toast.success('Reserva creada con éxito', {
         position: 'top-right',
         autoClose: 3000
       });
     } catch (error) {
       console.error('Error al reservar:', error);
-      toast.error(`Error: ${error.message}`, {
-        position: 'top-right',
-        autoClose: 3000
-      });
+      toast.error(
+        `Error: ${error.message || 'No se pudo completar la reserva'}`,
+        {
+          position: 'top-right',
+          autoClose: 3000
+        }
+      );
     }
   };
 
   useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const response = await fetch(`http://localhost:8090/eventos`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
+    if (!error) return;
+    toast.error(`Error: ${error}`, {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  }, [error]);
 
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setEventosData(data);
-      } catch (error) {
-        console.error('Error al obtener eventos:', error);
-        toast.error(`Error: ${error.message}`, {
-          position: 'top-right',
-          autoClose: 3000
-        });
-      }
-    };
-
-    fetchEventos();
-  }, []);
-
-  // Extraer eventos del estado una sola vez
-  const eventos = useMemo(() => {
-    return eventosData._embedded?.eventoDTOList || [];
-  }, [eventosData]);
-
-  // Filtrar eventos basados en el filtro actual
   const eventosFiltrados = useMemo(() => {
     if (!filtroActual.trim()) {
       return eventos;
@@ -85,7 +53,16 @@ const UsuarioPage = () => {
     );
   }, [eventos, filtroActual]);
 
-  // Manejar la búsqueda
+  const { paginatedItems: eventosPaginados, totalPages } = usePagination(
+    eventosFiltrados,
+    paginaActual,
+    6
+  );
+
+  useEffect(() => {
+    setPaginaActual(1);
+  }, [filtroActual]);
+
   const handleFilter = event => {
     event.preventDefault();
     const term = event.target.elements.searchTerm.value || '';
@@ -121,34 +98,78 @@ const UsuarioPage = () => {
               placeholder={'Buscar eventos por nombre'}
             />
 
-            <Row className="g-4">
-              {eventosFiltrados.length > 0 ? (
-                eventosFiltrados.map(evento => (
-                  <Col key={evento.id} xs={12} sm={6} md={4}>
-                    <UserEventCard
-                      cardTitle={evento.nombre}
-                      cardText={evento.descripcion}
-                      eventDate={evento.ocupacion?.fechaInicio}
-                      eventLocation="Hay que modificar el dto para que devuelva la ubicacion"
-                      eventId={evento.id}
-                      onHandleSubmit={handleSubmit}
-                    />
-                  </Col>
-                ))
-              ) : (
-                <div className="text-center mt-4 p-5 bg-light rounded">
-                  <p>
-                    No se encontraron eventos
-                    {filtroActual ? ' con el filtro actual' : ''}.
-                  </p>
-                  {filtroActual && (
-                    <p className="text-muted">
-                      Intenta con otro término de búsqueda.
-                    </p>
+            {(() => {
+              if (loading) {
+                return (
+                  <div className="text-center my-5">
+                    <output>
+                      <Spinner animation="border">
+                        <span className="visually-hidden">Cargando...</span>
+                      </Spinner>
+                    </output>
+                  </div>
+                );
+              }
+
+              if (error) {
+                return (
+                  <Alert variant="danger" className="my-3">
+                    {error}
+                  </Alert>
+                );
+              }
+
+              return (
+                <>
+                  <Row className="g-4">
+                    {eventosPaginados.length > 0 ? (
+                      eventosPaginados
+                        .filter(evento => !evento.cancelado)
+                        .map(evento => (
+                          <Col key={evento.id} xs={12} sm={6} md={4}>
+                            <UserEventCard
+                              cardTitle={evento.nombre}
+                              cardText={evento.descripcion}
+                              eventDate={evento.ocupacion.fechaInicio}
+                              eventLocation={
+                                evento.ocupacion.direccionEspacioFisico
+                              }
+                              eventSpaceName={
+                                evento.ocupacion.nombreEspacioFisico
+                              }
+                              eventId={evento.id}
+                              onHandleSubmit={handleSubmit}
+                            />
+                          </Col>
+                        ))
+                    ) : (
+                      <div className="text-center mt-4 p-5 bg-light rounded">
+                        <p>
+                          No se encontraron eventos
+                          {filtroActual ? ' con el filtro actual' : ''}.
+                        </p>
+                        {filtroActual && (
+                          <p className="text-muted">
+                            Intenta con otro término de búsqueda.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </Row>
+
+                  {eventosFiltrados.length > 0 && (
+                    <div className="d-flex justify-content-center mt-4">
+                      <PaginationBar
+                        totalPaginas={totalPages}
+                        paginaActual={paginaActual}
+                        onPageChange={setPaginaActual}
+                        initialMaxEllipsis={3}
+                      />
+                    </div>
                   )}
-                </div>
-              )}
-            </Row>
+                </>
+              );
+            })()}
           </Tab>
 
           <Tab eventKey="reservas" title="Mis Reservas">
