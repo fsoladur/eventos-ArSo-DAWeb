@@ -74,7 +74,7 @@ public class ServicioReservasImpl implements ServicioReservas {
     if (!repositorioEventos.existsById(idEvento)) {
       throw new EntidadNoEncontrada("Evento no encontrado");
     }
-    return repositorioReservas.findAllByEventoId(idEvento, pageable);
+    return repositorioReservas.findAllByEventoId(idEvento.toString(), pageable);
   }
 
   @Override
@@ -82,11 +82,11 @@ public class ServicioReservasImpl implements ServicioReservas {
     if (idUsuario == null) {
       throw new IllegalArgumentException("El id del usuario no puede ser nulo");
     }
-    if (!repositorioReservas.existsByIdUsuario(idUsuario)) {
+    if (!repositorioReservas.existsByIdUsuario(idUsuario.toString())) {
       throw new EntidadNoEncontrada("No se han encontrado reservas para el usuario");
     }
 
-    return repositorioReservas.findAllByIdUsuario(idUsuario);
+    return repositorioReservas.findAllByIdUsuario(idUsuario.toString());
   }
 
   @Override

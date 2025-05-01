@@ -14,11 +14,11 @@ public interface RepositorioReservasMongodb
     extends RepositorioReservas, MongoRepository<Reserva, UUID> {
 
   @Query("{ 'evento.$id': ?0 }")
-  Page<Reserva> findAllByEventoId(UUID eventoId, Pageable pageable);
+  Page<Reserva> findAllByEventoId(String eventoId, Pageable pageable);
 
   @Query(value = "{ 'idUsuario': ?0 }", exists = true)
-  boolean existsByIdUsuario(UUID idUsuario);
+  boolean existsByIdUsuario(String idUsuario);
 
   @Query(value = "{ 'idUsuario': ?0 }")
-  List<Reserva> findAllByIdUsuario(UUID idUsuario);
+  List<Reserva> findAllByIdUsuario(String idUsuario);
 }

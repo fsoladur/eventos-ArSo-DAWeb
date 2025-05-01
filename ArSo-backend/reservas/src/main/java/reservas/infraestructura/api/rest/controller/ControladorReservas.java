@@ -70,8 +70,8 @@ public class ControladorReservas implements ReservasApi {
             .collect(Collectors.toList()));
   }
 
-  @GetMapping("/eventos/{idEvento}/reservas")
-  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS, PROPIETARIO_ESPACIOS')")
+  @GetMapping("/reservas/eventos/{idEvento}")
+  @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'PROPIETARIO_ESPACIOS')")
   public PagedModel<EntityModel<ReservaDto>> getReservas(
       @PathVariable UUID idEvento, Pageable pageable) throws Exception {
     return this.pagedResourcesAssembler.toModel(

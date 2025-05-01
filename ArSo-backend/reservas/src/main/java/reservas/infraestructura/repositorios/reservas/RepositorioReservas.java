@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @NoRepositoryBean
 public interface RepositorioReservas extends CrudRepository<Reserva, UUID>, PagingAndSortingRepository<Reserva, UUID> {
-    Page<Reserva> findAllByEventoId(UUID eventoId, Pageable pageable);
-    boolean existsByIdUsuario(UUID idUsuario);
-    List<Reserva> findAllByIdUsuario(UUID idUsuario);
+    Page<Reserva> findAllByEventoId(String eventoId, Pageable pageable);
+    boolean existsByIdUsuario(String idUsuario);
+    List<Reserva> findAllByIdUsuario(String idUsuario);
 }
