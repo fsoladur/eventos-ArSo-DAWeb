@@ -51,10 +51,10 @@ public class ServicioReservasImpl implements ServicioReservas {
 
     Reserva reserva =
         this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
-    
+
     evento.add(reserva);
     evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
-    
+
     repositorioEventos.save(evento);
 
     publicadorEventos.publicarCreacionReserva(reserva);
@@ -87,6 +87,24 @@ public class ServicioReservasImpl implements ServicioReservas {
     }
 
     return repositorioReservas.findAllByIdUsuario(idUsuario.toString());
+  }
+
+  @Override
+  public void cancelar(UUID idReserva) throws Exception {
+    if (idReserva == null) {
+      throw new IllegalArgumentException("El id de la reserva no puede ser nulo");
+    }
+    Reserva reserva =
+        repositorioReservas
+            .findById(idReserva)
+            .orElseThrow(() -> new EntidadNoEncontrada("Reserva no encontrada"));
+
+    reserva.cancelar();
+    repositorioReservas.save(reserva);
+
+    Evento evento = reserva.getEvento();
+    evento.setPlazasDisponibles(evento.getPlazasDisponibles() + reserva.getPlazasReservadas());
+    repositorioEventos.save(evento);
   }
 
   @Override

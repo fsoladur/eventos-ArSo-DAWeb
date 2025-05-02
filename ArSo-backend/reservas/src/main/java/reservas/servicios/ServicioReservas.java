@@ -28,5 +28,7 @@ public interface ServicioReservas {
 
   List<Reserva> getAll(UUID idUsuario) throws Exception;
 
+  void cancelar(UUID idReserva) throws Exception;
+
   boolean validarNuevasPlazasEvento(UUID idEvento, int plazas);
 }
