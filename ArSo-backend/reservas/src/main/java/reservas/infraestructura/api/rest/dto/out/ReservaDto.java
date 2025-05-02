@@ -26,16 +26,20 @@ public class ReservaDto {
     @Schema(description = "Fecha y hora de inicio del evento asociado a la reserva.", example = "2023-10-01T14:30:00")
     private LocalDateTime fechaInicioEvento;
 
+    @Schema(description = "Nombre del evento asociado a la reserva.", example = "Concierto de Rock")
+    private String nombreEvento;
+
     public ReservaDto() {
     }
 
-    public ReservaDto(UUID id, UUID idUsuario, int plazasReservadas, UUID idEvento, boolean cancelado, LocalDateTime fechaInicioEvento) {
+    public ReservaDto(UUID id, UUID idUsuario, int plazasReservadas, UUID idEvento, boolean cancelado, LocalDateTime fechaInicioEvento, String nombreEvento) {
         this.id = id;
         this.idUsuario = idUsuario;
         this.plazasReservadas = plazasReservadas;
         this.idEvento = idEvento;
         this.cancelado = cancelado;
         this.fechaInicioEvento = fechaInicioEvento;
+        this.nombreEvento = nombreEvento;
     }
 
     public UUID getId() {
@@ -60,5 +64,9 @@ public class ReservaDto {
 
     public LocalDateTime getFechaInicioEvento() {
         return fechaInicioEvento;
+    }
+
+    public String getNombreEvento() {
+        return nombreEvento;
     }
 }

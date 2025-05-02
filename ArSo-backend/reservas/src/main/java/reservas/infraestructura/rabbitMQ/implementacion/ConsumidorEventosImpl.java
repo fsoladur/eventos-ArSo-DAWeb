@@ -28,7 +28,8 @@ public class ConsumidorEventosImpl {
             UUID.fromString(eventoCreacion.getEntidadId()),
             eventoCreacion.getPlazas(),
             eventoCreacion.isCancelado(),
-            LocalDateTime.parse(eventoCreacion.getFechaInicio()));
+            LocalDateTime.parse(eventoCreacion.getFechaInicio()),
+            eventoCreacion.getNombre());
         break;
       case EVENTO_MODIFICADO:
         EventoModificacion eventoModificacion = (EventoModificacion) eventoRabbit;

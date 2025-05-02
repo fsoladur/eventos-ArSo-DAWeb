@@ -20,7 +20,7 @@ export function useEventos() {
         }
 
         const eventos = await response.json();
-        setEventos(eventos._embedded.eventoDTOList);
+        setEventos(eventos._embedded?.eventoDTOList || []);
         setError(null);
       } catch (err) {
         setError(err.message);

@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { AuthContext } from './useAuth';
 import PropTypes from 'prop-types';
+import { generateAvatarURL, generateRandomName } from '../utils/utils';
+
+
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {

@@ -12,6 +12,7 @@ public class ReservaMapper {
         reserva.getPlazasReservadas(),
         reserva.getEvento().getId(),
         reserva.isCancelado(),
-        reserva.getEvento().getFechaInicio());
+        reserva.getEvento().getFechaInicio(),
+        reserva.getEvento().getNombreEvento());
   }
 }

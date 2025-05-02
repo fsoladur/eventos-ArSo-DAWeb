@@ -10,8 +10,8 @@ public class Usuario {
 	private String password;
 	private ArrayList<String> roles;
 	
-	public Usuario(String username, String password, String... roles) {
-		this.id = UUID.randomUUID();
+	public Usuario(UUID id, String username, String password, String... roles) {
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.roles = new ArrayList<String>();

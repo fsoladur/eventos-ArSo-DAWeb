@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import javax.servlet.http.Cookie;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class ServicioAuthImpl implements ServicioAuth {
   @Override
   public Usuario comprobarCredenciales(String username, String password) {
     if ("github".equals(password)) {
-      usuarios.put(username, new Usuario(username, "github", "USUARIO"));
+      usuarios.put(username, new Usuario(UUID.fromString("475ba197-6cd9-4ab1-aaba-e8d5c2f02803"), username, "github", "USUARIO"));
       return usuarios.get(username);
     } 
     // Si es autenticación normal - comportamiento existente
@@ -71,11 +72,11 @@ public class ServicioAuthImpl implements ServicioAuth {
   private void crearUsuarios() {
     usuarios = new HashMap<String, Usuario>();
     // usuario con rol GESTOR_EVENTOS
-    Usuario u1 = new Usuario("gestor", "gestor", "GESTOR_EVENTOS","PROPIETARIO_ESPACIOS");
+    Usuario u1 = new Usuario(UUID.fromString("475ba197-6cd9-4ab1-aaba-e8d5c2f02801"), "gestor", "gestor", "GESTOR_EVENTOS","PROPIETARIO_ESPACIOS");
     usuarios.put(u1.getUsername(), u1);
 
     // usuario con rol USUARIO
-    Usuario u2 = new Usuario("usuario", "usuario", "USUARIO");
+    Usuario u2 = new Usuario(UUID.fromString("475ba197-6cd9-4ab1-aaba-e8d5c2f02802"),"usuario", "usuario", "USUARIO");
     usuarios.put(u2.getUsername(), u2);
   }
 }

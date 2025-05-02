@@ -19,13 +19,15 @@ public class Evento {
   private int plazasDisponibles;
   private boolean cancelado;
   private LocalDateTime fechaInicio;
+  private String nombreEvento;
   @DBRef private List<Reserva> reservas;
 
-  public Evento(UUID id, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio) {
+  public Evento(UUID id, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio, String nombreEvento) {
     this.id = id;
     this.plazasDisponibles = plazasDisponibles;
     this.cancelado = cancelado;
     this.fechaInicio = fechaInicio;
+    this.nombreEvento = nombreEvento;
     this.reservas = new ArrayList<>();
   }
 
@@ -85,5 +87,13 @@ public class Evento {
 
   public void setFechaInicio(LocalDateTime fechaInicio) {
     this.fechaInicio = fechaInicio;
+  }
+
+  public String getNombreEvento() {
+    return nombreEvento;
+  }
+
+  public void setNombreEvento(String nombreEvento) {
+    this.nombreEvento = nombreEvento;
   }
 }

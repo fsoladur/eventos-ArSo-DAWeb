@@ -23,9 +23,8 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
 
   @Override
   public void despacharCreacionEvento(
-      UUID idEvento, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio)
-      throws Exception {
-    this.repositorioEventos.save(new Evento(idEvento, plazasDisponibles, cancelado, fechaInicio));
+      UUID idEvento, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio, String nombreEvento) throws Exception {
+    this.repositorioEventos.save(new Evento(idEvento, plazasDisponibles, cancelado, fechaInicio, nombreEvento));
   }
 
   @Override

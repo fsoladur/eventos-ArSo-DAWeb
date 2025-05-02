@@ -9,12 +9,63 @@ import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
 import { useEventos } from '../hooks/Eventos/useEventos';
 import PaginationBar from '../components/Pagination/PaginationBar';
 import { usePagination } from '../hooks/usePagination';
-import darAltaReserva from '../services/reservasServices';
+import { darAltaReserva, getReservasUsuario, cancelarReserva } from '../services/ReservasServices';
+import ReservasCard from '../components/Cards/ReservaCard';
+import { useAuth } from '../context/useAuth';
 
 const UsuarioPage = () => {
+  const { user } = useAuth();
   const [filtroActual, setFiltroActual] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
   const { eventos, loading, error } = useEventos();
+  
+  // Estados para las reservas
+  const [reservas, setReservas] = useState([]);
+  const [loadingReservas, setLoadingReservas] = useState(false);
+  const [errorReservas, setErrorReservas] = useState(null);
+  const [subTabActiva, setSubTabActiva] = useState('activas');
+
+  // Cargar las reservas cuando se accede al componente
+  useEffect(() => {
+    const cargarReservas = async () => {
+      if (!user) return;
+      
+      setLoadingReservas(true);
+      try {
+        console.log('Cargando reservas para el usuario:', user.id);
+        const reservasData = await getReservasUsuario(user.id);
+        setReservas(reservasData);
+      } catch (error) {
+        console.error('Error al cargar reservas:', error);
+        setErrorReservas('No se pudieron cargar tus reservas');
+        toast.error('Error al cargar tus reservas');
+      } finally {
+        setLoadingReservas(false);
+      }
+    };
+    
+    cargarReservas();
+  }, [user]);
+
+
+  const reservasActivas = useMemo(() => {
+    return reservas.filter(reserva => !reserva.cancelado && new Date(reserva.fechaInicioEvento) > new Date());
+  }, [reservas]);
+
+  const handleCancelarReserva = async (idReserva) => {
+    try {
+      // Aquí iría la llamada para cancelar la reserva
+      await cancelarReserva(idReserva);
+      toast.success('Reserva cancelada exitosamente');
+      
+      // Actualizar la lista de reservas
+      const nuevasReservas = await getReservasUsuario(user.id);
+      setReservas(nuevasReservas);
+    } catch (error) {
+      console.error('Error al cancelar la reserva:', error);
+      toast.error('No se pudo cancelar la reserva');
+    }
+  };
 
   const handleSubmit = async requestBody => {
     try {
@@ -23,6 +74,7 @@ const UsuarioPage = () => {
         position: 'top-right',
         autoClose: 3000
       });
+      setReservas(await getReservasUsuario(user.id));
     } catch (error) {
       console.error('Error al reservar:', error);
       toast.error(
@@ -173,24 +225,69 @@ const UsuarioPage = () => {
           </Tab>
 
           <Tab eventKey="reservas" title="Mis Reservas">
-            <div className="text-center mt-4">
-              <p>PEREZ HAZMELOOOOO</p>
+            <div className="mt-4">
+              <Tabs
+                activeKey={subTabActiva}
+                onSelect={(k) => setSubTabActiva(k)}
+                id="reservas-subtabs"
+                className="mb-3"
+                variant="pills"
+                justify
+              >
+                <Tab eventKey="activas" title="Mis reservas activas">
+                  {loadingReservas ? (
+                    <div className="text-center my-4">
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Cargando reservas...</span>
+                      </Spinner>
+                    </div>
+                  ) : errorReservas ? (
+                    <Alert variant="danger">{errorReservas}</Alert>
+                  ) : reservasActivas.length > 0 ? (
+                    <div className="card shadow-sm">
+                      <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '0 5px' }}>
+                        <ReservasCard 
+                          reservas={reservasActivas} 
+                          btnCancelado={true}
+                          onCancelado={handleCancelarReserva} 
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center my-4 p-3 bg-light rounded">
+                      <p>No tienes reservas activas en este momento.</p>
+                    </div>
+                  )}
+                </Tab>
+
+                <Tab eventKey="todas" title="Todas mis reservas">
+                  {loadingReservas ? (
+                    <div className="text-center my-4">
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Cargando reservas...</span>
+                      </Spinner>
+                    </div>
+                  ) : errorReservas ? (
+                    <Alert variant="danger">{errorReservas}</Alert>
+                  ) : reservas.length > 0 ? (
+                    <div className="card shadow-sm">
+                      <div style={{ maxHeight: '500px', overflowY: 'auto', padding: '0 5px' }}>
+                        <ReservasCard reservas={reservas} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center my-4 p-3 bg-light rounded">
+                      <p>No has realizado ninguna reserva.</p>
+                    </div>
+                  )}
+                </Tab>
+              </Tabs>
             </div>
           </Tab>
         </Tabs>
       </Container>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      
+      <ToastContainer />
     </>
   );
 };

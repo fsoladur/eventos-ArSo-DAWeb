@@ -1,10 +1,11 @@
 const getEvento = async id => {
     try {
-        const response = await fetch(`http://localhost:8090/api/eventos/${id}`, {
+        const response = await fetch(`http://localhost:8090/eventos/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include'
         });
         if (!response.ok) {
             throw new Error('Error al obtener el evento');
@@ -19,11 +20,12 @@ const getEvento = async id => {
 
 const getEventos = async () => {
     try {
-        const response = await fetch('http://localhost:8090/api/eventos', {
+        const response = await fetch('http://localhost:8090/eventos', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include'
         });
         if (!response.ok) {
             throw new Error('Error al obtener los eventos');
