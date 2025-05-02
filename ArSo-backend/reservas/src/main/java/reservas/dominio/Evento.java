@@ -1,5 +1,6 @@
 package reservas.dominio;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +18,14 @@ public class Evento {
 
   private int plazasDisponibles;
   private boolean cancelado;
+  private LocalDateTime fechaInicio;
   @DBRef private List<Reserva> reservas;
 
-  public Evento(UUID id, int plazasDisponibles, boolean cancelado) {
+  public Evento(UUID id, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio) {
     this.id = id;
     this.plazasDisponibles = plazasDisponibles;
     this.cancelado = cancelado;
+    this.fechaInicio = fechaInicio;
     this.reservas = new ArrayList<>();
   }
 
@@ -74,5 +77,13 @@ public class Evento {
 
   public void setReservas(List<Reserva> reservas) {
     this.reservas = reservas;
+  }
+
+  public LocalDateTime getFechaInicio() {
+    return fechaInicio;
+  }
+
+  public void setFechaInicio(LocalDateTime fechaInicio) {
+    this.fechaInicio = fechaInicio;
   }
 }

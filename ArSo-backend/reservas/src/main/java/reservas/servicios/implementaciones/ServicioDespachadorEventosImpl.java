@@ -1,5 +1,6 @@
 package reservas.servicios.implementaciones;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,10 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
   }
 
   @Override
-  public void despacharCreacionEvento(UUID idEvento, int plazasDisponibles, boolean cancelado)
+  public void despacharCreacionEvento(
+      UUID idEvento, int plazasDisponibles, boolean cancelado, LocalDateTime fechaInicio)
       throws Exception {
-    this.repositorioEventos.save(new Evento(idEvento, plazasDisponibles, cancelado));
+    this.repositorioEventos.save(new Evento(idEvento, plazasDisponibles, cancelado, fechaInicio));
   }
 
   @Override
@@ -45,12 +47,14 @@ public class ServicioDespachadorEventosImpl implements ServicioDespachadorEvento
   }
 
   @Override
-  public void despacharModificacionEvento(UUID idEvento, int plazasMaximasDisponibles) throws Exception {
+  public void despacharModificacionEvento(
+      UUID idEvento, int plazasMaximasDisponibles, LocalDateTime fechaInicio) throws Exception {
     Evento evento =
         this.repositorioEventos
             .findById(idEvento)
             .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
     evento.setPlazasDisponibles(plazasMaximasDisponibles - evento.getPlazasReservadas());
+    evento.setFechaInicio(fechaInicio);
     this.repositorioEventos.save(evento);
   }
 }

@@ -1,5 +1,7 @@
 package reservas.infraestructura.rabbitMQ.implementacion;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import reservas.infraestructura.rabbitMQ.config.RabbitMQConfig;
@@ -7,8 +9,6 @@ import reservas.infraestructura.rabbitMQ.dto.in.EventoCreacion;
 import reservas.infraestructura.rabbitMQ.dto.in.EventoModificacion;
 import reservas.infraestructura.rabbitMQ.dto.in.EventoRabbit;
 import reservas.servicios.ServicioDespachadorEventos;
-
-import java.util.UUID;
 
 @Component
 public class ConsumidorEventosImpl {
@@ -27,12 +27,15 @@ public class ConsumidorEventosImpl {
         servicioDespachadorEventos.despacharCreacionEvento(
             UUID.fromString(eventoCreacion.getEntidadId()),
             eventoCreacion.getPlazas(),
-            eventoCreacion.isCancelado());
+            eventoCreacion.isCancelado(),
+            LocalDateTime.parse(eventoCreacion.getFechaInicio()));
         break;
       case EVENTO_MODIFICADO:
         EventoModificacion eventoModificacion = (EventoModificacion) eventoRabbit;
         servicioDespachadorEventos.despacharModificacionEvento(
-            UUID.fromString(eventoModificacion.getEntidadId()), eventoModificacion.getPlazas());
+            UUID.fromString(eventoModificacion.getEntidadId()),
+            eventoModificacion.getPlazas(),
+            LocalDateTime.parse(eventoModificacion.getFechaInicio()));
         break;
       case EVENTO_CANCELADO:
         servicioDespachadorEventos.despacharCancelacionEvento(

@@ -1,7 +1,7 @@
 package reservas.infraestructura.api.rest.mapper;
 
-import reservas.infraestructura.api.rest.dto.out.ReservaDto;
 import reservas.dominio.Reserva;
+import reservas.infraestructura.api.rest.dto.out.ReservaDto;
 
 public class ReservaMapper {
 
@@ -10,6 +10,8 @@ public class ReservaMapper {
         reserva.getId(),
         reserva.getIdUsuario(),
         reserva.getPlazasReservadas(),
-        reserva.getEvento().getId());
+        reserva.getEvento().getId(),
+        reserva.isCancelado(),
+        reserva.getEvento().getFechaInicio());
   }
 }
