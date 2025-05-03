@@ -1,153 +1,34 @@
-@import '../../styles/variables.css';
 
-.event-card {
-  width: 100%;
-  background-color: white;
-  border: 2px solid #e8e8e8;
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 1rem auto;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+.event-description{
+  font-size:.8rem;
+  color:#505050;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  min-height:2.2rem;          /* garantiza que todas alineen */
 }
 
-.event-card-img {
-  object-fit: cover;
+.event-location,
+.event-space{
+  font-weight:600;
+  color:rgba(0,0,0,.65);
+  max-height:2.2rem;
+  overflow-y:auto;
+}
+.event-location::-webkit-scrollbar,
+.event-space::-webkit-scrollbar{width:4px;}
+.event-location::-webkit-scrollbar-thumb,
+.event-space::-webkit-scrollbar-thumb{
+  background:var(--terciary);
+  border-radius:4px;
 }
 
-.event-card-body {
-  flex-grow: 1;
+.event-card{
+  transition:.3s;
 }
-
-.event-card-title {
-  font-weight: bold;
-  color: var(--terciary);
-  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-  overflow: hidden; /* Oculta el contenido que excede el tamaño */
-  text-overflow: ellipsis; /* Muestra los puntos suspensivos */
-  max-width: 100%; /* Asegura que el título no exceda su contenedor */
-}
-
-.event-card-description {
-  color: #505050;
-  font-size: 0.9rem;
-  font-weight: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limita a 3 líneas */
-  line-clamp: 3; /* Propiedad estándar para compatibilidad */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis; /* Muestra puntos suspensivos */
-}
-
-.event-card-date-container {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-}
-
-.event-card-date-label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.event-card-location-container {
-  display: flex;
-  align-items: flex-start;   /* etiqueta arriba */
-  margin-top: 0.5rem;
-}
-
-.event-card-location-label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-  flex-shrink: 0;            /* evita que se encoja */
-}
-
-.event-card-location {
-  max-height: 1.6rem;        /* max-permitido */
-  overflow-y: auto;          /* scroll vertical cuando se pase */
-  font-weight: bold;
-  color:rgba(0, 0, 0, 0.65)
-}
-
-/* Estilizar scrollbar (opcional) */
-.event-card-location::-webkit-scrollbar {
-  width: 4px;
-}
-.event-card-location::-webkit-scrollbar-thumb {
-  background: var(--terciary);
-  border-radius: 4px;
-}
-
-.event-card-spaceName {
-  color: rgba(0, 0, 0, 0.65);
-  padding: 0;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 70%; /* Limita el ancho para dejar espacio a la etiqueta */
-}
-
-.event-card-date,
-.event-card-time {
-  color: rgba(0, 0, 0, 0.65);
-  padding: 0;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 70%; /* Limita el ancho para dejar espacio a la etiqueta */
-}
-
-.event-card-footer {
-  background-color: transparent;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.event-card-button {
-  background-color: var(--primary);
-  border-color: var(--primary);
-}
-
-.event-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--primary);
-}
-
-@media (max-width: 575px) {
-  .event-card {
-    max-width: 95vw;
-    margin: 0 auto;
-    border-radius: 4px;
-  }
-
-  .event-card:hover {
-    transform: none;
-  }
-  .event-card-img {
-    display: none;
-  }
-
-  .event-card-description {
-    display: none;
-  }
-
-  .event-card-title {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .event-card-footer {
-    padding: 0.5rem 1rem;
-    justify-content: center;
-  }
-
-  .event-card-button {
-    width: 100%;
-    padding: 0.25rem 0.5rem;
-  }
+.event-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 16px rgba(0,0,0,.2);
+  border-color:var(--primary);
 }

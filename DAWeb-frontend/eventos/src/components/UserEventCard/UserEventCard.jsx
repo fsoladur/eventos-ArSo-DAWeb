@@ -1,9 +1,9 @@
-import React from 'react';
+import Card   from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Form   from 'react-bootstrap/Form';
 import DischargeButton from '../DischargeButton/DischargeButton';
 import { useAuth } from '../../context/useAuth';
 import './userEventCard.css';
-import PropTypes from 'prop-types';
-import { Card, Button, Form } from 'react-bootstrap';
 
 function UserEventCard({
   cardTitle,
@@ -12,71 +12,72 @@ function UserEventCard({
   eventLocation,
   eventSpaceName,
   eventId,
-  onHandleSubmit
+  onHandleSubmit,
+  className = '',            // permite pasar h-100 desde fuera
 }) {
-  const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
   const { user } = useAuth();
+  const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
 
   const handleSubmit = e => {
     e.preventDefault();
-    const plazasReservadas = e.target.plazasReservadas.value;
-    const requestBody = {
+    onHandleSubmit({
       idUsuario: user.id,
       idEvento: eventId,
-      plazasReservadas: parseInt(plazasReservadas)
-    };
-
-    onHandleSubmit(requestBody);
+      plazasReservadas: parseInt(e.target.plazasReservadas.value, 10),
+    });
   };
 
   return (
-    <Card className="event-card">
+    <Card className={`event-card ${className}`}>
+      {/* ---------- Imagen más baja ---------- */}
       <Card.Img
         variant="top"
         src="/images/culturalDiversity.png"
         alt={cardTitle}
-        className="event-card-img"
+        style={{ height: 135, objectFit: 'cover' }}  /* ↓ altura = tarjeta más baja */
       />
-      <Card.Body className="event-card-body">
-        <Card.Title className="event-card-title">{cardTitle}</Card.Title>
-        <Card.Text className="event-card-description">{cardText}</Card.Text>
 
-        <div className="event-card-date-container">
-          <span className="event-card-date-label">Fecha: </span>
-          <span className="event-card-date">{datePart}</span>
-        </div>
-        <div className="event-card-time-container">
-          <span className="event-card-time-label">Hora: </span>
-          <span className="event-card-time">{timePart}</span>
+      {/* ---------- Cuerpo ---------- */}
+      <Card.Body className="d-flex flex-column p-3 pb-1">
+        <Card.Title className="fs-6 fw-bold text-truncate">
+          {cardTitle}
+        </Card.Title>
+
+        <Card.Text className="event-description mb-2">
+          {cardText}
+        </Card.Text>
+
+        <div className="mb-1"><strong>Fecha:</strong> {datePart}</div>
+        <div className="mb-1"><strong>Hora:</strong> {timePart}</div>
+
+        <div className="mb-1">
+          <strong>Ubicación:</strong>{' '}
+          <span className="event-location">{eventLocation}</span>
         </div>
 
-        <div className="event-card-location-container">
-          <span className="event-card-location-label">Ubicación: </span>
-          <span className="event-card-location">{eventLocation}</span>
-        </div>
-
-        <div className="event-card-spaceName-container">
-          <span className="event-card-spaceName-label">Espacio: </span>
-          <span className="event-card-spaceName">{eventSpaceName}</span>
+        <div className="mb-2">
+          <strong>Espacio:</strong>{' '}
+          <span className="event-space">{eventSpaceName}</span>
         </div>
       </Card.Body>
-      <Card.Footer className="event-card-footer">
-        <DischargeButton
-          buttonLabel="Reservar"
-          shortButtonLabel="Reservar"
-          className="w-100 fw-bold text-white"
-        >
+
+      {/* ---------- Footer ---------- */}
+      <Card.Footer className="bg-transparent border-0 d-flex justify-content-center">
+        <DischargeButton buttonLabel="Reservar" shortButtonLabel="Reservar" className="w-100">
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Control
-                type="number"
-                placeholder="Plazas reservadas"
-                name="plazasReservadas"
-                required
-                min={1}
-              />
-            </Form.Group>
-            <Button type="submit" className="mt-2 w-100">
+            <Form.Label className="text-center mb-2 fw-bold">
+              <span className='text-danger'>Estas a punto de reservar para el evento:</span> <span className='text-muted'>{cardTitle}</span>
+            </Form.Label>
+            <Form.Control
+              type="number"
+              name="plazasReservadas"
+              min="1"
+              placeholder="Plazas"
+              size="sm"
+              className="mb-2"
+              required
+            />
+            <Button type="submit" size="sm" className="w-100 fw-bold text-white">
               Reservar
             </Button>
           </Form>
@@ -85,14 +86,5 @@ function UserEventCard({
     </Card>
   );
 }
-
-UserEventCard.propTypes = {
-  cardTitle: PropTypes.string.isRequired,
-  cardText: PropTypes.string.isRequired,
-  eventDate: PropTypes.string.isRequired,
-  eventLocation: PropTypes.string.isRequired,
-  eventId: PropTypes.number.isRequired,
-  onHandleSubmit: PropTypes.func.isRequired
-};
 
 export default UserEventCard;

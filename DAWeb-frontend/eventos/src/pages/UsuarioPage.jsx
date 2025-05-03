@@ -178,10 +178,10 @@ const UsuarioPage = () => {
 
               return (
                 <>
-                  <Row className="g-4">
+                  <Row sm={1} md={2} lg={3} className="g-4">
                     {eventosPaginados.length > 0 ? (
                       eventosPaginados.map(evento => (
-                          <Col key={evento.id} xs={12} sm={6} md={4}>
+                          <Col key={evento.id} xs={12} sm={6} md={4} className='d-flex'>
                             <UserEventCard
                               cardTitle={evento.nombre}
                               cardText={evento.descripcion}
