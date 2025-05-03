@@ -13,7 +13,7 @@ function UserEventCard({
   eventSpaceName,
   eventId,
   onHandleSubmit,
-  className = '',            // permite pasar h-100 desde fuera
+  className = '',            
 }) {
   const { user } = useAuth();
   const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
@@ -38,7 +38,7 @@ function UserEventCard({
       />
 
       {/* ---------- Cuerpo ---------- */}
-      <Card.Body className="d-flex flex-column p-3 pb-1">
+      <Card.Body className="d-flex flex-column p-3 pb-1 flex-grow-1">
         <Card.Title className="fs-6 fw-bold text-truncate">
           {cardTitle}
         </Card.Title>
