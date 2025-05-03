@@ -105,8 +105,12 @@ const UsuarioPage = () => {
     );
   }, [eventos, filtroActual]);
 
+  // Primero filtrar eventos cancelados
+  const eventosFiltradosActivos = eventosFiltrados.filter(evento => !evento.cancelado);
+
+  // Luego aplicar paginación al resultado filtrado
   const { paginatedItems: eventosPaginados, totalPages } = usePagination(
-    eventosFiltrados,
+    eventosFiltradosActivos,
     paginaActual,
     6
   );
@@ -140,9 +144,10 @@ const UsuarioPage = () => {
         <Tabs
           defaultActiveKey="eventos"
           id="usuario-tabs"
-          className="justify-content-center mb-4"
+          className="mb-4 shadow-sm border rounded"
           fill
           variant="pills"
+          justify
         >
           <Tab eventKey="eventos" title="Eventos">
             <UserEventSearchBar
@@ -175,9 +180,7 @@ const UsuarioPage = () => {
                 <>
                   <Row className="g-4">
                     {eventosPaginados.length > 0 ? (
-                      eventosPaginados
-                        .filter(evento => !evento.cancelado)
-                        .map(evento => (
+                      eventosPaginados.map(evento => (
                           <Col key={evento.id} xs={12} sm={6} md={4}>
                             <UserEventCard
                               cardTitle={evento.nombre}
@@ -209,7 +212,7 @@ const UsuarioPage = () => {
                     )}
                   </Row>
 
-                  {eventosFiltrados.length > 0 && (
+                  {eventosFiltradosActivos.length > 0 && (
                     <div className="d-flex justify-content-center mt-4">
                       <PaginationBar
                         totalPaginas={totalPages}
@@ -230,7 +233,7 @@ const UsuarioPage = () => {
                 activeKey={subTabActiva}
                 onSelect={(k) => setSubTabActiva(k)}
                 id="reservas-subtabs"
-                className="mb-3"
+                className="mb-3 shadow-sm border rounded"
                 variant="pills"
                 justify
               >
