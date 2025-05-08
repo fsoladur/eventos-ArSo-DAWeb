@@ -38,5 +38,24 @@ const getEventos = async () => {
     }
 }
 
-export {getEvento, getEventos};
+const cancelarEvento = async (id) => {
+    try {
+        const response = await fetch(`http://localhost:8090/eventos/${id}/estado`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            throw new Error('Error al cancelar el evento');
+        }
+    }
+    catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+}
+
+export {getEvento, getEventos, cancelarEvento};
 

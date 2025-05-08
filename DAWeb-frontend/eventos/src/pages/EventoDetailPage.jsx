@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Toast } from 'react-bootstrap';
 import { getEvento } from '../services/EventService';
 import { getReservas } from '../services/ReservasServices';
 import { getBadgeColor } from '../utils/utils';
-import { useAuth } from '../context/useAuth';
 import ReservasCard from '../components/Cards/ReservaCard';
+import { cancelarEvento } from '../services/EventService';
+import { toast, ToastContainer } from 'react-toastify';
 
 const EventoDetailPage = () => {
   const { id } = useParams();
   const [evento, setEvento] = useState(null);
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {getUserDisplayData} = useAuth();
 
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const EventoDetailPage = () => {
     const fetchReservas = async () => {
       try {
         const data = await getReservas(id);
-        setReservas(data);
+        setReservas(data.filter(reserva => !reserva.cancelado));
       } catch (error) {
         console.error("Error al cargar las reservas:", error);
       }
@@ -39,6 +39,34 @@ const EventoDetailPage = () => {
     fetchReservas();
     setLoading(false);
   }, [id]);
+
+  const handleCancel = async () => {
+    try {
+      await cancelarEvento(id);
+      setEvento((prevEvento) => ({ ...prevEvento, cancelado: true }));
+      setReservas((prevReservas) => prevReservas.map((reserva) => ({ ...reserva, cancelada: true })));
+      toast.success("Evento cancelado con éxito", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+    } catch (error) {
+      toast.error("Error al cancelar el evento", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -82,7 +110,7 @@ const EventoDetailPage = () => {
                 <strong>Nº Plazas:</strong> {evento.numPlazas}
               </Card.Text>
 
-              {evento.ocupacion && (
+              {!evento.cancelado && (
                 <>
                   <Card.Subtitle className="text-primary fw-bold mb-3">
                     <strong>Detalles Adicionales:</strong> 
@@ -102,7 +130,7 @@ const EventoDetailPage = () => {
                 </>
               )}
 
-              <button className="btn btn-danger" disabled={evento.cancelado}>{evento.cancelado ? 'Cancelado' : 'Cancelar'}</button>
+              <button className="btn btn-danger" onClick={handleCancel} disabled={evento.cancelado}>{evento.cancelado ? 'Cancelado' : 'Cancelar'}</button>
 
             </Card.Body>
           </Card>
@@ -126,6 +154,8 @@ const EventoDetailPage = () => {
           </Card>
         </Col>)}
       </Row>
+
+      <ToastContainer/>
     </Container>
   );
 };

@@ -144,7 +144,7 @@ const UsuarioPage = () => {
         <Tabs
           defaultActiveKey="eventos"
           id="usuario-tabs"
-          className="mb-4 shadow-sm border rounded"
+          className="mb-4 shadow-sm border rounded fw-bold"
           fill
           variant="pills"
           justify
@@ -199,7 +199,7 @@ const UsuarioPage = () => {
                           </Col>
                         ))
                     ) : (
-                      <div className="text-center mt-4 p-5 bg-light rounded">
+                      <div className="text-center mt-4 p-5 bg-light rounded w-100">
                         <p>
                           No se encontraron eventos
                           {filtroActual ? ' con el filtro actual' : ''}.

@@ -2,7 +2,6 @@ import React from 'react';
 import { useAuth } from '../../context/useAuth';
 import './Navbar.css';
 import PropTypes from 'prop-types';
-import NavbarLinks from './NavLink';
 import { logout } from '../../services/authService.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,8 +42,6 @@ const Navbar = ({ session }) => {
             />
             <span className="brand-title">Eventos Fabi&Anto</span>
           </a>
-
-          {isAuthenticated && <NavbarLinks />}
 
           <button
             type="button"
