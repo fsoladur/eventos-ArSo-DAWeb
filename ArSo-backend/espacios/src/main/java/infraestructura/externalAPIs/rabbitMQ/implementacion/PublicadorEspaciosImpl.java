@@ -8,7 +8,7 @@ import com.rabbitmq.client.Channel;
 import dominio.EspacioFisico;
 import infraestructura.externalAPIs.rabbitMQ.PublicadorEspacios;
 import infraestructura.externalAPIs.rabbitMQ.dto.out.EventoRabbit;
-import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.BusEventosException;
 import infraestructura.externalAPIs.rabbitMQ.mapper.EspacioRabbitMapper;
 import infraestructura.externalAPIs.rabbitMQ.RabbitMQInitializer;
 
@@ -26,12 +26,12 @@ public class PublicadorEspaciosImpl implements PublicadorEspacios {
     this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
   }
 
-  private void sendMessage(EventoRabbit evento) throws RabbitMQException {
+  private void sendMessage(EventoRabbit evento) throws BusEventosException {
     try {
       Channel channel = RabbitMQInitializer.getChannel();
 
       if (channel == null || !channel.isOpen()) {
-        throw new RabbitMQException("El canal de Rabbit no se encuentra disponible");
+        throw new BusEventosException("El canal de Rabbit no se encuentra disponible");
       }
 
       byte[] mensaje = objectMapper.writeValueAsBytes(evento);
@@ -47,28 +47,28 @@ public class PublicadorEspaciosImpl implements PublicadorEspacios {
           mensaje);
 
     } catch (Exception e) {
-      throw new RabbitMQException(
+      throw new BusEventosException(
           "Error al publicar el evento de tipo " + evento.getTipoEvento().getNombre(), e);
     }
   }
 
   @Override
-  public void publicarEspacioCreacion(EspacioFisico espacio) throws RabbitMQException {
+  public void publicarEspacioCreacion(EspacioFisico espacio) throws BusEventosException {
     sendMessage(EspacioRabbitMapper.toEspacioCreacion(espacio));
   }
 
   @Override
-  public void publicarEspacioModificacion(EspacioFisico espacio) throws RabbitMQException {
+  public void publicarEspacioModificacion(EspacioFisico espacio) throws BusEventosException {
     sendMessage(EspacioRabbitMapper.toEspacioModificacion(espacio));
   }
 
   @Override
-  public void publicarEspacioBorrado(String entidadId) throws RabbitMQException {
+  public void publicarEspacioBorrado(String entidadId) throws BusEventosException {
     sendMessage(EspacioRabbitMapper.toEspacioCerrado(entidadId));
   }
 
   @Override
-  public void publicarEspacioActivado(String entidadId) throws RabbitMQException {
+  public void publicarEspacioActivado(String entidadId) throws BusEventosException {
     sendMessage(EspacioRabbitMapper.toEspacioActivo(entidadId));
   }
 }

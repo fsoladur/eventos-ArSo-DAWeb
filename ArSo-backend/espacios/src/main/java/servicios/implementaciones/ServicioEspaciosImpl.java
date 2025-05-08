@@ -6,7 +6,7 @@ import dominio.enumerados.EstadoEspacioFisico;
 import infraestructura.externalAPIs.eventosAPI.EventosAPI;
 import infraestructura.externalAPIs.factoria.FactoriaServicioExterno;
 import infraestructura.externalAPIs.rabbitMQ.PublicadorEspacios;
-import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.BusEventosException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
       double longitud,
       double latitud,
       String descripcion)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException {
 
     if (nombre == null || nombre.isEmpty()) {
       throw new IllegalArgumentException("El nombre del espacio no puede ser nulo o vacío.");
@@ -107,7 +107,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
   @Override
   public EspacioFisico modificarEspacioFisico(
       UUID idEspacio, String nombre, String descripcion, int capacidad)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException {
 
     if (idEspacio == null) {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
@@ -145,7 +145,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
   @Override
   public boolean darBajaEspacioFisico(UUID idEspacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException {
 
     if (idEspacio == null) {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
@@ -166,7 +166,7 @@ public class ServicioEspaciosImpl implements ServicioEspacios {
 
   @Override
   public boolean activarEspacioFisico(UUID idEspacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException {
     if (idEspacio == null) {
       throw new IllegalArgumentException("El id del espacio no puede ser nulo o vacío.");
     }

@@ -2,7 +2,7 @@ package servicios;
 
 import dominio.EspacioFisico;
 import dominio.PuntoInteres;
-import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.BusEventosException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public interface ServicioEspacios {
       final double longitud,
       final double latitud,
       final String descripcion)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException;
 
   /**
    * - ruta de acceso: "/espacios/{idEspacio}/puntosinteres" - método: PUT - body: lista de puntos
@@ -42,17 +42,17 @@ public interface ServicioEspacios {
    */
   EspacioFisico modificarEspacioFisico(
       final UUID idEspacio, final String nombre, final String descripcion, final int capacidad)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException;
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException;
 
   /**
    * - ruta de acceso: "/espacios/{idEspacio}/estado" - método: PUT - body: enum("activo",
    * "cerrado") - respuesta: 204 NO_CONTENT
    */
   boolean darBajaEspacioFisico(final UUID idEspacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException;
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException;
 
   boolean activarEspacioFisico(final UUID idEspacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException;
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException;
 
   /**
    * - ruta de acceso:

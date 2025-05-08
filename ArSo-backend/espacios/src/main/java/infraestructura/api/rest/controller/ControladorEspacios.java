@@ -7,7 +7,7 @@ import infraestructura.api.rest.DTO.ModificarEspacioFisicoDTO;
 import infraestructura.api.rest.mapper.EspacioFisicoMapper;
 import infraestructura.api.rest.utils.Listado;
 import infraestructura.api.rest.utils.Listado.ResumenExtendido;
-import infraestructura.externalAPIs.rabbitMQ.excepciones.RabbitMQException;
+import infraestructura.externalAPIs.rabbitMQ.excepciones.BusEventosException;
 import infraestructura.repositorio.excepciones.EntidadNoEncontrada;
 import infraestructura.repositorio.excepciones.RepositorioException;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class ControladorEspacios {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response darAltaEspacioFisico(CrearEspacioFisicoDTO espacioFisico)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException {
     UUID id =
         servicio.darAltaEspacioFisico(
             espacioFisico.getNombre(),
@@ -82,7 +82,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response modificarEspacioFisico(
       @PathParam("id") UUID id, ModificarEspacioFisicoDTO espacio)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException {
 
     servicio.modificarEspacioFisico(
         id, espacio.getNombre(), espacio.getDescripcion(), espacio.getCapacidad());
@@ -95,7 +95,7 @@ public class ControladorEspacios {
   @RolesAllowed("PROPIETARIO_ESPACIOS")
   public Response cambiarEstadoEspacioFisico(
       @PathParam("id") UUID id, @FormParam("estado") String estado)
-      throws RepositorioException, EntidadNoEncontrada, RabbitMQException, IOException {
+      throws RepositorioException, EntidadNoEncontrada, BusEventosException, IOException {
 
     boolean success = false;
     if ("activo".equalsIgnoreCase(estado)) {

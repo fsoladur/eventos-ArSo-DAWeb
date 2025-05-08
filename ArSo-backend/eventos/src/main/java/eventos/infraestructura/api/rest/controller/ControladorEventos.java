@@ -92,7 +92,7 @@ public class ControladorEventos implements EventosApi {
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("/eventos/{id}")
+  @PatchMapping("/eventos/{id}/estado")
   @PreAuthorize("hasAuthority('GESTOR_EVENTOS')")
   public ResponseEntity<Void> cancelarEvento(@PathVariable UUID id) throws EntidadNoEncontrada {
     this.servicioEventos.cancelarEvento(id);
