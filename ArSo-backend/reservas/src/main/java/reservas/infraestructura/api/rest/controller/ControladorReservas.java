@@ -44,13 +44,11 @@ public class ControladorReservas implements ReservasApi {
     @PreAuthorize("hasAuthority('USUARIO')")
     public ResponseEntity<Void> crearReserva(@Valid @RequestBody CrearReservaDto crearReservaDto)
             throws Exception {
-        UUID id =
-                this.servicioReservas.reservar(
-                        UUID.fromString(crearReservaDto.getIdEvento()),
-                        UUID.fromString(crearReservaDto.getIdUsuario()),
-                        crearReservaDto.getPlazasReservadas());
-        URI nuevaUri =
-                ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+        UUID id = this.servicioReservas.reservar(
+                UUID.fromString(crearReservaDto.getIdEvento()),
+                UUID.fromString(crearReservaDto.getIdUsuario()),
+                crearReservaDto.getPlazasReservadas());
+        URI nuevaUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
 
         return ResponseEntity.created(nuevaUri).build();
     }
@@ -72,7 +70,7 @@ public class ControladorReservas implements ReservasApi {
     }
 
     @GetMapping("/reservas/eventos/{idEvento}")
-    @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'PROPIETARIO_ESPACIOS')")
+    @PreAuthorize("hasAnyAuthority('GESTOR_EVENTOS', 'PROPIETARIO_ESPACIOS', 'USUARIO')")
     public PagedModel<EntityModel<ReservaDto>> getReservas(
             @PathVariable UUID idEvento, Pageable pageable) throws Exception {
         return this.pagedResourcesAssembler.toModel(
