@@ -1,6 +1,6 @@
-import Card   from 'react-bootstrap/Card';
+import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Form   from 'react-bootstrap/Form';
+import Form from 'react-bootstrap/Form';
 import DischargeButton from '../DischargeButton/DischargeButton';
 import { useAuth } from '../../context/useAuth';
 import './userEventCard.css';
@@ -13,7 +13,7 @@ function UserEventCard({
   eventSpaceName,
   eventId,
   onHandleSubmit,
-  className = '',            
+  className = ''
 }) {
   const { user } = useAuth();
   const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
@@ -23,7 +23,7 @@ function UserEventCard({
     onHandleSubmit({
       idUsuario: user.id,
       idEvento: eventId,
-      plazasReservadas: parseInt(e.target.plazasReservadas.value, 10),
+      plazasReservadas: parseInt(e.target.plazasReservadas.value, 10)
     });
   };
 
@@ -34,7 +34,10 @@ function UserEventCard({
         variant="top"
         src="/images/culturalDiversity.png"
         alt={cardTitle}
-        style={{ height: 135, objectFit: 'cover' }}  /* ↓ altura = tarjeta más baja */
+        style={{
+          height: 135,
+          objectFit: 'cover'
+        }} /* ↓ altura = tarjeta más baja */
       />
 
       {/* ---------- Cuerpo ---------- */}
@@ -43,12 +46,14 @@ function UserEventCard({
           {cardTitle}
         </Card.Title>
 
-        <Card.Text className="event-description mb-2">
-          {cardText}
-        </Card.Text>
+        <Card.Text className="event-description mb-2">{cardText}</Card.Text>
 
-        <div className="mb-1"><strong>Fecha:</strong> {datePart}</div>
-        <div className="mb-1"><strong>Hora:</strong> {timePart}</div>
+        <div className="mb-1">
+          <strong>Fecha:</strong> {datePart}
+        </div>
+        <div className="mb-1">
+          <strong>Hora:</strong> {timePart}
+        </div>
 
         <div className="mb-1">
           <strong>Ubicación:</strong>{' '}
@@ -63,10 +68,17 @@ function UserEventCard({
 
       {/* ---------- Footer ---------- */}
       <Card.Footer className="bg-transparent border-0 d-flex justify-content-center">
-        <DischargeButton buttonLabel="Reservar" shortButtonLabel="Reservar" className="w-100">
+        <DischargeButton
+          buttonLabel="Reservar"
+          shortButtonLabel="Reservar"
+          className="w-100"
+        >
           <Form onSubmit={handleSubmit}>
             <Form.Label className="text-center mb-2 fw-bold">
-              <span className='text-danger'>Estas a punto de reservar para el evento:</span> <span className='text-muted'>{cardTitle}</span>
+              <span className="text-danger">
+                Estas a punto de reservar para el evento:
+              </span>{' '}
+              <span className="text-muted">{cardTitle}</span>
             </Form.Label>
             <Form.Control
               type="number"
@@ -77,7 +89,11 @@ function UserEventCard({
               className="mb-2"
               required
             />
-            <Button type="submit" size="sm" className="w-100 fw-bold text-white">
+            <Button
+              type="submit"
+              size="sm"
+              className="w-100 fw-bold text-white"
+            >
               Reservar
             </Button>
           </Form>

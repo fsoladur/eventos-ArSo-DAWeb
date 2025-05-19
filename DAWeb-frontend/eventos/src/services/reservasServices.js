@@ -8,14 +8,16 @@ export async function darAltaReserva({ requestBody }) {
     body: JSON.stringify(requestBody),
     credentials: 'include'
   };
-  console.log('Request Body:', requestBody); // Log the request body
 
   try {
     const response = await fetch(url, options);
+
     if (!response.ok) {
-      throw new Error('Error al dar de alta la reserva');
+      const data = await response.json();
+      throw new Error(data.mensaje);
     }
   } catch (error) {
+    console.error(error);
     throw error;
   }
 }
@@ -39,6 +41,7 @@ export async function getReservas(idEvento) {
     // respuesta accedienco a _embedded
     return data._embedded?.reservaDtoList || [];
   } catch (error) {
+    console.error('Error en dar de alta la reserva:', error);
     throw error;
   }
 }
@@ -61,6 +64,7 @@ export async function getReservasUsuario(idUsuario) {
     const data = await response.json();
     return data._embedded?.reservaDtoList || [];
   } catch (error) {
+    console.error('Error en dar de alta la reserva:', error);
     throw error;
   }
 }
@@ -81,7 +85,7 @@ export async function cancelarReserva(idReserva) {
       throw new Error('Error al cancelar la reserva');
     }
   } catch (error) {
+    console.error('Error en dar de alta la reserva:', error);
     throw error;
   }
 }
-

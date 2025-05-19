@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getEventos } from '../../services/EventService';
 
 export function useEventos() {
   const [eventos, setEventos] = useState([]);
@@ -9,18 +10,8 @@ export function useEventos() {
     const fetchEventos = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8090/eventos`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-          throw new Error('No se pudieron cargar los espacios');
-        }
-
-        const eventos = await response.json();
-        setEventos(eventos._embedded?.eventoDTOList || []);
+        const eventosFetch = await getEventos();
+        setEventos(eventosFetch._embedded?.eventoDTOList || []);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -32,7 +23,6 @@ export function useEventos() {
 
     fetchEventos();
   }, []);
-
 
   function addEvento(evento) {
     setEventos(prevEventos => [...prevEventos, evento]);

@@ -8,7 +8,7 @@ const UserEventSearchBar = ({ onFilter, placeholder }) => {
   };
 
   return (
-    <Form className="mb-4" onSubmit={handleSubmit}>
+    <Form className="mb-0" onSubmit={handleSubmit}>
       <InputGroup>
         <Form.Control
           type="text"

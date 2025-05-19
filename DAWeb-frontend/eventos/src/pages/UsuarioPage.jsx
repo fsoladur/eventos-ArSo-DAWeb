@@ -9,16 +9,33 @@ import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
 import { useEventos } from '../hooks/Eventos/useEventos';
 import PaginationBar from '../components/Pagination/PaginationBar';
 import { usePagination } from '../hooks/usePagination';
-import { darAltaReserva, getReservasUsuario, cancelarReserva } from '../services/ReservasServices';
+import {
+  darAltaReserva,
+  getReservasUsuario,
+  cancelarReserva
+} from '../services/ReservasServices';
 import ReservasCard from '../components/Cards/ReservaCard';
 import { useAuth } from '../context/useAuth';
+import AdvancedEventFilter from '../components/AdvancedEventFilter/AdvancedEventFilter';
 
 const UsuarioPage = () => {
   const { user } = useAuth();
   const [filtroActual, setFiltroActual] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
   const { eventos, loading, error } = useEventos();
-  
+
+  // Estado para filtros avanzados
+  const [filtrosAvanzados, setFiltrosAvanzados] = useState({
+    nombre: '',
+    descripcion: '',
+    organizador: '',
+    categoria: '',
+    numPlazasMin: 0,
+    fechaInicio: null,
+    fechaFin: null,
+    direccion: ''
+  });
+
   // Estados para las reservas
   const [reservas, setReservas] = useState([]);
   const [loadingReservas, setLoadingReservas] = useState(false);
@@ -29,7 +46,7 @@ const UsuarioPage = () => {
   useEffect(() => {
     const cargarReservas = async () => {
       if (!user) return;
-      
+
       setLoadingReservas(true);
       try {
         console.log('Cargando reservas para el usuario:', user.id);
@@ -43,21 +60,22 @@ const UsuarioPage = () => {
         setLoadingReservas(false);
       }
     };
-    
+
     cargarReservas();
   }, [user]);
 
-
   const reservasActivas = useMemo(() => {
-    return reservas.filter(reserva => !reserva.cancelado && new Date(reserva.fechaInicioEvento) > new Date());
+    return reservas.filter(
+      reserva =>
+        !reserva.cancelado && new Date(reserva.fechaInicioEvento) > new Date()
+    );
   }, [reservas]);
 
-  const handleCancelarReserva = async (idReserva) => {
+  const handleCancelarReserva = async idReserva => {
     try {
-      // Aquí iría la llamada para cancelar la reserva
       await cancelarReserva(idReserva);
       toast.success('Reserva cancelada exitosamente');
-      
+
       // Actualizar la lista de reservas
       const nuevasReservas = await getReservasUsuario(user.id);
       setReservas(nuevasReservas);
@@ -95,18 +113,107 @@ const UsuarioPage = () => {
     });
   }, [error]);
 
+  // Funciones para manejar filtros avanzados
+  const handleFiltrosAvanzadosChange = nuevosFiltros => {
+    setFiltrosAvanzados(nuevosFiltros);
+    setPaginaActual(1); // Resetear paginación al cambiar filtros
+  };
+
+  const resetFiltrosAvanzados = () => {
+    setFiltrosAvanzados({
+      nombre: '',
+      descripcion: '',
+      organizador: '',
+      categoria: '',
+      numPlazasMin: 0,
+      fechaInicio: null,
+      fechaFin: null,
+      direccion: ''
+    });
+    setPaginaActual(1);
+  };
+
+  // Lógica de filtrado combinando filtro básico y avanzado
   const eventosFiltrados = useMemo(() => {
-    if (!filtroActual.trim()) {
-      return eventos;
+    let resultados = eventos;
+
+    // Aplicar filtro básico de búsqueda por nombre
+    if (filtroActual.trim()) {
+      resultados = resultados.filter(evento =>
+        evento.nombre?.toLowerCase().includes(filtroActual.toLowerCase())
+      );
     }
 
-    return eventos.filter(evento =>
-      evento.nombre?.toLowerCase().includes(filtroActual.toLowerCase())
-    );
-  }, [eventos, filtroActual]);
+    // Aplicar filtros avanzados
+    if (filtrosAvanzados.nombre) {
+      resultados = resultados.filter(evento =>
+        evento.nombre
+          ?.toLowerCase()
+          .includes(filtrosAvanzados.nombre.toLowerCase())
+      );
+    }
+
+    if (filtrosAvanzados.descripcion) {
+      resultados = resultados.filter(evento =>
+        evento.descripcion
+          ?.toLowerCase()
+          .includes(filtrosAvanzados.descripcion.toLowerCase())
+      );
+    }
+
+    if (filtrosAvanzados.organizador) {
+      resultados = resultados.filter(evento =>
+        evento.organizador
+          ?.toLowerCase()
+          .includes(filtrosAvanzados.organizador.toLowerCase())
+      );
+    }
+
+    if (filtrosAvanzados.categoria) {
+      resultados = resultados.filter(
+        evento => evento.categoria === filtrosAvanzados.categoria
+      );
+    }
+
+    if (filtrosAvanzados.numPlazasMin > 0) {
+      resultados = resultados.filter(
+        evento =>
+          evento.plazasTotales - evento.plazasOcupadas >=
+          filtrosAvanzados.numPlazasMin
+      );
+    }
+
+    if (filtrosAvanzados.fechaInicio) {
+      const fechaInicio = new Date(filtrosAvanzados.fechaInicio);
+      resultados = resultados.filter(evento => {
+        const fechaEvento = new Date(evento.ocupacion?.fechaInicio);
+        return fechaEvento >= fechaInicio;
+      });
+    }
+
+    if (filtrosAvanzados.fechaFin) {
+      const fechaFin = new Date(filtrosAvanzados.fechaFin);
+      resultados = resultados.filter(evento => {
+        const fechaEvento = new Date(evento.ocupacion?.fechaInicio);
+        return fechaEvento <= fechaFin;
+      });
+    }
+
+    if (filtrosAvanzados.direccion) {
+      resultados = resultados.filter(evento =>
+        evento.ocupacion?.direccionEspacioFisico
+          ?.toLowerCase()
+          .includes(filtrosAvanzados.direccion.toLowerCase())
+      );
+    }
+
+    return resultados;
+  }, [eventos, filtroActual, filtrosAvanzados]);
 
   // Primero filtrar eventos cancelados
-  const eventosFiltradosActivos = eventosFiltrados.filter(evento => !evento.cancelado);
+  const eventosFiltradosActivos = eventosFiltrados.filter(
+    evento => !evento.cancelado
+  );
 
   // Luego aplicar paginación al resultado filtrado
   const { paginatedItems: eventosPaginados, totalPages } = usePagination(
@@ -117,7 +224,7 @@ const UsuarioPage = () => {
 
   useEffect(() => {
     setPaginaActual(1);
-  }, [filtroActual]);
+  }, [filtroActual, filtrosAvanzados]);
 
   const handleFilter = event => {
     event.preventDefault();
@@ -150,20 +257,29 @@ const UsuarioPage = () => {
           justify
         >
           <Tab eventKey="eventos" title="Eventos">
-            <UserEventSearchBar
-              onFilter={handleFilter}
-              placeholder={'Buscar eventos por nombre'}
-            />
+            <div className="d-flex align-items-center mb-4">
+              <div className="flex-grow-1 me-2">
+                <UserEventSearchBar
+                  onFilter={handleFilter}
+                  placeholder={'Buscar eventos por nombre'}
+                />
+              </div>
+              <div>
+                <AdvancedEventFilter
+                  filters={filtrosAvanzados}
+                  onChange={handleFiltrosAvanzadosChange}
+                  onReset={resetFiltrosAvanzados}
+                />
+              </div>
+            </div>
 
             {(() => {
               if (loading) {
                 return (
                   <div className="text-center my-5">
-                    <output>
-                      <Spinner animation="border">
-                        <span className="visually-hidden">Cargando...</span>
-                      </Spinner>
-                    </output>
+                    <Spinner animation="border">
+                      <span className="visually-hidden">Cargando...</span>
+                    </Spinner>
                   </div>
                 );
               }
@@ -181,32 +297,42 @@ const UsuarioPage = () => {
                   <Row sm={1} md={2} lg={3} className="g-4">
                     {eventosPaginados.length > 0 ? (
                       eventosPaginados.map(evento => (
-                          <Col key={evento.id} xs={12} sm={6} md={4}>
-                            <UserEventCard
-                              cardTitle={evento.nombre}
-                              cardText={evento.descripcion}
-                              eventDate={evento.ocupacion.fechaInicio}
-                              eventLocation={
-                                evento.ocupacion.direccionEspacioFisico
-                              }
-                              eventSpaceName={
-                                evento.ocupacion.nombreEspacioFisico
-                              }
-                              eventId={evento.id}
-                              onHandleSubmit={handleSubmit}
-                              className="h-100"
-                            />
-                          </Col>
-                        ))
+                        <Col key={evento.id} xs={12} sm={6} md={4}>
+                          <UserEventCard
+                            cardTitle={evento.nombre}
+                            cardText={evento.descripcion}
+                            eventDate={evento.ocupacion.fechaInicio}
+                            eventLocation={
+                              evento.ocupacion.direccionEspacioFisico
+                            }
+                            eventSpaceName={
+                              evento.ocupacion.nombreEspacioFisico
+                            }
+                            eventId={evento.id}
+                            onHandleSubmit={handleSubmit}
+                            className="h-100"
+                          />
+                        </Col>
+                      ))
                     ) : (
                       <div className="text-center mt-4 p-5 bg-light rounded w-100">
                         <p>
                           No se encontraron eventos
-                          {filtroActual ? ' con el filtro actual' : ''}.
+                          {filtroActual ||
+                          Object.values(filtrosAvanzados).some(
+                            v => v !== '' && v !== 0 && v !== null
+                          )
+                            ? ' con los filtros actuales'
+                            : ''}
+                          .
                         </p>
-                        {filtroActual && (
+                        {(filtroActual ||
+                          Object.values(filtrosAvanzados).some(
+                            v => v !== '' && v !== 0 && v !== null
+                          )) && (
                           <p className="text-muted">
-                            Intenta con otro término de búsqueda.
+                            Intenta con otros criterios de búsqueda o limpia los
+                            filtros.
                           </p>
                         )}
                       </div>
@@ -232,65 +358,106 @@ const UsuarioPage = () => {
             <div className="mt-4">
               <Tabs
                 activeKey={subTabActiva}
-                onSelect={(k) => setSubTabActiva(k)}
+                onSelect={k => setSubTabActiva(k)}
                 id="reservas-subtabs"
                 className="mb-3 shadow-sm border rounded"
                 variant="pills"
                 justify
               >
                 <Tab eventKey="activas" title="Mis reservas activas">
-                  {loadingReservas ? (
-                    <div className="text-center my-4">
-                      <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Cargando reservas...</span>
-                      </Spinner>
-                    </div>
-                  ) : errorReservas ? (
-                    <Alert variant="danger">{errorReservas}</Alert>
-                  ) : reservasActivas.length > 0 ? (
-                    <div className="card shadow-sm">
-                      <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '0 5px' }}>
-                        <ReservasCard 
-                          reservas={reservasActivas} 
-                          btnCancelado={true}
-                          onCancelado={handleCancelarReserva} 
-                        />
+                  {(() => {
+                    if (loadingReservas) {
+                      return (
+                        <div className="text-center my-4">
+                          <Spinner animation="border">
+                            <span className="visually-hidden">
+                              Cargando reservas...
+                            </span>
+                          </Spinner>
+                        </div>
+                      );
+                    }
+
+                    if (errorReservas) {
+                      return <Alert variant="danger">{errorReservas}</Alert>;
+                    }
+
+                    if (reservasActivas.length > 0) {
+                      return (
+                        <div className="card shadow-sm">
+                          <div
+                            style={{
+                              maxHeight: '400px',
+                              overflowY: 'auto',
+                              padding: '0 5px'
+                            }}
+                          >
+                            <ReservasCard
+                              gestor={false}
+                              reservas={reservasActivas}
+                              btnCancelado={true}
+                              onCancelado={handleCancelarReserva}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="text-center my-4 p-3 bg-light rounded">
+                        <p>No tienes reservas activas en este momento.</p>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="text-center my-4 p-3 bg-light rounded">
-                      <p>No tienes reservas activas en este momento.</p>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </Tab>
 
                 <Tab eventKey="todas" title="Todas mis reservas">
-                  {loadingReservas ? (
-                    <div className="text-center my-4">
-                      <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Cargando reservas...</span>
-                      </Spinner>
-                    </div>
-                  ) : errorReservas ? (
-                    <Alert variant="danger">{errorReservas}</Alert>
-                  ) : reservas.length > 0 ? (
-                    <div className="card shadow-sm">
-                      <div style={{ maxHeight: '500px', overflowY: 'auto', padding: '0 5px' }}>
-                        <ReservasCard reservas={reservas} />
+                  {(() => {
+                    if (loadingReservas) {
+                      return (
+                        <div className="text-center my-4">
+                          <Spinner animation="border">
+                            <span className="visually-hidden">
+                              Cargando reservas...
+                            </span>
+                          </Spinner>
+                        </div>
+                      );
+                    }
+
+                    if (errorReservas) {
+                      return <Alert variant="danger">{errorReservas}</Alert>;
+                    }
+
+                    if (reservas.length > 0) {
+                      return (
+                        <div className="card shadow-sm">
+                          <div
+                            style={{
+                              maxHeight: '500px',
+                              overflowY: 'auto',
+                              padding: '0 5px'
+                            }}
+                          >
+                            <ReservasCard reservas={reservas} />
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="text-center my-4 p-3 bg-light rounded">
+                        <p>No has realizado ninguna reserva.</p>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="text-center my-4 p-3 bg-light rounded">
-                      <p>No has realizado ninguna reserva.</p>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </Tab>
               </Tabs>
             </div>
           </Tab>
         </Tabs>
       </Container>
-      
+
       <ToastContainer />
     </>
   );
