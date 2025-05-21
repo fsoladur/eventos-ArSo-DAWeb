@@ -1,26 +1,21 @@
 import React from 'react';
-import { Form, InputGroup, Button } from 'react-bootstrap';
+import { Form, InputGroup } from 'react-bootstrap';
 
-const UserEventSearchBar = ({ onFilter, placeholder }) => {
-  const handleSubmit = e => {
-    e.preventDefault();
-    onFilter(e);
+const UserEventSearchBar = ({ onSearchTermChange, searchTerm, placeholder }) => {
+  const handleChange = (e) => {
+    onSearchTermChange(e.target.value);
   };
 
   return (
-    <Form className="mb-0" onSubmit={handleSubmit}>
-      <InputGroup>
-        <Form.Control
-          type="text"
-          name="searchTerm"
-          className="rounded"
-          placeholder={placeholder || 'Buscar eventos...'}
-        />
-        <Button variant="primary" type="submit" className="ms-2 rounded">
-          Buscar
-        </Button>
-      </InputGroup>
-    </Form>
+    <InputGroup>
+      <Form.Control
+        type="text"
+        placeholder={placeholder || 'Buscar...'}
+        value={searchTerm}
+        onChange={handleChange}
+        aria-label="Término de búsqueda"
+      />
+    </InputGroup>
   );
 };
 

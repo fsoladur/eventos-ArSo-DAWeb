@@ -1,122 +1,100 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { Form, Row, Col, Collapse } from 'react-bootstrap';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 
 const categorias = ['CULTURAL', 'ENTRETENIMIENTO', 'DEPORTES', 'OTROS'];
 
-const AdvancedEventFilter = ({ filters, onChange, onReset }) => {
-  const [open, setOpen] = useState(false);
-  const filterRef = useRef(null);
-
-  // Cerrar el panel de filtros al hacer clic fuera
+// Usamos forwardRef para poder acceder a este componente desde el padre
+const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onReset }, ref) => {
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  
+  // Estado local para almacenar cambios temporales
+  const [localFilters, setLocalFilters] = useState(filters);
+  
+  // Actualizamos el estado local cuando cambian los props
   useEffect(() => {
-    const handleClickOutside = event => {
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
+    setLocalFilters(filters);
+  }, [filters]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // Exponemos los filtros locales al componente padre
+  useImperativeHandle(ref, () => ({
+    getFilters: () => localFilters
+  }));
 
   const handleChange = e => {
     const { name, value } = e.target;
-    onChange({
-      ...filters,
+    const newFilters = {
+      ...localFilters,
       [name]: name === 'numPlazasMin' ? parseInt(value) || 0 : value
-    });
+    };
+    setLocalFilters(newFilters);
+    // Ya no enviamos los cambios al padre inmediatamente
+  };
+  
+  const handleDateChange = (name, value) => {
+    const newFilters = {
+      ...localFilters,
+      [name]: value
+    };
+    setLocalFilters(newFilters);
+    // Ya no enviamos los cambios al padre inmediatamente
   };
 
   return (
-    <div className="d-flex position-relative" ref={filterRef}>
-      {/* Botones de control */}
-      <Button
-        size="sm"
-        variant="outline-secondary"
-        onClick={() => setOpen(!open)}
-        aria-controls="advanced-filters"
-        aria-expanded={open}
-        className="me-2"
-      >
-        Filtros
-      </Button>
-      <Button size="sm" variant="outline-danger" onClick={onReset}>
-        Limpiar
-      </Button>
-
-      {/* Panel de filtros desplegable */}
-      {open && (
-        <div
-          id="advanced-filters"
-          className="position-absolute bg-white shadow-sm border rounded p-3 mt-1"
-          style={{
-            zIndex: 1050,
-            top: '40px',
-            right: '0',
-            width: '90vw',
-            maxWidth: '1000px',
-            maxHeight: '80vh',
-            overflowY: 'auto'
-          }}
-        >
+    <div className="w-100">
+      <Collapse in={open}>
+        <div className="bg-light border rounded p-3 mb-3">
           <Form>
-            <Row
-              className="g-3"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))'
-              }}
-            >
-              {/* Filtro por nombre */}
-              <Col>
+            <Row className="g-3">
+              {/* Primera fila: 4 campos */}
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="nombre">
-                  <Form.Label>Nombre</Form.Label>
+                  <Form.Label className="fw-bold">Espacio Físico</Form.Label>
                   <Form.Control
                     type="text"
                     name="nombre"
-                    value={filters.nombre}
+                    value={localFilters.nombre}
                     onChange={handleChange}
+                    placeholder="Nombre del espacio"
                   />
                 </Form.Group>
               </Col>
 
-              {/* Filtro por descripción */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="descripcion">
-                  <Form.Label>Descripción</Form.Label>
+                  <Form.Label className="fw-bold">Descripción</Form.Label>
                   <Form.Control
                     type="text"
                     name="descripcion"
-                    value={filters.descripcion}
+                    value={localFilters.descripcion}
                     onChange={handleChange}
+                    placeholder="Palabras clave"
                   />
                 </Form.Group>
               </Col>
 
-              {/* Filtro por organizador */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="organizador">
-                  <Form.Label>Organizador</Form.Label>
+                  <Form.Label className="fw-bold">Organizador</Form.Label>
                   <Form.Control
                     type="text"
                     name="organizador"
-                    value={filters.organizador}
+                    value={localFilters.organizador}
                     onChange={handleChange}
+                    placeholder="Nombre del organizador"
                   />
                 </Form.Group>
               </Col>
 
-              {/* Filtro por categoría */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="categoria">
-                  <Form.Label>Categoría</Form.Label>
+                  <Form.Label className="fw-bold">Categoría</Form.Label>
                   <Form.Select
                     name="categoria"
-                    value={filters.categoria}
+                    value={localFilters.categoria}
                     onChange={handleChange}
                   >
                     <option value="">Todas</option>
@@ -129,80 +107,101 @@ const AdvancedEventFilter = ({ filters, onChange, onReset }) => {
                 </Form.Group>
               </Col>
 
-              {/* Filtro por plazas mínimas */}
-              <Col>
+              {/* Segunda fila: 4 campos restantes */}
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="numPlazasMin">
-                  <Form.Label>Plazas mínimas</Form.Label>
+                  <Form.Label className="fw-bold">Plazas mínimas</Form.Label>
                   <Form.Control
                     type="number"
                     name="numPlazasMin"
                     min={0}
-                    value={filters.numPlazasMin}
+                    value={localFilters.numPlazasMin}
                     onChange={handleChange}
                   />
                 </Form.Group>
               </Col>
 
-              {/* Filtro por fecha inicio */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <LocalizationProvider
                   dateAdapter={AdapterDateFns}
                   adapterLocale={es}
                 >
                   <Form.Group controlId="fechaInicio">
-                    <Form.Label>Fecha inicio</Form.Label>
-                    <DatePicker
-                      value={filters.fechaInicio}
-                      onChange={date =>
-                        onChange({ ...filters, fechaInicio: date })
-                      }
+                    <Form.Label className="fw-bold">Fecha inicio</Form.Label>
+                    <DateTimePicker
+                      value={localFilters.fechaInicio}
+                      onChange={(date) => handleDateChange("fechaInicio", date)}
                       slotProps={{
                         textField: { fullWidth: true, size: 'small' }
                       }}
+                      onOpen={() => setIsDatePickerOpen(true)}
+                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </Form.Group>
                 </LocalizationProvider>
               </Col>
 
-              {/* Filtro por fecha fin */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <LocalizationProvider
                   dateAdapter={AdapterDateFns}
                   adapterLocale={es}
                 >
                   <Form.Group controlId="fechaFin">
-                    <Form.Label>Fecha fin</Form.Label>
-                    <DatePicker
-                      value={filters.fechaFin}
-                      onChange={date =>
-                        onChange({ ...filters, fechaFin: date })
-                      }
+                    <Form.Label className="fw-bold">Fecha fin</Form.Label>
+                    <DateTimePicker
+                      value={localFilters.fechaFin}
+                      onChange={(date) => handleDateChange("fechaFin", date)}
                       slotProps={{
                         textField: { fullWidth: true, size: 'small' }
                       }}
+                      onOpen={() => setIsDatePickerOpen(true)}
+                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </Form.Group>
                 </LocalizationProvider>
               </Col>
 
-              {/* Filtro por dirección */}
-              <Col>
+              <Col xs={12} md={6} lg={3}>
                 <Form.Group controlId="direccion">
-                  <Form.Label>Dirección</Form.Label>
+                  <Form.Label className="fw-bold">Dirección</Form.Label>
                   <Form.Control
                     type="text"
                     name="direccion"
-                    value={filters.direccion}
+                    value={localFilters.direccion}
                     onChange={handleChange}
+                    placeholder="Dirección del evento"
                   />
                 </Form.Group>
               </Col>
             </Row>
+
+            {/* Botón Limpiar en la parte inferior */}
+            <div className="d-flex justify-content-end mt-3">
+              <button 
+                type="button" 
+                className="btn btn-outline-danger btn-sm"
+                onClick={() => {
+                  onReset();
+                  setLocalFilters({
+                    nombre: '',
+                    descripcion: '',
+                    organizador: '',
+                    categoria: '',
+                    numPlazasMin: 0,
+                    fechaInicio: null,
+                    fechaFin: null,
+                    direccion: ''
+                  });
+                }}
+              >
+                Limpiar
+              </button>
+            </div>
           </Form>
         </div>
-      )}
+      </Collapse>
     </div>
   );
-};
+});
 
 export default AdvancedEventFilter;

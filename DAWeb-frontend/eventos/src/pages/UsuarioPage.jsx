@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Spinner, Alert, Button } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
@@ -12,7 +12,8 @@ import { usePagination } from '../hooks/usePagination';
 import {
   darAltaReserva,
   getReservasUsuario,
-  cancelarReserva
+  cancelarReserva,
+  getReservas
 } from '../services/ReservasServices';
 import ReservasCard from '../components/Cards/ReservaCard';
 import { useAuth } from '../context/useAuth';
@@ -23,6 +24,8 @@ const UsuarioPage = () => {
   const [filtroActual, setFiltroActual] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
   const { eventos, loading, error } = useEventos();
+  
+  console.log('Eventos:', eventos);
 
   // Estado para filtros avanzados
   const [filtrosAvanzados, setFiltrosAvanzados] = useState({
@@ -41,6 +44,7 @@ const UsuarioPage = () => {
   const [loadingReservas, setLoadingReservas] = useState(false);
   const [errorReservas, setErrorReservas] = useState(null);
   const [subTabActiva, setSubTabActiva] = useState('activas');
+  const [open, setOpen] = useState(false);
 
   // Cargar las reservas cuando se accede al componente
   useEffect(() => {
@@ -147,8 +151,7 @@ const UsuarioPage = () => {
     // Aplicar filtros avanzados
     if (filtrosAvanzados.nombre) {
       resultados = resultados.filter(evento =>
-        evento.nombre
-          ?.toLowerCase()
+        evento.ocupacion?.nombreEspacioFisico.toLowerCase()
           .includes(filtrosAvanzados.nombre.toLowerCase())
       );
     }
@@ -178,11 +181,13 @@ const UsuarioPage = () => {
     if (filtrosAvanzados.numPlazasMin > 0) {
       resultados = resultados.filter(
         evento =>
-          evento.plazasTotales - evento.plazasOcupadas >=
-          filtrosAvanzados.numPlazasMin
+        {
+          return evento.numPlazas - reservasEvento.length >= filtrosAvanzados.numPlazasMin;
+        }
       );
     }
 
+    // Asegurarse de que los filtros de fecha incluyen hora correctamente
     if (filtrosAvanzados.fechaInicio) {
       const fechaInicio = new Date(filtrosAvanzados.fechaInicio);
       resultados = resultados.filter(evento => {
@@ -241,6 +246,12 @@ const UsuarioPage = () => {
     }
   };
 
+  // Añadir useRef para obtener referencia al componente de filtros
+  const filterRef = useRef(null);
+
+  // Crear un estado local para el término de búsqueda que no se aplicará automáticamente
+  const [searchInputValue, setSearchInputValue] = useState('');
+
   return (
     <>
       <Container className="my-5">
@@ -257,20 +268,65 @@ const UsuarioPage = () => {
           justify
         >
           <Tab eventKey="eventos" title="Eventos">
-            <div className="d-flex align-items-center mb-4">
-              <div className="flex-grow-1 me-2">
-                <UserEventSearchBar
-                  onFilter={handleFilter}
-                  placeholder={'Buscar eventos por nombre'}
-                />
+            {/* Barra de búsqueda y filtros en una sola línea */}
+            <div className="mb-4">
+              <div className="d-flex align-items-center mb-3">
+                {/* Barra de búsqueda que ocupa el espacio principal */}
+                <div className="flex-grow-1 me-2">
+                  <UserEventSearchBar
+                    searchTerm={searchInputValue}
+                    onSearchTermChange={setSearchInputValue}
+                    placeholder="Buscar eventos por nombre"
+                  />
+                </div>
+                
+                {/* Botones alineados a la derecha */}
+                <Button
+                  size="sm"
+                  variant={open ? "outline-secondary" : "outline-primary"}
+                  onClick={() => setOpen(!open)}
+                  className="me-2"
+                >
+                  {open ? 'Ocultar filtros' : 'Mostrar filtros'}
+                </Button>
+                
+                <Button 
+                  variant="primary" 
+                  size="sm"
+                  onClick={() => {
+                    // Obtener los filtros del componente hijo
+                    if (filterRef.current) {
+                      const currentFilters = filterRef.current.getFilters();
+                      setFiltrosAvanzados(currentFilters);
+                    }
+                    
+                    // Actualizar el filtro de búsqueda
+                    setFiltroActual(searchInputValue);
+                    
+                    // Resetear paginación y mostrar notificación
+                    setPaginaActual(1);
+                    
+                    if (searchInputValue.trim()) {
+                      toast.info(`Mostrando resultados para: "${searchInputValue}"`, {
+                        position: 'top-right',
+                        autoClose: 2000
+                      });
+                    }
+                  }}
+                >
+                  Buscar
+                </Button>
               </div>
-              <div>
-                <AdvancedEventFilter
-                  filters={filtrosAvanzados}
-                  onChange={handleFiltrosAvanzadosChange}
-                  onReset={resetFiltrosAvanzados}
-                />
-              </div>
+              
+              {/* Ahora pasamos la referencia al componente de filtros */}
+              <AdvancedEventFilter
+                ref={filterRef}
+                open={open}
+                setOpen={setOpen}
+                filters={filtrosAvanzados}
+                onChange={handleFiltrosAvanzadosChange}
+                onReset={resetFiltrosAvanzados}
+              />
             </div>
 
             {(() => {
