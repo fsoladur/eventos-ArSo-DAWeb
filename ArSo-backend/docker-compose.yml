@@ -79,6 +79,8 @@ services:
     volumes:
       - ./.mysql-data:/var/lib/mysql
       - ./.mysql-init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # si quieres usar datos
+      # ./.mysql-init/init.sql:/docker-entrypoint-initdb.d/init-datos.sql
     environment:
       MYSQL_ROOT_PASSWORD: practicas
     networks:
@@ -97,6 +99,8 @@ services:
       - '27017:27017'
     volumes:
       - ./.mongo-data:/data/db
+      # si quieres usar datos
+      #- ./.mongo-init/init.js:/docker-entrypoint-initdb.d/init.js
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: practicas
