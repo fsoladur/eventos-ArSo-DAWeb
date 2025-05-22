@@ -16,7 +16,7 @@
 
 .navbar-container {
   display: grid;
-  grid-template-columns: auto 1fr auto; /* Logo, Links, Button */
+  grid-template-columns: auto auto; /* Logo, Button para cerrar sesión */
   align-items: center;
   gap: 1.5rem;
   width: 100%;
@@ -30,28 +30,6 @@
   align-items: center;
   text-decoration: none;
   justify-self: start;
-}
-
-.nav-links {
-  justify-self: center; /* Centra los enlaces */
-  display: flex;
-  gap: 1rem;
-}
-
-.logout-button {
-  justify-self: end; /* Botón a la derecha */
-}
-
-.navLink {
-  color: white;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  transition: color 0.2s ease;
-}
-
-.navLink:hover {
-  color: var(--secondary);
 }
 
 .active {
@@ -101,21 +79,20 @@
     padding: 1rem;
   }
 
-  .brand,
-  .nav-links,
-  .logout-button {
-    justify-self: center;
+  .logoImg {
+    max-width: 60px;
   }
+}
 
-  .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
+@media (max-width: 500px) {
+  .brand-title {
+    display: none;
   }
 }
 
 @media (min-width: 1400px) {
   .logoImg {
-    max-width: 60px;
+    max-width: 70px;
   }
 
   .brand-title {

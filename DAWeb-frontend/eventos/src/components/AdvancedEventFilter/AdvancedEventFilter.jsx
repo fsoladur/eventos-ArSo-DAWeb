@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { Form, Row, Col, Collapse } from 'react-bootstrap';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -7,13 +7,11 @@ import { es } from 'date-fns/locale';
 
 const categorias = ['CULTURAL', 'ENTRETENIMIENTO', 'DEPORTES', 'OTROS'];
 
-// Usamos forwardRef para poder acceder a este componente desde el padre
-const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onReset }, ref) => {
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  
+// Pasar ref como una prop normal
+const AdvancedEventFilter = ({ open, filters, onChange, onReset, ref }) => {
   // Estado local para almacenar cambios temporales
   const [localFilters, setLocalFilters] = useState(filters);
-  
+
   // Actualizamos el estado local cuando cambian los props
   useEffect(() => {
     setLocalFilters(filters);
@@ -28,19 +26,23 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
     const { name, value } = e.target;
     const newFilters = {
       ...localFilters,
-      [name]: name === 'numPlazasMin' ? parseInt(value) || 0 : value
+      [name]: name === 'numPlazas' ? parseInt(value) || 0 : value
     };
     setLocalFilters(newFilters);
-    // Ya no enviamos los cambios al padre inmediatamente
+
+    // IMPORTANTE: Propagar los cambios al componente padre
+    onChange(newFilters);
   };
-  
+
   const handleDateChange = (name, value) => {
     const newFilters = {
       ...localFilters,
       [name]: value
     };
     setLocalFilters(newFilters);
-    // Ya no enviamos los cambios al padre inmediatamente
+
+    // IMPORTANTE: Propagar los cambios al componente padre
+    onChange(newFilters);
   };
 
   return (
@@ -56,7 +58,7 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                   <Form.Control
                     type="text"
                     name="nombre"
-                    value={localFilters.nombre}
+                    value={localFilters.nombre || ''}
                     onChange={handleChange}
                     placeholder="Nombre del espacio"
                   />
@@ -69,7 +71,7 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                   <Form.Control
                     type="text"
                     name="descripcion"
-                    value={localFilters.descripcion}
+                    value={localFilters.descripcion || ''}
                     onChange={handleChange}
                     placeholder="Palabras clave"
                   />
@@ -82,7 +84,7 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                   <Form.Control
                     type="text"
                     name="organizador"
-                    value={localFilters.organizador}
+                    value={localFilters.organizador || ''}
                     onChange={handleChange}
                     placeholder="Nombre del organizador"
                   />
@@ -94,7 +96,7 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                   <Form.Label className="fw-bold">Categoría</Form.Label>
                   <Form.Select
                     name="categoria"
-                    value={localFilters.categoria}
+                    value={localFilters.categoria || ''}
                     onChange={handleChange}
                   >
                     <option value="">Todas</option>
@@ -109,13 +111,16 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
 
               {/* Segunda fila: 4 campos restantes */}
               <Col xs={12} md={6} lg={3}>
-                <Form.Group controlId="numPlazasMin">
-                  <Form.Label className="fw-bold">Plazas mínimas</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="numPlazasMin"
+                <Form.Group controlId="numPlazas">
+                  <Form.Label className="fw-bold">
+                    Plazas totales mínimas: {localFilters.numPlazas || 0}
+                  </Form.Label>
+                  <Form.Range
+                    name="numPlazas"
                     min={0}
-                    value={localFilters.numPlazasMin}
+                    max={2000}
+                    step={5}
+                    value={localFilters.numPlazas || 0}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -130,12 +135,10 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                     <Form.Label className="fw-bold">Fecha inicio</Form.Label>
                     <DateTimePicker
                       value={localFilters.fechaInicio}
-                      onChange={(date) => handleDateChange("fechaInicio", date)}
+                      onChange={date => handleDateChange('fechaInicio', date)}
                       slotProps={{
                         textField: { fullWidth: true, size: 'small' }
                       }}
-                      onOpen={() => setIsDatePickerOpen(true)}
-                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </Form.Group>
                 </LocalizationProvider>
@@ -150,12 +153,11 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                     <Form.Label className="fw-bold">Fecha fin</Form.Label>
                     <DateTimePicker
                       value={localFilters.fechaFin}
-                      onChange={(date) => handleDateChange("fechaFin", date)}
+                      onChange={date => handleDateChange('fechaFin', date)}
                       slotProps={{
                         textField: { fullWidth: true, size: 'small' }
                       }}
-                      onOpen={() => setIsDatePickerOpen(true)}
-                      onClose={() => setIsDatePickerOpen(false)}
+                      minDateTime={localFilters.fechaInicio}
                     />
                   </Form.Group>
                 </LocalizationProvider>
@@ -167,7 +169,7 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
                   <Form.Control
                     type="text"
                     name="direccion"
-                    value={localFilters.direccion}
+                    value={localFilters.direccion || ''}
                     onChange={handleChange}
                     placeholder="Dirección del evento"
                   />
@@ -177,21 +179,11 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
 
             {/* Botón Limpiar en la parte inferior */}
             <div className="d-flex justify-content-end mt-3">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn btn-outline-danger btn-sm"
                 onClick={() => {
                   onReset();
-                  setLocalFilters({
-                    nombre: '',
-                    descripcion: '',
-                    organizador: '',
-                    categoria: '',
-                    numPlazasMin: 0,
-                    fechaInicio: null,
-                    fechaFin: null,
-                    direccion: ''
-                  });
                 }}
               >
                 Limpiar
@@ -202,6 +194,6 @@ const AdvancedEventFilter = forwardRef(({ open, setOpen, filters, onChange, onRe
       </Collapse>
     </div>
   );
-});
+};
 
 export default AdvancedEventFilter;

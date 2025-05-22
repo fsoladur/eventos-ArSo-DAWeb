@@ -3,20 +3,32 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import DischargeButton from '../DischargeButton/DischargeButton';
 import { useAuth } from '../../context/useAuth';
+import { getBadgeColor } from '../../utils/utils';
 import './userEventCard.css';
 
 function UserEventCard({
   cardTitle,
   cardText,
-  eventDate,
+  eventStartDate,
+  eventEndDate,
+  eventOrganizer,
   eventLocation,
+  eventPhoto,
   eventSpaceName,
+  eventCategory,
+  eventTotalSeats,
   eventId,
   onHandleSubmit,
   className = ''
 }) {
   const { user } = useAuth();
-  const [datePart, timePart] = eventDate ? eventDate.split('T') : ['', ''];
+  const [dateStartPart, timeStartPart] = eventStartDate
+    ? eventStartDate.split('T')
+    : ['', ''];
+
+  const [dateEndPart, timeEndPart] = eventEndDate
+    ? eventEndDate.split('T')
+    : ['', ''];
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -29,15 +41,12 @@ function UserEventCard({
 
   return (
     <Card className={`event-card ${className}`}>
-      {/* ---------- Imagen más baja ---------- */}
       <Card.Img
         variant="top"
-        src="/images/culturalDiversity.png"
+        src={eventPhoto}
         alt={cardTitle}
-        style={{
-          height: 135,
-          objectFit: 'cover'
-        }} /* ↓ altura = tarjeta más baja */
+        style={{ objectfit: 'cover', objectposition: 'center' }}
+        className="event-card-image"
       />
 
       {/* ---------- Cuerpo ---------- */}
@@ -46,22 +55,45 @@ function UserEventCard({
           {cardTitle}
         </Card.Title>
 
+        <span
+          className={`badge bg-${getBadgeColor(
+            eventCategory
+          )} align-self-start mb-2`}
+        >
+          {eventCategory}
+        </span>
+
         <Card.Text className="event-description mb-2">{cardText}</Card.Text>
 
-        <div className="mb-1">
-          <strong>Fecha:</strong> {datePart}
-        </div>
-        <div className="mb-1">
-          <strong>Hora:</strong> {timePart}
+        <div>
+          <strong>Plazas totales: </strong>
+          <p className="text-primary">{eventTotalSeats}</p>
         </div>
 
-        <div className="mb-1">
-          <strong>Ubicación:</strong>{' '}
+        <div className="mb-1 fw-medium">
+          <strong>Organizador: </strong> {eventOrganizer}
+        </div>
+        <div className="mb-1 fw-medium">
+          <strong>Fecha de inicio:</strong> {dateStartPart}
+        </div>
+        <div className="mb-1 fw-medium">
+          <strong>Hora de inicio:</strong> {timeStartPart}
+        </div>
+
+        <div className="mb-1 fw-medium">
+          <strong>Fecha de fin:</strong> {dateEndPart}
+        </div>
+        <div className="mb-1 fw-medium">
+          <strong>Hora de fin:</strong> {timeEndPart}
+        </div>
+
+        <div className="mb-1 fw-medium">
+          <strong>Ubicación: </strong>
           <span className="event-location">{eventLocation}</span>
         </div>
 
-        <div className="mb-2">
-          <strong>Espacio:</strong>{' '}
+        <div className="mb-2 fw-medium">
+          <strong>Espacio: </strong>
           <span className="event-space">{eventSpaceName}</span>
         </div>
       </Card.Body>

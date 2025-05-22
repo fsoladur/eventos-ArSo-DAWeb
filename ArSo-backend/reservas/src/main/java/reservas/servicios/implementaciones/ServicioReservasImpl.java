@@ -40,17 +40,16 @@ public class ServicioReservasImpl implements ServicioReservas {
       throw new IllegalArgumentException("El número de plazas reservadas debe ser mayor que 0");
     }
 
-    Evento evento =
-        repositorioEventos
-            .findById(idEvento)
-            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+    Evento evento = repositorioEventos
+        .findById(idEvento)
+        .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
     if (plazasReservadas > evento.getPlazasDisponibles()) {
-      throw new IllegalArgumentException("No hay suficientes plazas disponibles");
+      throw new IllegalArgumentException(
+          "No hay suficientes plazas disponibles en este evento: " + evento.getPlazasDisponibles());
     }
 
-    Reserva reserva =
-        this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
+    Reserva reserva = this.repositorioReservas.save(new Reserva(idUsuario, plazasReservadas, evento));
 
     evento.add(reserva);
     evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazasReservadas);
@@ -94,10 +93,9 @@ public class ServicioReservasImpl implements ServicioReservas {
     if (idReserva == null) {
       throw new IllegalArgumentException("El id de la reserva no puede ser nulo");
     }
-    Reserva reserva =
-        repositorioReservas
-            .findById(idReserva)
-            .orElseThrow(() -> new EntidadNoEncontrada("Reserva no encontrada"));
+    Reserva reserva = repositorioReservas
+        .findById(idReserva)
+        .orElseThrow(() -> new EntidadNoEncontrada("Reserva no encontrada"));
 
     reserva.cancelar();
     repositorioReservas.save(reserva);
@@ -115,10 +113,9 @@ public class ServicioReservasImpl implements ServicioReservas {
     if (plazas <= 0) {
       throw new IllegalArgumentException("El número de plazas debe ser mayor que 0");
     }
-    Evento evento =
-        repositorioEventos
-            .findById(idEvento)
-            .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
+    Evento evento = repositorioEventos
+        .findById(idEvento)
+        .orElseThrow(() -> new EntidadNoEncontrada("Evento no encontrado"));
 
     return evento.getPlazasReservadas() <= plazas;
   }

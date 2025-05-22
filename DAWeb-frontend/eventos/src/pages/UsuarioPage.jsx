@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, use } from 'react';
 import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
@@ -12,19 +12,19 @@ import { usePagination } from '../hooks/usePagination';
 import {
   darAltaReserva,
   getReservasUsuario,
-  cancelarReserva,
-  getReservas
+  cancelarReserva
 } from '../services/ReservasServices';
 import ReservasCard from '../components/Cards/ReservaCard';
 import { useAuth } from '../context/useAuth';
 import AdvancedEventFilter from '../components/AdvancedEventFilter/AdvancedEventFilter';
+import { generatePlacesURL } from '../utils/utils';
 
 const UsuarioPage = () => {
   const { user } = useAuth();
   const [filtroActual, setFiltroActual] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
   const { eventos, loading, error } = useEventos();
-  
+
   console.log('Eventos:', eventos);
 
   // Estado para filtros avanzados
@@ -33,7 +33,7 @@ const UsuarioPage = () => {
     descripcion: '',
     organizador: '',
     categoria: '',
-    numPlazasMin: 0,
+    numPlazas: 0,
     fechaInicio: null,
     fechaFin: null,
     direccion: ''
@@ -44,6 +44,8 @@ const UsuarioPage = () => {
   const [loadingReservas, setLoadingReservas] = useState(false);
   const [errorReservas, setErrorReservas] = useState(null);
   const [subTabActiva, setSubTabActiva] = useState('activas');
+
+  // Estado para el filtro
   const [open, setOpen] = useState(false);
 
   // Cargar las reservas cuando se accede al componente
@@ -129,7 +131,7 @@ const UsuarioPage = () => {
       descripcion: '',
       organizador: '',
       categoria: '',
-      numPlazasMin: 0,
+      numPlazas: 0,
       fechaInicio: null,
       fechaFin: null,
       direccion: ''
@@ -141,6 +143,12 @@ const UsuarioPage = () => {
   const eventosFiltrados = useMemo(() => {
     let resultados = eventos;
 
+    resultados = resultados.filter(evento => {
+      const fechaActual = new Date();
+      const fechaFin = new Date(evento.ocupacion?.fechaFin);
+      return fechaFin >= fechaActual && !evento.cancelado;
+    });
+
     // Aplicar filtro básico de búsqueda por nombre
     if (filtroActual.trim()) {
       resultados = resultados.filter(evento =>
@@ -151,7 +159,8 @@ const UsuarioPage = () => {
     // Aplicar filtros avanzados
     if (filtrosAvanzados.nombre) {
       resultados = resultados.filter(evento =>
-        evento.ocupacion?.nombreEspacioFisico.toLowerCase()
+        evento.ocupacion?.nombreEspacioFisico
+          .toLowerCase()
           .includes(filtrosAvanzados.nombre.toLowerCase())
       );
     }
@@ -178,13 +187,10 @@ const UsuarioPage = () => {
       );
     }
 
-    if (filtrosAvanzados.numPlazasMin > 0) {
-      resultados = resultados.filter(
-        evento =>
-        {
-          return evento.numPlazas - reservasEvento.length >= filtrosAvanzados.numPlazasMin;
-        }
-      );
+    if (filtrosAvanzados.numPlazas > 0) {
+      resultados = resultados.filter(evento => {
+        return evento.numPlazas >= filtrosAvanzados.numPlazas;
+      });
     }
 
     // Asegurarse de que los filtros de fecha incluyen hora correctamente
@@ -231,21 +237,6 @@ const UsuarioPage = () => {
     setPaginaActual(1);
   }, [filtroActual, filtrosAvanzados]);
 
-  const handleFilter = event => {
-    event.preventDefault();
-    const term = event.target.elements.searchTerm.value || '';
-    setFiltroActual(term);
-
-    if (term.trim()) {
-      toast.info(`Mostrando resultados para: "${term}"`, {
-        position: 'top-right',
-        autoClose: 2000
-      });
-    } else {
-      setFiltroActual('');
-    }
-  };
-
   // Añadir useRef para obtener referencia al componente de filtros
   const filterRef = useRef(null);
 
@@ -279,19 +270,19 @@ const UsuarioPage = () => {
                     placeholder="Buscar eventos por nombre"
                   />
                 </div>
-                
+
                 {/* Botones alineados a la derecha */}
                 <Button
                   size="sm"
-                  variant={open ? "outline-secondary" : "outline-primary"}
+                  variant={open ? 'outline-secondary' : 'outline-primary'}
                   onClick={() => setOpen(!open)}
                   className="me-2"
                 >
                   {open ? 'Ocultar filtros' : 'Mostrar filtros'}
                 </Button>
-                
-                <Button 
-                  variant="primary" 
+
+                <Button
+                  variant="primary"
                   size="sm"
                   onClick={() => {
                     // Obtener los filtros del componente hijo
@@ -299,25 +290,28 @@ const UsuarioPage = () => {
                       const currentFilters = filterRef.current.getFilters();
                       setFiltrosAvanzados(currentFilters);
                     }
-                    
+
                     // Actualizar el filtro de búsqueda
                     setFiltroActual(searchInputValue);
-                    
+
                     // Resetear paginación y mostrar notificación
                     setPaginaActual(1);
-                    
+
                     if (searchInputValue.trim()) {
-                      toast.info(`Mostrando resultados para: "${searchInputValue}"`, {
-                        position: 'top-right',
-                        autoClose: 2000
-                      });
+                      toast.info(
+                        `Mostrando resultados para: "${searchInputValue}"`,
+                        {
+                          position: 'top-right',
+                          autoClose: 2000
+                        }
+                      );
                     }
                   }}
                 >
                   Buscar
                 </Button>
               </div>
-              
+
               {/* Ahora pasamos la referencia al componente de filtros */}
               <AdvancedEventFilter
                 ref={filterRef}
@@ -357,14 +351,19 @@ const UsuarioPage = () => {
                           <UserEventCard
                             cardTitle={evento.nombre}
                             cardText={evento.descripcion}
-                            eventDate={evento.ocupacion.fechaInicio}
+                            eventStartDate={evento.ocupacion.fechaInicio}
+                            eventEndDate={evento.ocupacion.fechaFin}
+                            eventOrganizer={evento.organizador}
                             eventLocation={
                               evento.ocupacion.direccionEspacioFisico
                             }
                             eventSpaceName={
                               evento.ocupacion.nombreEspacioFisico
                             }
+                            eventPhoto={evento.fotoEvento}
+                            eventCategory={evento.categoria}
                             eventId={evento.id}
+                            eventTotalSeats={evento.numPlazas}
                             onHandleSubmit={handleSubmit}
                             className="h-100"
                           />

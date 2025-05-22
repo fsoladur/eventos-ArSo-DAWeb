@@ -8,19 +8,19 @@ Este documento contiene los casos de uso del proyecto de desarrollo de la asigna
 
 Características tecnológicas a cumplir:
 
-- HTML, CSS y Bootstrap
+- HTML, CSS y Bootstrap ✅
 
-- Uso de CSS Grid en alguna vista
+- Uso de CSS Grid en alguna vista ✅
 
-- Diseño adaptado a móviles siguiendo un diseño RWD (Responsive Web Design) que aplique el uso de Media Queries
+- Diseño adaptado a móviles siguiendo un diseño RWD (Responsive Web Design) que aplique el uso de Media Queries ✅
 
-- Diseño web: Fuentes (Google Fonts), Paleta de colores(https://coolors.co/), Iconos (Font Awesome o YesIcon)
+- Diseño web: Fuentes (Google Fonts), Paleta de colores(https://coolors.co/) ✅, Iconos (Font Awesome o YesIcon✅)
 
-- Uso de Bootstrap basado en un grid layout y no solo componentes
+- Uso de Bootstrap basado en un grid layout y no solo componentes ✅
 
-- Uso de React para hacer nuestros propios componentes.
+- Uso de React para hacer nuestros propios componentes.✅
 
-- JavaScript y llamadas asíncronas a la API RESTful (fetch y alguna con AJAX)
+- JavaScript y llamadas asíncronas a la API RESTful (fetch) ✅
 
 ## Casos de uso - diseño
 
@@ -28,32 +28,34 @@ Características tecnológicas a cumplir:
 
 Casos de uso genéricos:
 
-- La aplicación deberá **permitir hacer un Login/Logout a los usuarios**
+- La aplicación deberá **permitir hacer un Login/Logout a los usuarios** con y sin github dos usuarios:
+  - usuario:usuario ✅
+  - gestor:gestor ✅
 
 ### Actor gestor (rol gestor)
 
 Casos de uso:
 
-- gestor podrá **dar de alta y modificar los espacios físicos**
+- gestor podrá **dar de alta y modificar los espacios físicos** ✅ EspaciosPage
 
-- gestor podrá **dar de alta y modificar los Eventos**.
+- gestor podrá **dar de alta y modificar los Eventos**. ✅ EventosPage
 
-- gestor puede **cancelar un evento anulando todas las reservas hechas por los clientes si la fecha de inicio es posterior a la fecha actual**.
+- gestor puede **cancelar un evento anulando todas las reservas hechas por los clientes si la fecha de inicio es posterior a la fecha actual**. ✅ EventoDetailPage
 
-- gestor podrá **cerrar temporalmente un espacio físico si no tiene eventos activos**.
+- gestor podrá **cerrar temporalmente un espacio físico si no tiene eventos activos**.✅ EspaciosPage
 
 ### Actor usuario (rol usuario)
 
 Casos de uso:
 
-- Los usuarios podrán **listar los eventos del sistema y consultar sus propiedades**.
+- Los usuarios podrán **listar los eventos del sistema y consultar sus propiedades**.✅ UsuarioPage
 
-- Los usuarios podrán **filtrar los eventos por sus propiedades y/o por las propiedades de sus espacios físicos**. Además, **se podrá filtrar por el número de plazas libres del evento**
+- Los usuarios podrán **filtrar los eventos por sus propiedades y/o por las propiedades de sus espacios físicos**. Además, **se podrá filtrar por el número de plazas libres del evento** ✅ UsuarioPage
 
-- Un usuario **podrá realizar una reserva en un evento indicando el número de plazas a reservar, si el evento no está cancelado, la fecha actual sea anterior a la fecha de fin y quedan plazas libres**
+- Un usuario **podrá realizar una reserva en un evento indicando el número de plazas a reservar, si el evento no está cancelado, la fecha actual sea anterior a la fecha de fin y quedan plazas libres** ✅ UsuarioPage
 
-- el usuario **podrá anular una reserva si la fecha de inicio del evento es posterior a la fecha en el momento de la anulación**.
+- el usuario **podrá anular una reserva si la fecha de inicio del evento es posterior a la fecha en el momento de la anulación**. ✅ UsuarioPage
 
-- Cada usuario **debe poder consultar las reservas que tenga activas (la fecha actual es anterior a la fecha de inicio del evento)**
+- Cada usuario **debe poder consultar las reservas que tenga activas (la fecha actual es anterior a la fecha de inicio del evento)** ✅ UsuarioPage
 
-- Cada usuario debe **poder consultar la lista de reservas previas realizadas en el sistema (la fecha actual es posterior a la fecha de inicio del evento).**
+- Cada usuario debe **poder consultar la lista de reservas previas realizadas en el sistema (la fecha actual es posterior a la fecha de inicio del evento).** ✅ UsuarioPage

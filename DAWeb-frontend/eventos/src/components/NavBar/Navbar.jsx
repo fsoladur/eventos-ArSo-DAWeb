@@ -6,7 +6,7 @@ import { logout } from '../../services/authService.js';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ session }) => {
-  const { user, authLogout } = useAuth();
+  const { authLogout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -24,8 +24,6 @@ const Navbar = ({ session }) => {
       console.error('Error during logout:', error);
     }
   };
-
-  const isAuthenticated = user !== null && typeof user === 'object';
 
   return (
     <header className="custom-header">
