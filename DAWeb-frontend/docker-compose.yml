@@ -1,0 +1,22 @@
+services:
+  welcome-express:
+    build: ./welcome-express
+    container_name: welcome-express
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on:
+      eventos-react:
+        condition: service_healthy
+  eventos-react:
+    build: ./eventos
+    container_name: eventos-react
+    restart: always
+    ports:
+      - '5173:5173'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5173']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef, use } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
@@ -13,11 +13,10 @@ import {
   darAltaReserva,
   getReservasUsuario,
   cancelarReserva
-} from '../services/ReservasServices';
+} from '../services/reservasServices';
 import ReservasCard from '../components/Cards/ReservaCard';
 import { useAuth } from '../context/useAuth';
 import AdvancedEventFilter from '../components/AdvancedEventFilter/AdvancedEventFilter';
-import { generatePlacesURL } from '../utils/utils';
 
 const UsuarioPage = () => {
   const { user } = useAuth();
