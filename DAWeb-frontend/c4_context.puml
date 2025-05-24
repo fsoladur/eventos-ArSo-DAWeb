@@ -1,0 +1,50 @@
+@startuml C4_Context
+!include ./includes/C4.puml
+
+!include ./includes/spring_original.puml
+!include ./includes/express_original.puml
+!include ./includes/react.puml
+!include ./includes/mysql.puml
+!include ./includes/mongodb.puml
+!include ./includes/rabbitmq_original.puml
+
+Person(usuario, "Usuario", "Persona que accede al sistema para gestionar eventos, reservas y espacios")
+
+System_Boundary(sistema, "Sistema de Gestión de Eventos y Reservas") {
+
+    System_Ext(welcomeExpress, "<$express_original> Welcome Express", "Sirve la página de bienvenida y redirige a la SPA")
+    
+    System(eventosReact, "<$react> Eventos React", "SPA que actúa como frontend del sistema")
+    
+    System(gatewayApp, "<$spring_original> API Gateway", "Encamina peticiones REST a microservicios")
+    
+    System(eventosApp, "<$spring_original> Eventos Service", "Microservicio de gestión de eventos")
+    System(reservasApp, "<$spring_original> Reservas Service", "Microservicio de gestión de reservas")
+    System(espaciosApp, "<$spring_original> Espacios Service", "Microservicio de gestión de espacios")
+    
+    SystemDb(eventosDB, "<$mysql> Eventos DB", "Base de datos MySQL de eventos")
+    SystemDb(reservasDB, "<$mongodb> Reservas DB", "Base de datos MongoDB de reservas")
+    SystemDb(espaciosDB, "<$mysql> Espacios DB", "Base de datos MySQL de espacios")
+
+    System(rabbitmq, "<$rabbitmq_original> RabbitMQ", "Sistema de mensajería para eventos")
+}
+
+Rel(usuario, welcomeExpress, "Accede a")
+Rel(welcomeExpress, eventosReact, "Redirige a SPA")
+Rel(usuario, eventosReact, "Utiliza desde el navegador")
+
+Rel(eventosReact, gatewayApp, "Envía solicitudes REST", "HTTPS")
+Rel(gatewayApp, eventosApp, "Redirige peticiones REST")
+Rel(gatewayApp, reservasApp, "Redirige peticiones REST")
+Rel(gatewayApp, espaciosApp, "Redirige peticiones REST")
+
+Rel(eventosApp, eventosDB, "Lee/Escribe")
+Rel(reservasApp, reservasDB, "Lee/Escribe")
+Rel(espaciosApp, espaciosDB, "Lee/Escribe")
+
+Rel(eventosApp, rabbitmq, "Publica/Escucha eventos", "AMQP")
+Rel(reservasApp, rabbitmq, "Publica/Escucha eventos", "AMQP")
+Rel(espaciosApp, rabbitmq, "Publica/Escucha eventos", "AMQP")
+
+SHOW_LEGEND()
+@enduml

@@ -1,16 +1,116 @@
 # Introducción
 
+En este documento se presenta un resumen del trabajo realizado en el desarrollo del frontend de la aplicación de desarrollo de aplicaciones web. Concretamente, detallaremos algunos detalles técnicos de la implementación, las tecnologías utilizadas y la arquitectura del sistema. Además, se describirá la funcionalidad implementada en relación a los casos de uso definidos en el proyecto.
+
 ## Resumen de tecnologías utilizadas (Elementos desarrollados en DaWeb y ArSo)
+
+En este apartado nos centraremos en hablar de forma resumida y concisa de las tecnologías que hemos utilizado en ambos proyectos, DaWeb y ArSo, para el desarrollo del frontend y backend de la aplicación. En el caso de DaWeb, el desarrollo se ha centrado en la creación de una SPA (Single Page Application) utilizando React y otras tecnologías, mientras que en ArSo se ha utilizado una arquitectura de microservicios con Spring Boot y otros componentes para el backend.
+
+### Arquitectura del Software (ArSo)
+
+En el caso de Arquitectura del Software (ArSo), hemos utilizado diversas tecnologías para el desarrollo de la arquitectura de microservicios (espacios, eventos y reservas). Concretamente, hemos utilizado:
+
+- **Spring Boot**: Framework para el desarrollo de aplicaciones Java que ha sido utilizado para crear los microservicios de reservas y eventos.
+- **Spring Security**: Framework de seguridad para aplicaciones Java que ha sido utilizado para gestionar la autenticación y autorización de usuarios en los microservicios.
+- **Spring Cloud Netflix Zuul**: Servidor de pasarela que ha sido utilizado para enrutar las peticiones a los distintos microservicios y gestionar la comunicación entre ellos.
+- **JPA**: Framework para el acceso a bases de datos que ha sido utilizado para gestionar la persistencia de datos en los microservicios de eventos y espacios físicos. Concretamente, se ha utilizado EclipseLink como proveedor de JPA en el microservicio de espacios físicos e Hibernate en el microservicio de eventos que es el que utiliza por defecto Spring Data JPA.
+- **JAX-RS**: API para la creación de servicios RESTful que ha sido utilizada para definir las rutas y endpoints del microservicio de espacios físicos.
+- **Spring Data MongoDB**: Framework para el acceso a bases de datos NoSQL que ha sido utilizado para gestionar la persistencia de datos en el microservicio de reservas, permitiendo una integración sencilla con MongoDB.
+- **Retrofit**: Biblioteca para la creación de clientes HTTP que ha sido utilizada para realizar peticiones síncronas entre los distintos microservicios de la arquitectura, facilitando la comunicación entre ellos.
+- **Spring boot HATEOAS**: Framework que ha sido utilizado para implementar hipermedios en los microservicios, permitiendo una navegación más intuitiva y flexible entre los recursos expuestos por la API.
+- **Spring boot AMQP**: Framework que ha sido utilizado para implementar la comunicación asíncrona entre los microservicios mediante el uso de colas de mensajes, facilitando la escalabilidad y resiliencia del sistema. Concretamente, se ha utilizado RabbitMQ como broker de mensajes para gestionar la comunicación entre los microservicios de espacios, eventos y reservas.
+
+### Desarrollo de aplicaciones web (DaWeb)
+
+Entre las distintas tecnologías que hemos utilizado en el desarrollo del frontend, destacamos las siguientes:
+
+- **Node.js**: Entorno de ejecución para JavaScript en el servidor backend que ha sido utilizando principalmente para la página bienvenida a la aplicación.
+- **Express-Handlebars**: motor de plantillas utilizado para renderizar la página de bienvenida de forma modular y reutilizable.
+- **Bootstrap**: Framework CSS utilizado para el diseño y maquetación de las distintas vista de la aplicación, proporcionando un diseño responsivo y atractivo.
+- **Sass**: Preprocesador CSS utilizado para poder modificar los estilos de Bootstrap y personalizar la apariencia de la aplicación de forma más sencilla y eficiente.
+- **CSS flex**: Utilizado en varias vistas y componentes React para crear un diseño flexible y adaptativo, permitiendo que los elementos se distribuyan de manera eficiente en el espacio disponible y se ajusten a diferentes tamaños de pantalla.
+- **CSS Grid**: Utilizado en algunas vistas y componentes React para crear un diseño flexible y adaptativo con una estructura de cuadrícula, facilitando la disposición de los elementos en la interfaz de usuario.
+- **Media Queries**: Implementadas para asegurar que la aplicación se adapte a diferentes tamaños de pantalla, mejorando la experiencia de usuario en dispositivos móviles.
+- **React**: Biblioteca de JavaScript utilizada para construir componentes reutilizables y gestionar el estado de la aplicación de forma eficiente. React ha sido utilizado en el resto de vistas y componentes de la aplicación, permitiendo un desarrollo más modular y mantenible.
+- **React router**: Utilizado para gestionar la navegación entre las distintas vistas de la aplicación, permitiendo una experiencia de usuario fluida y sin recargas de página con el fin de desarrollar una SPA (Single Page Application).
+- **React Bootstrap**: Biblioteca que integra Bootstrap con React, facilitando el uso de componentes de Bootstrap en la aplicación React.
+- **React Toastify**: Biblioteca utilizada para mostrar notificaciones y mensajes emergentes de forma sencilla y atractiva, mejorando la experiencia de usuario al proporcionar feedback visual sobre las acciones realizadas en la aplicación.
+- **Material UI**: Biblioteca de componentes de interfaz de usuario para React que proporciona una amplia gama de componentes predefinidos y personalizables. Principalmente se ha utilizado para el uso de selectores de fecha y hora, así como otros componentes de formularios.
 
 ## Diagrama de arquitectura del sistema
 
+El diagrama de arquitectura del sistema es el que se muestra a continuación. En él se puede observar la arquitectura general de la aplicación, incluyendo los distintos componentes y tecnologías utilizadas en el desarrollo del frontend y backend. Este diagrama nos permite entender cómo interactúan los distintos elementos del sistema y cómo se comunican entre sí.
+
+![Diagrama de arquitectura del sistema](./img/C4_Context.png)
+
 # Descripción de la funcionalidad implementada en relación a cada caso de uso
+
+En este apartado se describirá la funcionalidad implementada en relación a cada caso de uso definido en el proyecto. Cada caso de uso se detalla con su correspondiente descripción.
 
 ## Caso de uso 0: Página de bienvenida desarrollada con Express-Handlebars
 
+Para implementar la página de bienvenida del sistema de gestión de eventos y espacios, se ha desarrollado una aplicación web basada en la arquitectura cliente-servidor utilizando el patrón MVC (Modelo-Vista-Controlador), donde Express.js actúa como controlador y Handlebars como motor de plantillas para las vistas. Esta implementación ejemplifica los conceptos fundamentales de desarrollo web, concretamente, la parte de renderizado del lado del servidor que hemos visto en clase mediante el uso de plantillas Handlebars.
+
+Hemos utilizado algunos aspectos técnicos para conseguir modularización como la implementación de layouts (plantillas base) para mantener la estructura HTML consistente y la utilización de partials para componentes reutilizables. En nuestro caso, hemos utilizado un único layout principal ('main') que define la estructura HTML base, complementado por diversos partials que componen el layout principal ('home') con el fin de lograr modularización y reutilización de código. Entre los distintos 'componentes' o partials encontramos:
+
+- _navbar.hbs_ (barra de navegación superior con logo y botón de inicio de sesión), hero.hbs (sección principal con video de fondo, título y llamada a la acción), _about.hbs_ (información del portal con estructura de dos columnas responsive), _footer.hbs_ (pie de página con enlaces, información de contacto y formulario de suscripción) y _social-icons.hbs_ (componente reutilizable con iconos de redes sociales implementado en múltiples secciones). Esta estructura modular permitió desarrollar una página de bienvenida mantenible, ofreciendo una experiencia de usuario atractiva y adaptable a múltiples dispositivos gracias a la implementación de Media Queries y diseño responsive.
+
 ## Caso de uso 1: Inicio de sesión con usuario y contraseña
 
+A partir de este momento, la aplicación se centra en el desarrollo de un SPA (Single Page Application) utilizando React, donde se implementa el resto de la funcionalidad del sistema. En este caso de uso, vamos a explicar dos apartados fundamentales. El inicio de sesión con usuario y contraseña.
+
+Concretamente, lo relativo al inicio de sesión se puede ver en el fichero _LoginPage.jsx_, esta página lo que contiene son tres componentes. Una barra de navegación superior, un formulario de inicio de sesión y un pie de página. El formulario de inicio de sesión se compone de dos campos, uno para el nombre de usuario y otro para la contraseña, así como un botón para enviar el formulario. Cuando el usuario envía el formulario, se realiza una petición POST al servidor con los datos introducidos. Si la autenticación es exitosa, se redirige al usuario a la página principal del sistema. En caso contrario, se muestra un mensaje de error.
+
+La autenticación se gestiona mediante el uso de tokens JWT (JSON Web Tokens), que se generan en el servidor y se envían al cliente tras una autenticación exitosa. Estos tokens se almacenan en el almacenamiento local del navegador y se utilizan para autenticar las peticiones posteriores al servidor, permitiendo así un acceso seguro a las funcionalidades protegidas de la aplicación para cada usuario. El backend de ArSo como tal, también nos envía el mismo token JWT por una cookie HttpOnly, que se almacena en el navegador y se envía automáticamente en las peticiones posteriores al servidor. Esto permite que el usuario permanezca autenticado durante toda su sesión en la aplicación.
+
+Concretamente, hemos definido únicamente dos roles de usuario cuyos usuarios y contraseñas son:
+
+- **Usuario gestor**: gestor, contraseña: gestor
+- **Usuario usuario**: usuario, contraseña: usuario
+
 ## Caso de uso 2: Inicio de sesión con GitHub (funcionalidad implementada de forma mixta entre DaWeb y ArSo)
+
+Para el inicio de sesión con GitHub, tuvimso que implementar la funcionalidad de forma mixta entre DaWeb y ArSo. En DaWeb, solo se implementó el botón de inicio de sesión con GitHub, que redirige al usuario a la página de autorización de GitHub. Una vez que el usuario autoriza la aplicación, el backend de ArSo redirige al usuario de vuelta a la aplicación con un código de autorización que se le pasa como parámetro en la URL. El usuario autenticado con GitHub recibe el rol usuario. Se adjunta el código relativo a esta funcionalidad en ArSo para poder comprobar la solución implementada.
+
+```java
+  @Override
+  public void onAuthenticationSuccess(
+      HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication)
+      throws IOException {
+
+    DefaultOAuth2User user =
+      (DefaultOAuth2User) authentication.getPrincipal();
+
+    Map<String, Object> claims = fetchUserInfo(user);
+
+    Usuario usuario = servicioAuth.getUsuario(user
+        .getAttributes().get("login").toString());
+
+    if (claims != null) {
+      // Generamos el token JWT
+      String token = servicioAuth.generarToken(claims);
+
+      // Construimos el DTO de respuesta
+      AutorizationResponseDto responseDto =
+          new AutorizationResponseDto(
+              usuario.getId(), usuario.getUsername(), usuario.getRoles(), token);
+
+      response.addCookie(servicioAuth.generarCookie(token));
+
+      // lo pasamos como query -param (base64url-encoded)
+      String json      = new ObjectMapper().writeValueAsString(responseDto);
+      String base64url = Base64.getUrlEncoder().withoutPadding()
+              .encodeToString(json.getBytes(StandardCharsets.UTF_8));
+
+    // ---------- 4) redirección ----------
+      String target = "http://localhost:5173?data=" + base64url;
+      response.sendRedirect(target);
+    }
+  }
+```
+
+El momento en que nuestro frontend recibe el token JWT, lo almacena en el almacenamiento local del navegador y lo utiliza para autenticar las peticiones posteriores al servidor, permitiendo así un acceso seguro a las funcionalidades protegidas de la aplicación. En este caso, el usuario autenticado con GitHub recibe el rol usuario. El tratamiento de este token se realiza en el componente _ConditionalRedirect.jsx_ donde una vez se monta el componente, se compruba si existe el token JWT en la URL. Si existe, se extrae el token y se almacena en el almacenamiento local del navegador. A continuación, se redirige al usuario a la página principal de la aplicación en función de su rol.
 
 ## Caso de uso 3: Gestión de espacios físicos (rol gestor)
 
@@ -33,3 +133,7 @@
 ## Caso de uso 12: Consulta de todas las reservas (rol usuario)
 
 # Discusión y conclusiones del trabajo realizado
+
+A continuación, se presentan las conclusiones del trabajo realizado por ambos componentes del equipo.
+
+- Fabián Sola Durán. Bajo mi punto de vista, el proyecto es enriquecedor y ha supuesto una experiencia bastante positiva exceptuando los problemas que hemos presentado a la hora de realizar un desarrollo relativamente "decente". En muchas ocasiones, he tenido que recurrir a la documentación oficial de las tecnologías y diversos tutoriales para aprender a utilizarlas. Además, había incongruencias entre la especificación del proyecto y la especificación del proyecto de ArSo, lo que ha dificultado la implementación de algunas funcionalidades ya que había que modificar diversas partes de ArSo. A pesar de ello, he aprendido mucho sobre el desarrollo de aplicaciones web y ha sido un primer contacto agradable con las tecnologías de desarrollo web. Como mejora de cara al futuro, creo que sería interesante que en alguna asignatura del primer cuatrimestre se tratasen tecnologías como HTML, CSS, BOOTSTRAP y JavaScript de forma introductoria para que en esta asignatura pudiésemos centrarnos en el desarrollo de aplicaciones web de forma más avanzada (ya sea usando React o Express-Handlebars) y no tener que perder tanto tiempo en aprender las tecnologías desde cero.
