@@ -220,14 +220,9 @@ const UsuarioPage = () => {
     return resultados;
   }, [eventos, filtroActual, filtrosAvanzados]);
 
-  // Primero filtrar eventos cancelados
-  const eventosFiltradosActivos = eventosFiltrados.filter(
-    evento => !evento.cancelado
-  );
-
   // Luego aplicar paginación al resultado filtrado
   const { paginatedItems: eventosPaginados, totalPages } = usePagination(
-    eventosFiltradosActivos,
+    eventosFiltrados,
     paginaActual,
     6
   );
@@ -258,10 +253,8 @@ const UsuarioPage = () => {
           justify
         >
           <Tab eventKey="eventos" title="Eventos">
-            {/* Barra de búsqueda y filtros en una sola línea */}
             <div className="mb-4">
               <div className="d-flex align-items-center mb-3">
-                {/* Barra de búsqueda que ocupa el espacio principal */}
                 <div className="flex-grow-1 me-2">
                   <UserEventSearchBar
                     searchTerm={searchInputValue}
@@ -270,7 +263,6 @@ const UsuarioPage = () => {
                   />
                 </div>
 
-                {/* Botones alineados a la derecha */}
                 <Button
                   size="sm"
                   variant={open ? 'outline-secondary' : 'outline-primary'}
@@ -311,7 +303,6 @@ const UsuarioPage = () => {
                 </Button>
               </div>
 
-              {/* Ahora pasamos la referencia al componente de filtros */}
               <AdvancedEventFilter
                 ref={filterRef}
                 open={open}
@@ -343,7 +334,7 @@ const UsuarioPage = () => {
 
               return (
                 <>
-                  <Row sm={1} md={2} lg={3} className="g-4">
+                  <Row sm={1} md={2} lg={4} className="g-4">
                     {eventosPaginados.length > 0 ? (
                       eventosPaginados.map(evento => (
                         <Col key={evento.id} xs={12} sm={6} md={4}>
@@ -393,7 +384,7 @@ const UsuarioPage = () => {
                     )}
                   </Row>
 
-                  {eventosFiltradosActivos.length > 0 && (
+                  {eventosFiltrados.length > 0 && (
                     <div className="d-flex justify-content-center mt-4">
                       <PaginationBar
                         totalPaginas={totalPages}

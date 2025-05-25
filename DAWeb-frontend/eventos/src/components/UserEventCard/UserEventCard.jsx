@@ -49,7 +49,6 @@ function UserEventCard({
         className="event-card-image"
       />
 
-      {/* ---------- Cuerpo ---------- */}
       <Card.Body className="d-flex flex-column p-3 pb-1 flex-grow-1">
         <Card.Title className="fs-6 fw-bold text-truncate">
           {cardTitle}
@@ -98,7 +97,6 @@ function UserEventCard({
         </div>
       </Card.Body>
 
-      {/* ---------- Footer ---------- */}
       <Card.Footer className="bg-transparent border-0 d-flex justify-content-center">
         <DischargeButton
           buttonLabel="Reservar"

@@ -114,26 +114,321 @@ El momento en que nuestro frontend recibe el token JWT, lo almacena en el almace
 
 ## Caso de uso 3: Gestión de espacios físicos (rol gestor)
 
+//TODO
+
 ## Caso de uso 4: Gestión de eventos (rol gestor)
+
+//TODO
 
 ## Caso de uso 5: Cancelación de eventos (rol gestor)
 
+//TODO
+
 ## Caso de uso 6: Cierre temporal de espacios físicos (rol gestor)
+
+//TODO
 
 ## Caso de uso 7: Listado de eventos activos (rol usuario)
 
+Por defecto, la página de usuario únicamente muestra un grid de eventos activos. Para ello, se ha implementado un componente llamado _UserEventCard.jsx_ que recibe como parámetros toda la información del evento y se encarga de mostrarla en una tarjeta. Este componente se utiliza en la página de usuario para mostrar todos los eventos activos. Cuando se monta el componente, se realiza una petición al servidor para obtener todos los eventos. Para ello, se utiliza el hook personalizado '_useEventos.js_' en la página de usuario. Este hook se encarga de realizar la petición al servidor y devolver los eventos activos. El código del hook es el siguiente:
+
+```jsx
+export function useEventos() {
+  const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        setLoading(true);
+        const eventosFetch = await getEventos();
+        const eventosBase = eventosFetch._embedded?.eventoDTOList || [];
+
+        const eventosConFotos = eventosBase.map(evento => ({
+          ...evento,
+          fotoEvento: generatePlacesURL()
+        }));
+
+        setEventos(eventosConFotos);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error al cargar los espacios:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventos();
+  }, []);
+
+  function addEvento(evento) {
+    const eventoConFoto = {
+      ...evento,
+      fotoEvento: generatePlacesURL()
+    };
+    setEventos(prevEventos => [...prevEventos, eventoConFoto]);
+  }
+
+  return { eventos, loading, error, addEvento };
+}
+```
+
+Una vez obtenemos todos los eventos, se filtran y se muestran únicamente aquellos que están activos. Para ello, se utiliza el siguiente código:
+
+```jsx
+const eventosFiltrados = useMemo(() => {
+  let resultados = eventos;
+
+  resultados = resultados.filter(evento => {
+    const fechaActual = new Date();
+    const fechaFin = new Date(evento.ocupacion?.fechaFin);
+    return fechaFin >= fechaActual && !evento.cancelado;
+  });
+
+  // Otros filtros...
+}, [eventos, filtroActual, filtrosAvanzados]);
+```
+
 ## Caso de uso 8: Filtrado de avanzado de eventos (rol usuario)
+
+Para realizar el filtrado avanzado de eventos, se ha implementado un componente llamado _AdvancedEventFilter.jsx_. A este componente le pasamos como parámetro desde la _UsuarioPage.jsx_ lo siguiente:
+
+```jsx
+const AdvancedEventFilter = ({ open, filters, onChange, onReset, ref }) => {
+  // Estado local para almacenar cambios temporales
+  const [localFilters, setLocalFilters] = useState(filters);
+
+  // Actualizamos el estado local cuando cambian los props
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
+  // Exponemos los filtros locales al componente padre
+  useImperativeHandle(ref, () => ({
+    getFilters: () => localFilters
+  }));
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    const newFilters = {
+      ...localFilters,
+      [name]: name === 'numPlazas' ? parseInt(value) || 0 : value
+    };
+    setLocalFilters(newFilters);
+
+    // IMPORTANTE: Propagar los cambios al componente padre
+    onChange(newFilters);
+  };
+
+  const handleDateChange = (name, value) => {
+    const newFilters = {
+      ...localFilters,
+      [name]: value
+    };
+    setLocalFilters(newFilters);
+
+    // IMPORTANTE: Propagar los cambios al componente padre
+    onChange(newFilters);
+  };
+```
+
+Como se puede ver en el anterior código, el componente _AdvancedEventFilter.jsx_ recibe como parámetros los filtros actuales del componente padre, una función para manejar los cambios y otra para resetear los filtros. El componente utiliza un estado local para almacenar los cambios temporales y actualiza este estado cuando cambian los filtros recibidos como props. Además, expone una función `getFilters` que permite al componente padre obtener los filtros actuales. Para poder exponer esta función, se utiliza el hook `useImperativeHandle`, que permite personalizar la instancia del componente expuesta a través de una referencia. En nuestro caso, utilizamos este hook para exponer el estado actual de los filtros al componente padre, permitiendo que este pueda acceder a los filtros actuales y utilizarlos para realizar la búsqueda avanzada de eventos.
+
+Habiendo hecho estos cambios, el componente padre, _UsuarioPage.jsx_, puede acceder a los filtros actuales mediante la referencia al componente _AdvancedEventFilter.jsx_ y, a través de esta referencia y con el método getFilters que expone el hijo se pueden obtener los filtros seleccionados por el usuario. De esta forma, se puede realizar una búsqueda avanzada de eventos en función de los filtros seleccionados por el usuario. El componente _UsuarioPage.jsx_ también se encarga de gestionar la lógica de búsqueda y filtrado de eventos.
 
 ## Caso de uso 9: Inscripción a eventos, realización de reservas (rol usuario)
 
+La implementación de este caso de uso es bastante sencilla. El componente que se encarga de almacenar la información asociada a cada evento es el componente _UserEventCard.jsx_. Este componente recibe como parámetros toda la información del evento, además de un manejador para gestionar la inscripción a eventos mediante reservas.
+
+```jsx
+function UserEventCard({
+  cardTitle,
+  cardText,
+  eventStartDate,
+  eventEndDate,
+  eventOrganizer,
+  eventLocation,
+  eventPhoto,
+  eventSpaceName,
+  eventCategory,
+  eventTotalSeats,
+  eventId,
+  onHandleSubmit,
+  className = ''
+}) {
+  const handleSubmit = e => {
+    e.preventDefault();
+    onHandleSubmit({
+      idUsuario: user.id,
+      idEvento: eventId,
+      plazasReservadas: parseInt(e.target.plazasReservadas.value, 10)
+    });
+  };
+}
+```
+
+Lo que hacemos es utilizar la función del componente padre _UsuarioPage.jsx_ que se encarga de gestionar la inscripción a eventos mediante reservas '_onHandleSubmit_'. Esta función se encarga de realizar la petición al servidor para crear una reserva asociada al evento.
+
+La lógica asociada a la petición de creación de reserva es la siguiente y se encuentra en el componente _UsuarioPage.jsx_:
+
+```jsx
+const handleSubmit = async requestBody => {
+  try {
+    await darAltaReserva({ requestBody: requestBody });
+    toast.success('Reserva creada con éxito', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    setReservas(await getReservasUsuario(user.id));
+  } catch (error) {
+    console.error('Error al reservar:', error);
+    toast.error(
+      `Error: ${error.message || 'No se pudo completar la reserva'}`,
+      {
+        position: 'top-right',
+        autoClose: 3000
+      }
+    );
+  }
+};
+```
+
 ## Caso de uso 10: Cancelación de reservas (rol usuario)
 
-## Caso de uso 11: Consulta de reservas activas (rol usuario)
+Para la gestión de la cancelación de reservas, hemos seguido una dinámica y enfoque similar al caso de uso anterior. En este caso, el componente que se encarga de almacenar la información asociada a cada reserva es el componente _ReservasCard.jsx_. Este componente recibe todas las reservas, además de un manejador para gestionar la cancelación de reservas.
 
-## Caso de uso 12: Consulta de todas las reservas (rol usuario)
+```jsx
+const ReservasCard = { reservas, btnCancelado, onCancelado, gestor };
+```
+
+Este componente mostrará la información de cada reserva y si el usuario no es gestor, mostrará un botón para cancelar la reserva. El botón de cancelar reserva llamará a la función _onCancelado_ que se encarga de gestionar la cancelación de reservas y le pasará el id de la reserva a cancelar al componente padre _UsuarioPage.jsx_. La lógica asociada a la petición de cancelación de reserva es la siguiente y se encuentra en el componente _UsuarioPage.jsx_:
+
+```jsx
+const handleCancelarReserva = async idReserva => {
+  try {
+    await cancelarReserva(idReserva);
+    toast.success('Reserva cancelada exitosamente');
+
+    // Actualizar la lista de reservas
+    const nuevasReservas = await getReservasUsuario(user.id);
+    setReservas(nuevasReservas);
+  } catch (error) {
+    console.error('Error al cancelar la reserva:', error);
+    toast.error('No se pudo cancelar la reserva');
+  }
+};
+```
+
+## Caso de uso 11: Consulta de reservas activas y todas las reservas (rol usuario)
+
+Para este caso de uso, hemos definido dos _Tab_ distintos dentro de la página de usuario. El primero de ellos muestra las reservas activas del usuario y el segundo muestra todas las reservas realizadas por el usuario, tanto activas como canceladas.
+
+El primer _Tab_ muestra las reservas activas del usuario. Para ello, se utiliza el componente _ReservasCard.jsx_ que recibe como parámetro las reservas activas del usuario y un manejador para gestionar la cancelación de reservas. El componente _ReservasCard.jsx_ se encarga de mostrar la información de cada reserva y si el usuario no es gestor, mostrará un botón para cancelar la reserva.
+
+El código asociado en el _UsuarioPage.jsx_ es el siguiente:
+
+```jsx
+<Tab eventKey="reservas" title="Mis Reservas">
+  <div className="mt-4">
+    <Tabs
+      activeKey={subTabActiva}
+      onSelect={k => setSubTabActiva(k)}
+      id="reservas-subtabs"
+      className="mb-3 shadow-sm border rounded"
+      variant="pills"
+      justify
+    >
+      <Tab eventKey="activas" title="Mis reservas activas">
+        {(() => {
+          if (loadingReservas) {
+            return (
+              <div className="text-center my-4">
+                <Spinner animation="border">
+                  <span className="visually-hidden">
+                    Cargando reservas...
+                  </span>
+                </Spinner>
+              </div>
+            );
+          }
+          if (errorReservas) {
+            return <Alert variant="danger">{errorReservas}</Alert>;
+          }
+          if (reservasActivas.length > 0) {
+            return (
+              <div className="card shadow-sm">
+                <div
+                  style={{
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    padding: '0 5px'
+                  }}
+                >
+                  <ReservasCard
+                    gestor={false}
+                    reservas={reservasActivas}
+                    btnCancelado={true}
+                    onCancelado={handleCancelarReserva}
+                  />
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="text-center my-4 p-3 bg-light rounded">
+              <p>No tienes reservas activas en este momento.</p>
+            </div>
+          );
+        })()}
+      </Tab>
+      <Tab eventKey="todas" title="Todas mis reservas">
+        {(() => {
+          if (loadingReservas) {
+            return (
+              <div className="text-center my-4">
+                <Spinner animation="border">
+                  <span className="visually-hidden">
+                    Cargando reservas...
+                  </span>
+                </Spinner>
+              </div>
+            );
+          }
+          if (errorReservas) {
+            return <Alert variant="danger">{errorReservas}</Alert>;
+          }
+          if (reservas.length > 0) {
+            return (
+              <div className="card shadow-sm">
+                <div
+                  style={{
+                    maxHeight: '500px',
+                    overflowY: 'auto',
+                    padding: '0 5px'
+                  }}
+                >
+                  <ReservasCard reservas={reservas} />
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="text-center my-4 p-3 bg-light rounded">
+              <p>No has realizado ninguna reserva.</p>
+            </div>
+          );
+        })()}
+      </Tab>
+```
 
 # Discusión y conclusiones del trabajo realizado
 
 A continuación, se presentan las conclusiones del trabajo realizado por ambos componentes del equipo.
 
-- Fabián Sola Durán. Bajo mi punto de vista, el proyecto es enriquecedor y ha supuesto una experiencia bastante positiva exceptuando los problemas que hemos presentado a la hora de realizar un desarrollo relativamente "decente". En muchas ocasiones, he tenido que recurrir a la documentación oficial de las tecnologías y diversos tutoriales para aprender a utilizarlas. Además, había incongruencias entre la especificación del proyecto y la especificación del proyecto de ArSo, lo que ha dificultado la implementación de algunas funcionalidades ya que había que modificar diversas partes de ArSo. A pesar de ello, he aprendido mucho sobre el desarrollo de aplicaciones web y ha sido un primer contacto agradable con las tecnologías de desarrollo web. Como mejora de cara al futuro, creo que sería interesante que en alguna asignatura del primer cuatrimestre se tratasen tecnologías como HTML, CSS, BOOTSTRAP y JavaScript de forma introductoria para que en esta asignatura pudiésemos centrarnos en el desarrollo de aplicaciones web de forma más avanzada (ya sea usando React o Express-Handlebars) y no tener que perder tanto tiempo en aprender las tecnologías desde cero.
+- **Fabián Sola Durán**. Bajo mi punto de vista, el proyecto es enriquecedor y ha supuesto una experiencia bastante positiva exceptuando los problemas que hemos presentado a la hora de realizar un desarrollo relativamente "decente". En muchas ocasiones, he tenido que recurrir a la documentación oficial de las tecnologías y diversos tutoriales para aprender a utilizarlas. Además, había incongruencias entre la especificación del proyecto y la especificación del proyecto de ArSo, lo que ha dificultado la implementación de algunas funcionalidades ya que había que modificar diversas partes de ArSo. A pesar de ello, he aprendido mucho sobre el desarrollo de aplicaciones web y ha sido un primer contacto agradable con las tecnologías de desarrollo web. Como mejora de cara al futuro, creo que sería interesante que en alguna asignatura del primer cuatrimestre se tratasen tecnologías como HTML, CSS, BOOTSTRAP y JavaScript de forma introductoria para que en esta asignatura pudiésemos centrarnos en el desarrollo de aplicaciones web de forma más avanzada (ya sea usando React o Express-Handlebars) y así poder centrarnos en el desarrollo de aplicaciones web más complejas en las que se usen buenas prácticas aprendidas en clase.
+
+- **Antonio Pérez Serrano**. //TODO
+
+En líneas generales, el proyecto nos ha resultado útil y ha despertado nuestro interés acerca del desarrollo de aplicaciones con React. Hemos aprendido a utilizar diversas tecnologías y herramientas que nos han permitido desarrollar una aplicación web completa y funcional. A pesar de los desafíos y dificultades encontradas, hemos logrado implementar la mayoría de los casos de uso definidos en el proyecto y hemos adquirido una comprensión más profunda del desarrollo de aplicaciones web modernas.
