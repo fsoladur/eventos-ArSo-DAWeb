@@ -114,10 +114,16 @@ El momento en que nuestro frontend recibe el token JWT, lo almacena en el almace
 
 ## Caso de uso 3: Gestión de espacios físicos (rol gestor)
 
-El componente con la lógica principal de los espacios se encuentra en _EspaciosPage_. Para la realización de la página de *espacios* y de *eventos* se hizo uso de un listado de tipo acordeon _AccordionList.jsx_ adaptando el componente de la libreria de React Boostrap que recibe el tipo componente tarjeta a mostrar. Para ello, se ha implementado un componente llamado _SpaceCard.jsx_ que recibe como parámetros toda la información del espacio y se encarga de mostrarla en una tarjeta. Cuando se monta el componente, se llama a un hook personalizado _useEspacios_ que realiza una petición al servidor para obtener todos los espacios. Además, se ha implementado un botón _DischargeButton_ que, junto con sus variantes, es capaz de generar un modal con un formulario. La variante del botón determina el tipo de formulario que se muestra en el modal, reaprovechando asi la lógica para los eventos.
+El componente con la lógica principal de los espacios se encuentra en _EspaciosPage_. Para la realización de la página de _espacios_ y de _eventos_ se hizo uso de un listado de tipo acordeon _AccordionList.jsx_ adaptando el componente de la libreria de React Boostrap que recibe el tipo componente tarjeta a mostrar. Para ello, se ha implementado un componente llamado _SpaceCard.jsx_ que recibe como parámetros toda la información del espacio y se encarga de mostrarla en una tarjeta. Cuando se monta el componente, se llama a un hook personalizado _useEspacios_ que realiza una petición al servidor para obtener todos los espacios. Además, se ha implementado un botón _DischargeButton_ que, junto con sus variantes, es capaz de generar un modal con un formulario. La variante del botón determina el tipo de formulario que se muestra en el modal, reaprovechando asi la lógica para los eventos.
 
 ```jsx
-const DischargeButton = ({ shortButtonLabel, buttonLabel, children, onClose, className }) => {
+const DischargeButton = ({
+  shortButtonLabel,
+  buttonLabel,
+  children,
+  onClose,
+  className
+}) => {
   const [showModal, setShowModal] = useState(false);
 
   // lógica para controlar el modal
@@ -174,7 +180,7 @@ Para la cancelación y visualización por parte del gestor de los eventos. Se in
 
 ## Caso de uso 6: Cierre temporal de espacios físicos (rol gestor)
 
-Para la cancelación de los espacios, al desplegarse vista de edición de la tarjeta, se proporciona al usuario  un botón con la información 'Cancelar'. Dependiendo de si ha sido exitoso o no se hara uso del componente **React Toastify** previamente comentado. El botón actua como un toggle permitiendo su activación en caso de estar cancelado.
+Para la cancelación de los espacios, al desplegarse vista de edición de la tarjeta, se proporciona al usuario un botón con la información 'Cancelar'. Dependiendo de si ha sido exitoso o no se hara uso del componente **React Toastify** previamente comentado. El botón actua como un toggle permitiendo su activación en caso de estar cancelado.
 
 ## Caso de uso 7: Listado de eventos activos (rol usuario)
 
@@ -477,6 +483,6 @@ A continuación, se presentan las conclusiones del trabajo realizado por ambos c
 
 - **Fabián Sola Durán**. Bajo mi punto de vista, el proyecto es enriquecedor y ha supuesto una experiencia bastante positiva exceptuando los problemas que hemos presentado a la hora de realizar un desarrollo relativamente "decente". En muchas ocasiones, he tenido que recurrir a la documentación oficial de las tecnologías y diversos tutoriales para aprender a utilizarlas. Además, había incongruencias entre la especificación del proyecto y la especificación del proyecto de ArSo, lo que ha dificultado la implementación de algunas funcionalidades ya que había que modificar diversas partes de ArSo. A pesar de ello, he aprendido mucho sobre el desarrollo de aplicaciones web y ha sido un primer contacto agradable con las tecnologías de desarrollo web. Como mejora de cara al futuro, creo que sería interesante que en alguna asignatura del primer cuatrimestre se tratasen tecnologías como HTML, CSS, BOOTSTRAP y JavaScript de forma introductoria para que en esta asignatura pudiésemos centrarnos en el desarrollo de aplicaciones web de forma más avanzada (ya sea usando React o Express-Handlebars) y así poder centrarnos en el desarrollo de aplicaciones web más complejas en las que se usen buenas prácticas aprendidas en clase.
 
-- **Antonio Pérez Serrano**. Puta mierda de proyecto.
+- **Antonio Pérez Serrano**. El proyecto ha sido positivo e interesante, aunque el principal problema la entrega del enunciado antes de las vacaciones, ya que limitó el avance de otras prácticas. No se tuvo en cuenta que algunas personas tienen iniciativa propia para aprender por su cuenta y podrían haber empezado el proyecto más de un mes antes si hubiera tenido los casos de uso definitivos justo cuando el profesor de ArSo dio por finalizado los contenidos de los de los desarrollos de los tres microservicios a implementar. Además, Partes de la documentación no tuvieron en cuenta a la otra asignatura ya que pidieron implementaciones adicionales como dar de baja reserva lo cual generaba cierto conflicto entre los intereses de ambas asignaturas. Entonces cuando te cruzas con esta situación el proyecto deja de ser productivo porque el tiempo se reduce en exceso lo que da a lugar a la aplicación de malas prácticas/decisiones por la falta de tiempo y el agotamiento sale a relucir.
 
 En líneas generales, el proyecto nos ha resultado útil y ha despertado nuestro interés acerca del desarrollo de aplicaciones con React. Hemos aprendido a utilizar diversas tecnologías y herramientas que nos han permitido desarrollar una aplicación web completa y funcional. A pesar de los desafíos y dificultades encontradas, hemos logrado implementar la mayoría de los casos de uso definidos en el proyecto y hemos adquirido una comprensión más profunda del desarrollo de aplicaciones web modernas.
