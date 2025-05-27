@@ -37,6 +37,18 @@ Entre las distintas tecnologías que hemos utilizado en el desarrollo del fronte
 - **React Toastify**: Biblioteca utilizada para mostrar notificaciones y mensajes emergentes de forma sencilla y atractiva, mejorando la experiencia de usuario al proporcionar feedback visual sobre las acciones realizadas en la aplicación.
 - **Material UI**: Biblioteca de componentes de interfaz de usuario para React que proporciona una amplia gama de componentes predefinidos y personalizables. Principalmente se ha utilizado para el uso de selectores de fecha y hora, así como otros componentes de formularios.
 
+## Instrucciones de construcción del proyecto
+
+Para ejecutar el backend desarrollado en Arquitectura del Software hay que introducirse en su respectivo directorio y ejecutar el comando _`docker compose up -d`_.
+
+En el caso del frontend desarrollado para esta asignatura podemos hacer un despliegue en docker ejecutando el mismo comando o podemos inicializar cada proyecto por separado con los siguientes comandos (desde la raíz del proyecto):
+
+```bash
+cd DAWeb-frontend
+cd eventos && npm run dev
+cd ../welcome-express && node app.js
+```
+
 ## Diagrama de arquitectura del sistema
 
 El diagrama de arquitectura del sistema es el que se muestra a continuación. En él se puede observar la arquitectura general de la aplicación, incluyendo los distintos componentes y tecnologías utilizadas en el desarrollo del frontend y backend. Este diagrama nos permite entender cómo interactúan los distintos elementos del sistema y cómo se comunican entre sí.

@@ -206,3 +206,5 @@ fabric.properties
 *.rabbitmq-data*
 *.rabbitmq.conf*
 *node_modules*
+
+*.style*
