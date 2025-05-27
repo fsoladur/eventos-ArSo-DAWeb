@@ -5,7 +5,7 @@ import Login from '../components/Login/Login';
 import { useAuth } from '../context/useAuth';
 import { login } from '../services/authService';
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -38,7 +38,6 @@ const LoginPage = () => {
       <Navbar session={false} />
       <Login onHandleSubmit={handleSubmit} />
       <Footer />
-      <ToastContainer />
     </>
   );
 };

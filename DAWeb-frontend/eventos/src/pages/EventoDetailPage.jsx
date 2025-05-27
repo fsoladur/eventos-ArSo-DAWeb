@@ -5,7 +5,7 @@ import { getEvento, cancelarEvento } from '../services/EventService';
 import { getReservas } from '../services/reservasServices';
 import { getBadgeColor } from '../utils/utils';
 import ReservasCard from '../components/Cards/ReservaCard';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const EventoDetailPage = () => {
   const { id } = useParams();
@@ -172,8 +172,6 @@ const EventoDetailPage = () => {
           </Col>
         )}
       </Row>
-
-      <ToastContainer />
     </Container>
   );
 };

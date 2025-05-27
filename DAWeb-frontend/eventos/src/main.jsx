@@ -15,11 +15,15 @@ import EventDetailPage from './pages/EventoDetailPage';
 import './styles/custom.css';
 import AuthProvider from './context/AuthContext';
 import ConditionalRedirect from './routes/ConditionalRedirect';
+import AuthenticationErrorHandler from './components/AuthenticationErrorHandler/AuthenticationErrorHandler';
+import { ToastContainer } from 'react-toastify';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
+        <AuthenticationErrorHandler />
+        <ToastContainer position="top-right" />
         <Routes>
           <Route path="/" element={<ConditionalRedirect />} />
           <Route path="/login" element={<LoginPage />} />

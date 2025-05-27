@@ -3,7 +3,7 @@ import UserEventCard from '../components/UserEventCard/UserEventCard';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import { Container, Row, Col, Spinner, Alert, Button } from 'react-bootstrap';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserEventSearchBar from '../components/SearchBars/UserEventSearchBar';
 import { useEventos } from '../hooks/Eventos/useEventos';
@@ -502,8 +502,6 @@ const UsuarioPage = () => {
           </Tab>
         </Tabs>
       </Container>
-
-      <ToastContainer />
     </>
   );
 };
