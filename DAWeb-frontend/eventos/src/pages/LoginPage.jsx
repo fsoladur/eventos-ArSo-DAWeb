@@ -3,7 +3,7 @@ import Footer from '../components/Footer/Footer';
 import Navbar from '../components/NavBar/Navbar';
 import Login from '../components/Login/Login';
 import { useAuth } from '../context/useAuth';
-import { login } from '../services/authService';
+import { login } from '../services/AuthService';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
