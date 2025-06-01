@@ -17,17 +17,14 @@ const AuthenticationErrorHandler = () => {
 
         if (response.status === 401) {
           console.log('Sesión expirada. Redirigiendo al login...');
-          toast.error(
-            'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
-            {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true
-            }
-          );
+          toast.error('Por favor, inicia sesión nuevamente.', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true
+          });
           authLogout();
           navigate('/login', { replace: true });
         }
