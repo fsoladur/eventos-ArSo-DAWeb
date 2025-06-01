@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/useAuth';
 import './Navbar.css';
 import PropTypes from 'prop-types';
-import { logout } from '../../services/authService.js';
+import { logout } from '../../services/AuthService.js';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ session }) => {
